@@ -19,8 +19,8 @@
       <div class="grid">
         <div><label for="salaryRevenue">支払金額 <small>（給与の年収）</small></label><div class="field"><input id="salaryRevenue" type="number" inputmode="numeric" value="5000000"><span class="unit">円</span></div></div>
         <div><label for="salaryIncome">給与所得控除後の金額</label><div class="field"><input id="salaryIncome" type="number" inputmode="numeric" value="3560000"><span class="unit">円</span></div></div>
-        <div><label for="deductions">所得控除の額の合計額</label><div class="field"><input id="deductions" type="number" inputmode="numeric" value="1410000"><span class="unit">円</span></div></div>
-        <div><label for="withheld">源泉徴収税額</label><div class="field"><input id="withheld" type="number" inputmode="numeric" value="119900"><span class="unit">円</span></div></div>
+        <div><label for="deductions">所得控除の額の合計額</label><div class="field"><input id="deductions" type="number" inputmode="numeric" value="1770000"><span class="unit">円</span></div></div>
+        <div><label for="withheld">源泉徴収税額</label><div class="field"><input id="withheld" type="number" inputmode="numeric" value="91300"><span class="unit">円</span></div></div>
         <div><label for="housingCredit">住宅借入金等特別控除の額 <small>（なければ0）</small></label><div class="field"><input id="housingCredit" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
         <div><label for="oneEmployer">給与をもらっている会社</label><div class="field"><select id="oneEmployer"><option value="1">1か所</option><option value="0">2か所以上</option></select></div></div>
         <div><label for="yearEnd">会社の年末調整</label><div class="field"><select id="yearEnd"><option value="1">済み</option><option value="0">受けていない</option></select></div></div>
@@ -53,10 +53,11 @@
         <tr><td>副業がない場合の所得税（復興特別所得税込み）</td><td id="t3"></td></tr>
         <tr><td>副業を含めた所得税（復興特別所得税込み）</td><td id="t4"></td></tr>
         <tr><td>すでに差し引かれた税金（会社＋副業）</td><td id="t5"></td></tr>
+        <tr><td>基礎控除（給与のみ → 副業込み）</td><td id="t6"></td></tr>
       </tbody>
     </table></div>
     <p class="note" id="check"></p>
-    <p class="note">※目安です。副業の所得で基礎控除・配偶者控除などが変わる場合や、特例がある年は実際の税額と差が出ます。住民税は所得×10%の概算です。</p>
+    <p class="note">※目安です。副業で合計所得が増えて基礎控除が下がる分（令和8・9年分の金額）は反映しています。配偶者控除などが変わる場合や、特例がある年は実際の税額と差が出ます。住民税は所得×10%の概算です。</p>
   </section>
 
   <div class="ad-slot"></div>
@@ -70,7 +71,7 @@
     <p>青色申告や、赤字を給与と差し引く「損益通算」ができるのは事業所得だけです。取引を帳簿に記録して保存していると、事業所得に区分される場合が多いとされています。</p>
     <h2>計算のしくみ</h2>
     <ul>
-      <li>課税所得＝給与所得控除後の金額＋副業の所得−所得控除の合計（1,000円未満切り捨て）</li>
+      <li>課税所得＝給与所得控除後の金額＋副業の所得−所得控除の合計（1,000円未満切り捨て）。副業で合計所得が489万円・655万円を超えると基礎控除が下がるため、その分も反映</li>
       <li>所得税は速算表で計算し、住宅ローン控除を引いてから復興特別所得税（2.1%）を加算</li>
       <li>確定申告で払う税金は100円未満切り捨て。「副業がない場合の所得税」が源泉徴収票の税額とほぼ一致すれば、入力は正しいと考えられます</li>
     </ul>
@@ -98,6 +99,7 @@ UI.watch(() => {
   UI.set("resident", UI.yen(r.residentTax));
   UI.set("increase", UI.yen(r.increase));
   UI.set("takehome", UI.yen(r.takeHome));
+  UI.$("t6").textContent = UI.yen(r.basicSalary) + " → " + UI.yen(r.basicWith);
   [["t1", r.profitBefore], ["t2", r.blue], ["t3", r.taxBase], ["t4", r.taxWith], ["t5", r.alreadyPaid]].forEach(([id, v]) => UI.$(id).textContent = UI.yen(v));
   UI.$("check").textContent = r.checkOk === null ? "" : r.checkOk
     ? "✓ 副業がない場合の所得税が、源泉徴収票の税額とほぼ一致しています（入力OK）。"

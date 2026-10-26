@@ -21,6 +21,17 @@ const Calc = (() => {
     return 0;
   }
 
+  // 基礎控除（令和8年分・令和9年分。国税庁タックスアンサーNo.1199）。x は合計所得金額
+  function basicDeduction(x) {
+    if (x <= 4890000) return 1040000;
+    if (x <= 6550000) return 670000;
+    if (x <= 23500000) return 620000;
+    if (x <= 24000000) return 480000;
+    if (x <= 24500000) return 320000;
+    if (x <= 25000000) return 160000;
+    return 0;
+  }
+
   // 復興特別所得税込みの所得税（税額控除 credit を先に差し引く）
   function incomeTaxWithReconstruction(taxable, credit = 0) {
     const base = Math.max(0, incomeTax(taxable) - credit);
@@ -42,7 +53,11 @@ const Calc = (() => {
     const combined = (profit < 0 && isZatsu) ? 0 : profit;           // 給与と合算する所得
     const taxableBase = Math.max(0, floorTo(p.salaryIncome - p.deductions, 1000));
     const taxBase = incomeTaxWithReconstruction(taxableBase, p.housingCredit);
-    const taxableWith = Math.max(0, floorTo(p.salaryIncome + combined - p.deductions - p.extraDeductions, 1000));
+    // 副業で合計所得が増えると基礎控除が下がることがある（源泉徴収票の所得控除は給与だけの基礎控除で計算済み）
+    const basicSalary = basicDeduction(Math.max(0, p.salaryIncome));
+    const basicWith = basicDeduction(Math.max(0, p.salaryIncome + combined));
+    const deductionsWith = p.deductions - basicSalary + basicWith;
+    const taxableWith = Math.max(0, floorTo(p.salaryIncome + combined - deductionsWith - p.extraDeductions, 1000));
     const taxWith = incomeTaxWithReconstruction(taxableWith, p.housingCredit);
     const alreadyPaid = p.withheld + p.sideWithheld;
     const diff = taxWith - alreadyPaid;
@@ -64,7 +79,7 @@ const Calc = (() => {
       judge = "副業の所得（青色申告特別控除の前）が20万円を超えるため、確定申告が必要です。"
         + (blue > 0 ? "青色申告特別控除は、期限内に申告して初めて受けられます。" : "");
     }
-    return { profitBefore, blue, profit, combined, taxableBase, taxBase, taxableWith, taxWith,
+    return { profitBefore, blue, profit, combined, basicSalary, basicWith, taxableBase, taxBase, taxableWith, taxWith,
              alreadyPaid, settle, residentTax, increase, takeHome: profitBefore - increase, judge,
              checkOk: p.withheld > 0 ? Math.abs(taxBase - p.withheld) < 100 : null };
   }
@@ -171,7 +186,7 @@ const Calc = (() => {
     return { tsumitateLeft, seichoLeft, lifeLeft, seichoLifeLeft, yearTotalLeft: Math.min(tsumitateLeft + seichoLeft, lifeLeft) };
   }
 
-  return { incomeTax, incomeTaxWithReconstruction, sideJob, depreciation, shogakuLimit, boothFee,
+  return { incomeTax, incomeTaxWithReconstruction, basicDeduction, sideJob, depreciation, shogakuLimit, boothFee,
            stockGain, dividendCompare, nisa, TEIGAKU };
 })();
 if (typeof module !== "undefined") module.exports = Calc;
