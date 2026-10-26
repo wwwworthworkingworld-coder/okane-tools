@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOOTH手数料・利益の計算ツール｜受取金額と同人誌・グッズの損益分岐</title>
+<meta name="description" content="BOOTHのサービス利用料（5.6%＋45円）と受取金額を計算。同人誌・グッズの印刷費・イベント参加費から利益と何部売れば黒字かもわかります。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>BOOTH手数料・利益の計算</h1>
+  <p class="lead">BOOTHの手数料と受取金額、同人誌・グッズの利益と損益分岐部数を計算します。</p>
+
+  <section class="card">
+    <h2>① 手数料と受取金額</h2>
+    <div class="grid">
+      <div><label for="price">商品の価格 <small>（1個）</small></label><div class="field"><input id="price" type="number" inputmode="numeric" value="1000"><span class="unit">円</span></div></div>
+      <div><label for="qty">数量</label><div class="field"><input id="qty" type="number" inputmode="numeric" value="1" min="1"><span class="unit">個</span></div></div>
+      <div><label for="ship">送料 <small>（自宅発送で買い手が払う分）</small></label><div class="field"><input id="ship" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+    </div>
+    <fieldset><legend>手数料の設定（変更があったときだけ直してください）</legend>
+      <div class="grid">
+        <div><label for="rate">サービス利用料率</label><div class="field"><input id="rate" type="number" step="0.1" value="5.6"><span class="unit">%</span></div></div>
+        <div><label for="fixed">1注文あたりの固定料金</label><div class="field"><input id="fixed" type="number" value="45"><span class="unit">円</span></div></div>
+      </div>
+    </fieldset>
+    <div class="result">
+      <div class="stat"><div class="k">買い手の支払額</div><div class="v" id="pay">-</div></div>
+      <div class="stat"><div class="k">BOOTH手数料</div><div class="v" id="fee">-</div></div>
+      <div class="stat big"><div class="k">受取金額</div><div class="v good" id="recv">-</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>② 利益と損益分岐</h2>
+    <div class="grid">
+      <div><label for="print">印刷・製作費（総額）</label><div class="field"><input id="print" type="number" inputmode="numeric" value="60000"><span class="unit">円</span></div></div>
+      <div><label for="copies">作る部数</label><div class="field"><input id="copies" type="number" inputmode="numeric" value="100"><span class="unit">部</span></div></div>
+      <div><label for="eprice">イベントでの頒布価格</label><div class="field"><input id="eprice" type="number" inputmode="numeric" value="1000"><span class="unit">円</span></div></div>
+      <div><label for="esold">イベントで売れる見込み</label><div class="field"><input id="esold" type="number" inputmode="numeric" value="50"><span class="unit">部</span></div></div>
+      <div><label for="ecost">参加費＋交通費など</label><div class="field"><input id="ecost" type="number" inputmode="numeric" value="12000"><span class="unit">円</span></div></div>
+      <div><label for="bprice">BOOTHでの販売価格</label><div class="field"><input id="bprice" type="number" inputmode="numeric" value="1200"><span class="unit">円</span></div></div>
+      <div><label for="bsold">BOOTHで売れる見込み</label><div class="field"><input id="bsold" type="number" inputmode="numeric" value="20"><span class="unit">部</span></div></div>
+    </div>
+    <div class="result">
+      <div class="stat big"><div class="k">利益</div><div class="v" id="profit">-</div></div>
+      <div class="stat"><div class="k">1部あたりの原価</div><div class="v" id="unit">-</div></div>
+      <div class="stat"><div class="k">黒字になる部数（イベント価格で）</div><div class="v" id="be">-</div></div>
+      <div class="stat"><div class="k">売れ残り</div><div class="v" id="left">-</div></div>
+    </div>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>BOOTHの手数料のしくみ</h2>
+    <p>2025年10月28日以降、BOOTHのサービス利用料は「利用対象額×5.6％＋45円（1注文ごと）」です。帳簿には、手数料を引く前の金額を売上、手数料を支払手数料として分けて記録するのが基本です。最新の料率はBOOTH公式ヘルプでご確認ください。</p>
+  </section>
+
+  <section class="card cta">
+    <h2>BOOTHの売上CSVを貼るだけで確定申告の数字まで</h2>
+    <p class="lead" style="margin:0">売上管理CSVを貼るだけで、月別の売上・手数料・受取金額から確定申告の数字まで自動で集計するExcelです。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050610" target="_blank" rel="noopener">BOOTH売上かんたん収支シート</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+UI.watch(() => {
+  const fee = a => Calc.boothFee(a, Number(UI.$("rate").value) || 0, Number(UI.$("fixed").value) || 0);
+  const pay = UI.num("price") * Math.max(1, UI.num("qty")) + UI.num("ship");
+  UI.set("pay", UI.yen(pay)); UI.set("fee", UI.yen(fee(pay))); UI.set("recv", UI.yen(pay - fee(pay)));
+  const make = UI.num("print"), copies = UI.num("copies");
+  const sales = UI.num("eprice") * UI.num("esold") + (UI.num("bprice") - fee(UI.num("bprice"))) * UI.num("bsold");
+  const profit = sales - make - UI.num("ecost");
+  UI.set("profit", UI.yen(profit), profit >= 0 ? "good" : "bad");
+  UI.set("unit", copies ? UI.yen(make / copies) : "-");
+  UI.set("be", UI.num("eprice") ? Math.ceil((make + UI.num("ecost")) / UI.num("eprice")) + "部" : "-");
+  const left = copies - UI.num("esold") - UI.num("bsold");
+  UI.set("left", left >= 0 ? left + "部" : "部数不足", left < 0 ? "bad" : "");
+});
+</script>
+</body>
+</html>

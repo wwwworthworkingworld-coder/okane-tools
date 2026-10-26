@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>株の税金の計算ツール｜売却益の税金と配当の課税方式（申告分離・総合課税）の比較</title>
+<meta name="description" content="株の売却益にかかる税金（20.315%）と、配当金の課税方式（申告不要・申告分離課税・総合課税＋配当控除）でどれが有利かを計算します。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>株の税金の計算</h1>
+  <p class="lead">上場株式の売却益にかかる税金と、配当金をどの課税方式で申告すると税金が少なくなるかの目安を計算します。投資の判断をおすすめするものではありません。</p>
+
+  <section class="card">
+    <h2>① 株を売ったときの税金</h2>
+    <div class="grid">
+      <div><label for="sell">売却した金額</label><div class="field"><input id="sell" type="number" inputmode="numeric" value="1500000"><span class="unit">円</span></div></div>
+      <div><label for="cost">取得費 <small>（買ったときの金額）</small></label><div class="field"><input id="cost" type="number" inputmode="numeric" value="1200000"><span class="unit">円</span></div></div>
+      <div><label for="fee">売買手数料</label><div class="field"><input id="fee" type="number" inputmode="numeric" value="1000"><span class="unit">円</span></div></div>
+    </div>
+    <div class="result">
+      <div class="stat"><div class="k">売却益（譲渡所得）</div><div class="v" id="gain">-</div></div>
+      <div class="stat"><div class="k">所得税（15.315%）</div><div class="v" id="git">-</div></div>
+      <div class="stat"><div class="k">住民税（5%）</div><div class="v" id="grt">-</div></div>
+      <div class="stat big"><div class="k">税金の合計（20.315%）</div><div class="v" id="gtotal">-</div></div>
+    </div>
+    <p class="note" id="gnote"></p>
+  </section>
+
+  <section class="card">
+    <h2>② 配当金の課税方式の比較</h2>
+    <div class="grid">
+      <div><label for="div">国内株の配当金（年間・税引前）</label><div class="field"><input id="div" type="number" inputmode="numeric" value="300000"><span class="unit">円</span></div></div>
+      <div><label for="taxable">配当以外の課税所得 <small>（源泉徴収票の「給与所得控除後の金額−所得控除の額の合計額」）</small></label><div class="field"><input id="taxable" type="number" inputmode="numeric" value="2150000"><span class="unit">円</span></div></div>
+    </div>
+    <div class="result">
+      <div class="stat"><div class="k">申告不要・申告分離課税（20.315%）</div><div class="v" id="dsep">-</div></div>
+      <div class="stat"><div class="k">総合課税（配当控除あり）</div><div class="v" id="dgen">-</div></div>
+      <div class="stat big"><div class="k">税金が少ないのは</div><div class="v" id="dbetter" style="font-size:20px">-</div></div>
+    </div>
+    <div class="table-wrap"><table><tbody>
+      <tr><td>総合課税：所得税（復興特別所得税込み・配当控除後）</td><td id="dit"></td></tr>
+      <tr><td>総合課税：住民税（10%−配当控除）</td><td id="drt"></td></tr>
+      <tr><td>配当控除（所得税／住民税）</td><td id="dcr"></td></tr>
+    </tbody></table></div>
+    <p class="note">※国内上場株式の配当が対象（REIT・外国株・NISA口座の配当は配当控除の対象外）。総合課税にすると合計所得が増え、国民健康保険料・各種の所得制限などに影響する場合があります。令和6年度からは住民税も所得税と同じ課税方式になります。</p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>株の売却益の税金</h2>
+    <p>上場株式の売却益には、所得税15.315%（復興特別所得税を含む）と住民税5%、合計<strong>20.315%</strong>の税金がかかります。「特定口座（源泉徴収あり）」なら証券会社が自動で納めてくれるので、確定申告は原則不要です。</p>
+    <h2>売却損が出たとき</h2>
+    <p>同じ年のほかの株の売却益や、申告分離課税にした配当と相殺できます（損益通算）。それでも残った損失は、確定申告をすれば<strong>翌年以降3年間</strong>繰り越せます。複数の証券会社を使っている場合は、確定申告で損益をまとめると税金が戻ることがあります。</p>
+    <h2>配当の3つの課税方式</h2>
+    <ul>
+      <li><strong>申告不要</strong>：配当から20.315%が差し引かれて終わり。手間がかからない</li>
+      <li><strong>申告分離課税</strong>：税率は同じ20.315%だが、株の売却損と相殺できる</li>
+      <li><strong>総合課税</strong>：給与などと合算して累進税率で課税。配当控除があるため、所得が低めの人は税金が少なくなることがある</li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>副業・個人事業の帳簿もExcelで</h2>
+    <p class="lead" style="margin:0">副業の収支と税金の目安をまとめて計算できるExcelテンプレートを販売しています。</p>
+    <a class="btn" href="https://256-co.booth.pm/" target="_blank" rel="noopener">テンプレートを見る（BOOTH）</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+UI.watch(() => {
+  const g = Calc.stockGain(UI.num("sell"), UI.num("cost"), UI.num("fee"));
+  UI.set("gain", UI.yen(g.gain), g.gain < 0 ? "bad" : "");
+  UI.set("git", UI.yen(g.incomeTax)); UI.set("grt", UI.yen(g.residentTax)); UI.set("gtotal", UI.yen(g.total));
+  UI.$("gnote").textContent = g.gain < 0 ? "売却損です。同じ年の売却益と相殺でき、確定申告すれば3年間繰り越せます。" : "※1円未満切り捨ての概算です。";
+  const d = Calc.dividendCompare(UI.num("div"), UI.num("taxable"));
+  UI.set("dsep", UI.yen(d.separate)); UI.set("dgen", UI.yen(d.general)); UI.set("dbetter", d.better);
+  UI.$("dit").textContent = UI.yen(d.generalIT); UI.$("drt").textContent = UI.yen(d.generalRT);
+  UI.$("dcr").textContent = UI.yen(d.creditIT) + " ／ " + UI.yen(d.creditRT);
+});
+</script>
+</body>
+</html>

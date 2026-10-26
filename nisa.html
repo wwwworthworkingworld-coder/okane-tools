@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NISA枠の残り計算ツール｜新NISAの年間投資枠・生涯投資枠はあといくら？</title>
+<meta name="description" content="新NISAの年間投資枠（つみたて投資枠120万円・成長投資枠240万円）と生涯投資枠1,800万円の残りを計算。売却した分の枠の復活にも対応。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>NISA枠の残りの計算</h1>
+  <p class="lead">新NISA（2024年から）の、今年あといくら投資できるか・生涯であといくら投資できるかを計算します。金額は買付額（簿価）で入力してください。</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <fieldset><legend>今年の買付額</legend>
+      <div class="grid">
+        <div><label for="yt">つみたて投資枠で買った額</label><div class="field"><input id="yt" type="number" inputmode="numeric" value="600000"><span class="unit">円</span></div></div>
+        <div><label for="ys">成長投資枠で買った額</label><div class="field"><input id="ys" type="number" inputmode="numeric" value="1000000"><span class="unit">円</span></div></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>生涯投資枠（いま保有している分の買付額の合計）</legend>
+      <div class="grid">
+        <div><label for="lt">保有分の買付額の合計 <small>（今年の分を含む・売却した分は除く）</small></label><div class="field"><input id="lt" type="number" inputmode="numeric" value="4200000"><span class="unit">円</span></div></div>
+        <div><label for="ls">うち成長投資枠の分</label><div class="field"><input id="ls" type="number" inputmode="numeric" value="2400000"><span class="unit">円</span></div></div>
+      </div>
+    </fieldset>
+    <div class="result">
+      <div class="stat"><div class="k">今年のつみたて投資枠の残り</div><div class="v" id="r1">-</div></div>
+      <div class="stat"><div class="k">今年の成長投資枠の残り</div><div class="v" id="r2">-</div></div>
+      <div class="stat big"><div class="k">今年あと投資できる額</div><div class="v good" id="r3">-</div></div>
+      <div class="stat"><div class="k">生涯投資枠の残り</div><div class="v" id="r4">-</div></div>
+      <div class="stat"><div class="k">うち成長投資枠の残り</div><div class="v" id="r5">-</div></div>
+    </div>
+    <p class="note">※売却した商品の枠（買付額）は、翌年以降に生涯投資枠として復活します。年間投資枠（360万円）は売却しても復活しません。</p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>新NISAの枠のしくみ</h2>
+    <ul>
+      <li>年間投資枠：つみたて投資枠<strong>120万円</strong>＋成長投資枠<strong>240万円</strong>＝合計360万円</li>
+      <li>生涯投資枠：<strong>1,800万円</strong>（うち成長投資枠は1,200万円まで）</li>
+      <li>生涯投資枠は買付額（簿価）で管理され、売却すると翌年以降にその分の枠が復活します</li>
+      <li>NISA口座の売却益・配当は非課税（その代わり、損失を他の口座の利益と相殺することはできません）</li>
+    </ul>
+    <p>制度の内容は変わることがあります。最新の情報は金融庁や証券会社のサイトでご確認ください。</p>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+UI.watch(() => {
+  const r = Calc.nisa({ yearTsumitate: UI.num("yt"), yearSeicho: UI.num("ys"),
+                        lifetimeBookValue: UI.num("lt"), lifetimeSeichoBookValue: UI.num("ls") });
+  UI.set("r1", UI.yen(r.tsumitateLeft)); UI.set("r2", UI.yen(r.seichoLeft)); UI.set("r3", UI.yen(r.yearTotalLeft));
+  UI.set("r4", UI.yen(r.lifeLeft)); UI.set("r5", UI.yen(r.seichoLifeLeft));
+});
+</script>
+</body>
+</html>

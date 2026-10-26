@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>家事按分の計算ツール｜家賃・スマホ代・電気代を経費にできる額</title>
+<meta name="description" content="自宅兼事務所の家賃、スマホ代、電気代、ネット代など、仕事とプライベート共用の支出を家事按分して、経費にできる金額を計算します。面積・時間・日数などの按分方法に対応。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>家事按分の計算</h1>
+  <p class="lead">仕事とプライベートの両方で使っている支出（家賃・スマホ代・電気代など）のうち、経費にできる金額を計算します。</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <div class="grid">
+      <div><label for="item">支出の種類</label><div class="field"><select id="item">
+        <option value="rent">家賃</option><option value="phone">スマホ代</option><option value="net">インターネット代</option>
+        <option value="power">電気代</option><option value="car">車の費用（ガソリン代など）</option><option value="other">その他</option></select></div></div>
+      <div><label for="monthly">1か月の金額</label><div class="field"><input id="monthly" type="number" inputmode="numeric" value="80000"><span class="unit">円</span></div></div>
+      <div><label for="months">対象の月数</label><div class="field"><input id="months" type="number" inputmode="numeric" value="12" min="1" max="12"><span class="unit">か月</span></div></div>
+      <div><label for="method">按分の方法</label><div class="field"><select id="method">
+        <option value="area">面積（仕事スペース÷全体）</option><option value="time">時間（仕事で使う時間÷使う時間）</option>
+        <option value="days">日数（仕事で使う日÷使う日）</option><option value="ratio">割合を直接入力</option></select></div></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div id="boxA"><label for="a" id="labelA">仕事スペースの面積</label><div class="field"><input id="a" type="number" inputmode="decimal" value="6"><span class="unit" id="unitA">㎡</span></div></div>
+      <div id="boxB"><label for="b" id="labelB">住まい全体の面積</label><div class="field"><input id="b" type="number" inputmode="decimal" value="40"><span class="unit" id="unitB">㎡</span></div></div>
+    </div>
+    <div class="result">
+      <div class="stat"><div class="k">事業割合</div><div class="v" id="ratio">-</div></div>
+      <div class="stat big"><div class="k">経費にできる額（年間）</div><div class="v good" id="expense">-</div></div>
+      <div class="stat"><div class="k">プライベート分（事業主貸）</div><div class="v" id="private">-</div></div>
+      <div class="stat"><div class="k">1か月あたりの経費</div><div class="v" id="perMonth">-</div></div>
+    </div>
+    <p class="note" id="hint"></p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>家事按分とは</h2>
+    <p>仕事とプライベートの両方で使っている支出は、仕事で使った割合の分だけを経費にできます。これを「家事按分（かじあんぶん）」といいます。割合は、面積・時間・使用日数など、<strong>説明できる合理的な基準</strong>で決めることが大切です。</p>
+    <h2>よく使われる按分の基準</h2>
+    <ul>
+      <li>家賃：仕事に使う部屋の面積÷住まい全体の面積</li>
+      <li>電気代：仕事で使う時間÷1日の使用時間、または面積</li>
+      <li>スマホ代・ネット代：仕事で使う時間や通話の割合</li>
+      <li>車の費用：仕事で走った距離÷全体の走行距離</li>
+    </ul>
+    <h2>注意点</h2>
+    <ul>
+      <li>按分の根拠（間取り図、使用時間のメモなど）を残しておくと、説明を求められたときに安心です。</li>
+      <li>会社員の副業で、仕事にほとんど使っていない支出を高い割合で経費にするのは避けましょう。</li>
+      <li>帳簿では、経費の分を各科目（地代家賃・通信費など）に、残りを「事業主貸」として記録します。</li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>家事按分を帳簿に自動で反映</h2>
+    <p class="lead" style="margin:0">「事業割合」を入れるだけで、経費と事業主貸に自動で分けて記帳できるExcel帳簿です。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050803" target="_blank" rel="noopener">個人事業主の青色申告 かんたん複式帳簿</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/ui.js"></script>
+<script>
+const LABELS = {
+  area: ["仕事スペースの面積", "住まい全体の面積", "㎡"],
+  time: ["仕事で使う時間（1日）", "使う時間の合計（1日）", "時間"],
+  days: ["仕事で使う日数（1か月）", "使う日数（1か月）", "日"],
+  ratio: ["事業割合", "", "%"],
+};
+const HINTS = {
+  rent: "家賃は面積で按分するのが一般的です。", phone: "スマホ代は使用時間で按分する例が多いです。",
+  net: "ネット代は使用時間で按分する例が多いです。", power: "電気代は使用時間または面積で按分します。",
+  car: "車は走行距離で按分するのが一般的です（「割合を直接入力」で距離の割合を入れてください）。", other: "",
+};
+UI.watch(() => {
+  const m = UI.$("method").value;
+  const [la, lb, unit] = LABELS[m];
+  UI.$("labelA").textContent = la; UI.$("unitA").textContent = unit;
+  UI.$("labelB").textContent = lb; UI.$("unitB").textContent = unit;
+  UI.$("boxB").hidden = m === "ratio";
+  const a = UI.num("a"), b = UI.num("b");
+  let ratio = m === "ratio" ? a / 100 : (b > 0 ? a / b : 0);
+  ratio = Math.min(1, Math.max(0, ratio));
+  const total = UI.num("monthly") * Math.min(12, Math.max(0, UI.num("months")));
+  const expense = Math.round(total * ratio);
+  UI.set("ratio", (ratio * 100).toFixed(1) + "%");
+  UI.set("expense", UI.yen(expense));
+  UI.set("private", UI.yen(total - expense));
+  UI.set("perMonth", UI.yen(UI.num("months") > 0 ? expense / UI.num("months") : 0));
+  UI.$("hint").textContent = HINTS[UI.$("item").value];
+});
+</script>
+</body>
+</html>

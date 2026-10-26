@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>副業の税金シミュレーター｜確定申告が必要か・いくら増えるか【令和8年分】</title>
+<meta name="description" content="会社員の副業の税金を計算。源泉徴収票の数字を入れるだけで、確定申告が必要か（20万円ルール）、確定申告で払う・戻る税金、住民税の増加の目安がわかります。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>副業の税金シミュレーター</h1>
+  <p class="lead">会社の源泉徴収票の数字と副業の収支を入れると、確定申告が必要か、税金がいくら増える（戻る）かの目安を計算します（令和8年分の制度）。</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <fieldset><legend>会社の源泉徴収票（前年のものでも目安になります）</legend>
+      <div class="grid">
+        <div><label for="salaryRevenue">支払金額 <small>（給与の年収）</small></label><div class="field"><input id="salaryRevenue" type="number" inputmode="numeric" value="5000000"><span class="unit">円</span></div></div>
+        <div><label for="salaryIncome">給与所得控除後の金額</label><div class="field"><input id="salaryIncome" type="number" inputmode="numeric" value="3560000"><span class="unit">円</span></div></div>
+        <div><label for="deductions">所得控除の額の合計額</label><div class="field"><input id="deductions" type="number" inputmode="numeric" value="1410000"><span class="unit">円</span></div></div>
+        <div><label for="withheld">源泉徴収税額</label><div class="field"><input id="withheld" type="number" inputmode="numeric" value="119900"><span class="unit">円</span></div></div>
+        <div><label for="housingCredit">住宅借入金等特別控除の額 <small>（なければ0）</small></label><div class="field"><input id="housingCredit" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+        <div><label for="oneEmployer">給与をもらっている会社</label><div class="field"><select id="oneEmployer"><option value="1">1か所</option><option value="0">2か所以上</option></select></div></div>
+        <div><label for="yearEnd">会社の年末調整</label><div class="field"><select id="yearEnd"><option value="1">済み</option><option value="0">受けていない</option></select></div></div>
+        <div><label for="extra">確定申告で追加する所得控除 <small>（医療費控除など）</small></label><div class="field"><input id="extra" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>副業</legend>
+      <div class="grid">
+        <div><label for="sideRevenue">副業の収入 <small>（年間・経費を引く前）</small></label><div class="field"><input id="sideRevenue" type="number" inputmode="numeric" value="490000"><span class="unit">円</span></div></div>
+        <div><label for="sideExpenses">必要経費</label><div class="field"><input id="sideExpenses" type="number" inputmode="numeric" value="213090"><span class="unit">円</span></div></div>
+        <div><label for="kind">所得の区分</label><div class="field"><select id="kind">
+          <option value="jigyo-white">事業所得（白色申告）</option><option value="jigyo-blue65">事業所得（青色65万円・e-Tax）</option>
+          <option value="jigyo-blue55">事業所得（青色55万円・紙提出）</option><option value="jigyo-blue10">事業所得（青色10万円）</option>
+          <option value="zatsu">雑所得（業務）</option></select></div></div>
+        <div><label for="sideWithheld">副業で源泉徴収された税額</label><div class="field"><input id="sideWithheld" type="number" inputmode="numeric" value="22460"><span class="unit">円</span></div></div>
+      </div>
+    </fieldset>
+
+    <div class="judge" id="judge"></div>
+    <div class="result">
+      <div class="stat big"><div class="k">確定申告で払う（＋）／戻る（−）税金</div><div class="v" id="settle">-</div></div>
+      <div class="stat"><div class="k">住民税の増減（目安）</div><div class="v" id="resident">-</div></div>
+      <div class="stat"><div class="k">副業で増える税金の合計</div><div class="v" id="increase">-</div></div>
+      <div class="stat"><div class="k">副業の手取り（目安）</div><div class="v" id="takehome">-</div></div>
+    </div>
+    <div class="table-wrap"><table>
+      <tbody>
+        <tr><td>副業の所得（青色申告特別控除の前）</td><td id="t1"></td></tr>
+        <tr><td>青色申告特別控除</td><td id="t2"></td></tr>
+        <tr><td>副業がない場合の所得税（復興特別所得税込み）</td><td id="t3"></td></tr>
+        <tr><td>副業を含めた所得税（復興特別所得税込み）</td><td id="t4"></td></tr>
+        <tr><td>すでに差し引かれた税金（会社＋副業）</td><td id="t5"></td></tr>
+      </tbody>
+    </table></div>
+    <p class="note" id="check"></p>
+    <p class="note">※目安です。副業の所得で基礎控除・配偶者控除などが変わる場合や、特例がある年は実際の税額と差が出ます。住民税は所得×10%の概算です。</p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>確定申告が必要になるのはどんなとき？</h2>
+    <p>会社員で、給与を1か所から受け取り年末調整を受けている人は、給与以外の所得（副業の収入−経費）が<strong>20万円以下</strong>なら所得税の確定申告は原則不要です。ただし<strong>住民税の申告は必要</strong>です。医療費控除などで確定申告をする場合は、20万円以下でも副業の所得を含めて申告します。</p>
+    <h2>青色申告特別控除の注意点</h2>
+    <p>副業を事業所得として青色申告していると、最大65万円の控除があります。ただし、この控除は期限内に確定申告をして初めて受けられるため、20万円の判定は控除前の所得で考えます。</p>
+    <h2>事業所得と雑所得のちがい</h2>
+    <p>青色申告や、赤字を給与と差し引く「損益通算」ができるのは事業所得だけです。取引を帳簿に記録して保存していると、事業所得に区分される場合が多いとされています。</p>
+    <h2>計算のしくみ</h2>
+    <ul>
+      <li>課税所得＝給与所得控除後の金額＋副業の所得−所得控除の合計（1,000円未満切り捨て）</li>
+      <li>所得税は速算表で計算し、住宅ローン控除を引いてから復興特別所得税（2.1%）を加算</li>
+      <li>確定申告で払う税金は100円未満切り捨て。「副業がない場合の所得税」が源泉徴収票の税額とほぼ一致すれば、入力は正しいと考えられます</li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>副業の帳簿づけと税金の計算を、1つのExcelで</h2>
+    <p class="lead" style="margin:0">1行入力で帳簿ができ、このシミュレーションと同じ計算も自動で行うExcelテンプレートです。無料のお試し版あり。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9051108" target="_blank" rel="noopener">会社員の副業 確定申告かんたん帳簿</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+UI.watch(() => {
+  const r = Calc.sideJob({
+    salaryRevenue: UI.num("salaryRevenue"), salaryIncome: UI.num("salaryIncome"), deductions: UI.num("deductions"),
+    withheld: UI.num("withheld"), housingCredit: UI.num("housingCredit"), extraDeductions: UI.num("extra"),
+    sideRevenue: UI.num("sideRevenue"), sideExpenses: UI.num("sideExpenses"), kind: UI.$("kind").value,
+    sideWithheld: UI.num("sideWithheld"), oneEmployer: UI.$("oneEmployer").value === "1", yearEndAdjusted: UI.$("yearEnd").value === "1",
+  });
+  UI.$("judge").textContent = r.judge;
+  UI.set("settle", (r.settle > 0 ? "+" : "") + UI.yen(r.settle), r.settle > 0 ? "bad" : "good");
+  UI.set("resident", UI.yen(r.residentTax));
+  UI.set("increase", UI.yen(r.increase));
+  UI.set("takehome", UI.yen(r.takeHome));
+  [["t1", r.profitBefore], ["t2", r.blue], ["t3", r.taxBase], ["t4", r.taxWith], ["t5", r.alreadyPaid]].forEach(([id, v]) => UI.$(id).textContent = UI.yen(v));
+  UI.$("check").textContent = r.checkOk === null ? "" : r.checkOk
+    ? "✓ 副業がない場合の所得税が、源泉徴収票の税額とほぼ一致しています（入力OK）。"
+    : "⚠ 副業がない場合の所得税が源泉徴収票の税額と一致しません。入力を確認してください（年の途中の扶養の変更などで一致しない場合もあります）。";
+});
+</script>
+</body>
+</html>

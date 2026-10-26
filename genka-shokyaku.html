@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>減価償却の計算ツール｜パソコン・カメラ・車の毎年の償却費（定額法）</title>
+<meta name="description" content="個人事業主・副業向けの減価償却計算。取得価額・取得月・耐用年数から毎年の減価償却費と未償却残高を一覧で計算。定額法・一括償却資産・少額減価償却資産の特例に対応。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>減価償却の計算</h1>
+  <p class="lead">パソコン・カメラ・車など10万円以上の備品の、毎年の減価償却費を計算します（個人の定額法。償却率は国税庁の償却率表）。</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <div class="grid">
+      <div><label for="cost">取得価額 <small>（税込経理なら税込）</small></label><div class="field"><input id="cost" type="number" inputmode="numeric" value="330000"><span class="unit">円</span></div></div>
+      <div><label for="ym">使い始めた年月</label><div class="field"><input id="ym" type="month" value="2026-10"></div></div>
+      <div><label for="method">償却の方法</label><div class="field"><select id="method">
+        <option value="teigaku">定額法（通常）</option><option value="ikkatsu">一括償却資産（20万円未満・3年で均等）</option>
+        <option value="shogaku">少額減価償却資産の特例（青色申告のみ・全額をその年の経費）</option></select></div></div>
+      <div id="lifeBox"><label for="life">耐用年数</label><div class="field"><select id="life"></select><span class="unit">年</span></div></div>
+      <div><label for="ratio">事業で使う割合</label><div class="field"><input id="ratio" type="number" inputmode="numeric" value="100" min="0" max="100"><span class="unit">%</span></div></div>
+    </div>
+    <p class="note">主な耐用年数の目安：パソコン4年（サーバー用は5年）、カメラ5年、普通自動車6年、軽自動車4年、事務机（金属製）15年。正確には国税庁の耐用年数表で確認してください。</p>
+    <div class="judge" id="judge"></div>
+    <div class="result">
+      <div class="stat big"><div class="k">今年（初年度）の経費になる額</div><div class="v good" id="first">-</div></div>
+      <div class="stat"><div class="k">2年目以降（1年あたり）</div><div class="v" id="second">-</div></div>
+      <div class="stat"><div class="k">償却が終わる年</div><div class="v" id="end">-</div></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>年</th><th>月数</th><th>減価償却費</th><th>経費になる額</th><th>年末の未償却残高</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>10万円・20万円・30万円の境目</h2>
+    <ul>
+      <li><strong>10万円未満</strong>：消耗品費として、買った年に全額を経費にできます。</li>
+      <li><strong>10万円以上20万円未満</strong>：「一括償却資産」として3年で均等に経費にできます（月数に関係なく1年に1/3ずつ）。</li>
+      <li><strong>30万円未満</strong>（令和8年4月1日以後の取得は<strong>40万円未満</strong>）：青色申告者は「少額減価償却資産の特例」で全額をその年の経費にできます（年間合計300万円まで）。</li>
+      <li>それ以外は、耐用年数にわたって定額法で毎年少しずつ経費にします。</li>
+    </ul>
+    <h2>定額法の計算のしかた</h2>
+    <p>1年分の償却費＝取得価額×償却率です。使い始めた年は月割り（使い始めた月を1か月と数える）で計算し、最後は帳簿上1円を残します。事業とプライベートの両方で使う場合は、償却費に事業で使う割合を掛けた額が経費になります。</p>
+  </section>
+
+  <section class="card cta">
+    <h2>減価償却を帳簿と決算書に自動で反映</h2>
+    <p class="lead" style="margin:0">固定資産を登録するだけで、償却費の仕訳から青色申告決算書の3ページまで自動で作るExcel帳簿です。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050803" target="_blank" rel="noopener">個人事業主の青色申告 かんたん複式帳簿</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+const lifeSel = UI.$("life");
+Object.keys(Calc.TEIGAKU).forEach(y => {
+  const o = document.createElement("option"); o.value = y; o.textContent = y; if (y === "5") o.selected = true; lifeSel.appendChild(o);
+});
+UI.watch(() => {
+  const [y, mo] = (UI.$("ym").value || "2026-01").split("-").map(Number);
+  const method = UI.$("method").value;
+  const cost = UI.num("cost");
+  UI.$("lifeBox").hidden = method !== "teigaku";
+  const rows = Calc.depreciation({ cost, year: y, month: mo, life: Number(lifeSel.value), method,
+                                   ratio: Math.min(100, Math.max(0, UI.num("ratio"))) / 100 });
+  let judge = "";
+  if (cost < 100000) judge = "10万円未満なので、消耗品費として買った年に全額を経費にできます。";
+  else if (method === "ikkatsu" && cost >= 200000) judge = "一括償却資産にできるのは20万円未満です。";
+  else if (method === "shogaku" && cost >= Calc.shogakuLimit(y, mo)) judge = `少額減価償却資産の特例は${Calc.shogakuLimit(y, mo) / 10000}万円未満までです。`;
+  UI.$("judge").textContent = judge || "計算結果は下の表のとおりです。";
+  UI.set("first", rows.length ? UI.yen(rows[0].expense) : "-");
+  UI.set("second", rows.length > 1 ? UI.yen(rows[1].expense) : "-");
+  UI.set("end", rows.length ? rows[rows.length - 1].year + "年" : "-");
+  UI.$("rows").innerHTML = rows.map(r => `<tr><td>${r.year}年</td><td>${r.months}</td><td>${UI.yen(r.depreciation)}</td><td>${UI.yen(r.expense)}</td><td>${UI.yen(r.endBalance)}</td></tr>`).join("");
+});
+</script>
+</body>
+</html>
