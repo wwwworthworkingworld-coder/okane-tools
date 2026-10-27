@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>経費メモ｜スマホで経費をすぐ記録、CSVでExcelへ</title>
+<meta name="description" content="スマホのすき間時間に経費を記録できる無料の経費メモ。日付・金額・科目・支払方法を入れるだけ。データはスマホの中だけに保存され、CSVで書き出して帳簿のExcelに取り込めます。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="keihi-manifest.json">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="theme-color" content="#1f5f99">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="経費メモ">
+<style>
+  .memo-form{display:grid;gap:14px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--main);border-color:var(--main);color:#fff;font-weight:700}
+  .amount input{font-size:28px;font-weight:800;text-align:right;padding:12px}
+  .save{width:100%;border:0;border-radius:12px;background:var(--main);color:#fff;font-size:18px;font-weight:800;padding:14px;cursor:pointer}
+  .save:active{opacity:.85}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10}
+  .toast.show{opacity:1}
+  .list{list-style:none;margin:0;padding:0}
+  .list li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .list .d{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:3.4em}
+  .list .t{font-size:14px;line-height:1.4}
+  .list .t small{display:block;color:var(--muted);font-size:12px}
+  .list .a{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+  .list .ex{font-size:11px;color:var(--good)}
+  .tools-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .btn2{border:1px solid var(--main);background:var(--card);color:var(--main);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer}
+  .btn2.danger{border-color:var(--bad);color:var(--bad)}
+  .month{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px}
+  .month b{font-size:20px;font-variant-numeric:tabular-nums}
+  .empty{color:var(--muted);font-size:14px;padding:12px 0}
+</style>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>経費メモ</h1>
+  <p class="lead">支払ったその場で、経費をスマホに記録。たまったらCSVで書き出して、帳簿のExcelに取り込めます。</p>
+
+  <section class="card">
+    <form class="memo-form" id="form" autocomplete="off">
+      <div class="row2">
+        <div><label for="date">日付</label><div class="field"><input id="date" type="date" required></div></div>
+        <div class="amount"><label for="amount">金額</label><div class="field"><input id="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="0" required><span class="unit">円</span></div></div>
+      </div>
+      <div>
+        <label>科目</label>
+        <div class="chips" id="cats"></div>
+        <div class="field"><select id="catAll" aria-label="ほかの科目"></select></div>
+      </div>
+      <div>
+        <label>支払方法</label>
+        <div class="chips" id="pays"></div>
+      </div>
+      <div><label for="memo">内容 <small>（お店・何に使ったか）</small></label><div class="field"><input id="memo" type="text" maxlength="60" placeholder="例：品川→渋谷 電車／文房具"></div></div>
+      <div>
+        <label>事業で使った割合 <small>（家と共用のもの）</small></label>
+        <div class="chips" id="rates"></div>
+      </div>
+      <button class="save" type="submit" id="saveBtn">記録する</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="month"><span id="monthLabel">今月の合計</span><b id="monthTotal">¥0</b></div>
+    <ul class="list" id="list"></ul>
+    <div class="tools-row">
+      <button class="btn2" type="button" id="exportNew">まだ書き出していない分をCSVに</button>
+      <button class="btn2" type="button" id="exportAll">全部をCSVに</button>
+    </div>
+    <p class="note">書き出したCSVは、帳簿のExcelの「明細取り込み」シートに貼り付けると取引入力の形になります（種類は「スマホ経費メモ」）。</p>
+  </section>
+
+  <section class="card article">
+    <h2>使い方</h2>
+    <ul>
+      <li>ホーム画面に追加すると、アプリのように開けます（iPhone：共有ボタン→「ホーム画面に追加」／Android：メニュー→「ホーム画面に追加」）。電波がない場所でも記録できます。</li>
+      <li>記録はこのスマホのブラウザの中だけに保存され、どこにも送信されません。ブラウザのデータを消すと記録も消えるので、月に1回くらいはCSVに書き出しておくと安心です。</li>
+      <li>支払方法の「クレジットカード」は、カード明細のCSVを取り込む場合は二重になるので、明細にない支払い（現金・Suicaなど）を中心に記録するのがおすすめです。</li>
+      <li>記録をタップすると、修正や削除ができます。</li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>記録したあとの帳簿づけ・確定申告はExcelで</h2>
+    <p class="lead" style="margin:0">経費メモのCSVやカード明細を貼り付けるだけで帳簿になり、青色申告決算書の数字まで自動で計算するExcelテンプレートです。無料のお試し版あり。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050803" target="_blank" rel="noopener">個人事業主の青色申告 かんたん複式帳簿</a>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<footer class="site-footer"></footer>
+<script src="assets/ui.js"></script>
+<script>
+(() => {
+  const KEY = "keihi-memo-v1";
+  const CATS = ["旅費交通費", "会議費", "消耗品費", "通信費", "接待交際費", "新聞図書費"];
+  const ALL = ["租税公課", "荷造運賃", "水道光熱費", "旅費交通費", "通信費", "広告宣伝費", "接待交際費", "損害保険料", "修繕費",
+    "消耗品費", "福利厚生費", "外注工賃", "地代家賃", "支払手数料", "新聞図書費", "会議費", "研修費", "諸会費", "雑費", "仕入高", "事業主貸"];
+  const PAYS = ["現金", "Suica・電子マネー", "クレジットカード", "普通預金"];
+  const RATES = [["100%", ""], ["50%", 0.5], ["30%", 0.3]];
+  const $ = id => document.getElementById(id);
+  const yen = v => "¥" + Number(v || 0).toLocaleString("ja-JP");
+  const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+
+  let items = [];
+  try { items = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { items = []; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(items)); return true; } catch (e) { toast("保存できませんでした（プライベートモードでは保存できません）"); return false; } };
+  let state = { cat: CATS[0], pay: PAYS[0], rate: "", editing: null };
+
+  function chips(el, list, key, labelOf, valueOf) {
+    el.innerHTML = "";
+    list.forEach(x => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = labelOf(x);
+      b.setAttribute("aria-pressed", String(state[key] === valueOf(x)));
+      b.onclick = () => { state[key] = valueOf(x); render(); };
+      el.appendChild(b);
+    });
+  }
+  function renderForm() {
+    chips($("cats"), CATS, "cat", x => x, x => x);
+    chips($("pays"), PAYS, "pay", x => x, x => x);
+    chips($("rates"), RATES, "rate", x => x[0], x => x[1]);
+    const sel = $("catAll");
+    sel.innerHTML = '<option value="">ほかの科目を選ぶ…</option>' + ALL.filter(c => !CATS.includes(c)).map(c => `<option${c === state.cat ? " selected" : ""}>${c}</option>`).join("");
+    $("saveBtn").textContent = state.editing ? "修正を保存" : "記録する";
+  }
+  function renderList() {
+    const ym = today().slice(0, 7);
+    const sorted = items.slice().sort((a, b) => (b.date + b.id).localeCompare(a.date + a.id));
+    $("monthTotal").textContent = yen(items.filter(i => i.date.startsWith(ym)).reduce((s, i) => s + i.amount, 0));
+    const ul = $("list"); ul.innerHTML = "";
+    if (!sorted.length) { ul.innerHTML = '<li class="empty" style="display:block">まだ記録はありません。</li>'; return; }
+    sorted.slice(0, 100).forEach(i => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="d">${i.date.slice(5).replace("-", "/")}</span>`
+        + `<span class="t">${esc(i.cat)}${i.rate ? "（" + Math.round(i.rate * 100) + "%）" : ""}<small>${esc(i.memo || "")}・${esc(i.pay)}${i.exported ? ' <span class="ex">書き出し済み</span>' : ""}</small></span>`
+        + `<span class="a">${yen(i.amount)}</span>`;
+      li.onclick = () => edit(i.id);
+      ul.appendChild(li);
+    });
+    if (sorted.length > 100) { const li = document.createElement("li"); li.className = "empty"; li.style.display = "block"; li.textContent = `ほか${sorted.length - 100}件（CSVにはすべて入ります）`; ul.appendChild(li); }
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function render() { renderForm(); renderList(); }
+
+  function edit(id) {
+    const i = items.find(x => x.id === id); if (!i) return;
+    if (state.editing === id) { // 2回目のタップで削除を確認
+      if (confirm(`${i.date} ${i.cat} ${yen(i.amount)} を削除しますか？`)) { items = items.filter(x => x.id !== id); save(); reset(); toast("削除しました"); }
+      return;
+    }
+    state = { cat: i.cat, pay: i.pay, rate: i.rate || "", editing: id };
+    $("date").value = i.date; $("amount").value = i.amount; $("memo").value = i.memo || "";
+    render(); window.scrollTo({ top: 0, behavior: "smooth" });
+    toast("修正できます（もう一度タップすると削除）");
+  }
+  function reset() {
+    const keepDate = $("date").value || today();
+    state = { cat: state.cat, pay: state.pay, rate: "", editing: null };
+    $("amount").value = ""; $("memo").value = ""; $("date").value = keepDate;
+    render();
+  }
+  $("catAll").onchange = e => { if (e.target.value) { state.cat = e.target.value; render(); } };
+  $("form").onsubmit = e => {
+    e.preventDefault();
+    const amount = Math.round(Number($("amount").value));
+    if (!(amount > 0)) { toast("金額を入れてください"); $("amount").focus(); return; }
+    const rec = { date: $("date").value || today(), amount, cat: state.cat, pay: state.pay, memo: $("memo").value.trim(), rate: state.rate };
+    if (state.editing) {
+      const i = items.find(x => x.id === state.editing);
+      Object.assign(i, rec, { exported: false });
+    } else {
+      items.push(Object.assign({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), exported: false }, rec));
+    }
+    if (save()) { toast(state.editing ? "修正しました" : "記録しました"); reset(); $("amount").focus(); }
+  };
+
+  function csv(list) {
+    const q = s => /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    const lines = ["日付,金額,科目,支払方法,内容,事業割合"].concat(
+      list.slice().sort((a, b) => a.date.localeCompare(b.date)).map(i =>
+        [i.date.replace(/-/g, "/"), i.amount, i.cat, i.pay, q(i.memo || ""), i.rate === "" || i.rate == null ? "" : i.rate].join(",")));
+    return "﻿" + lines.join("\r\n") + "\r\n";
+  }
+  async function exportList(list) {
+    if (!list.length) { toast("書き出す記録がありません"); return; }
+    const name = `keihi-memo_${today().replace(/-/g, "")}.csv`;
+    const file = new File([csv(list)], name, { type: "text/csv" });
+    let done = false;
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "経費メモ" }); done = true; } catch (e) { if (e.name === "AbortError") return; }
+    }
+    if (!done) {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = name;
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }
+    list.forEach(i => { i.exported = true; }); save(); render();
+    toast(`${list.length}件を書き出しました`);
+  }
+  $("exportNew").onclick = () => exportList(items.filter(i => !i.exported));
+  $("exportAll").onclick = () => exportList(items);
+
+  let tId;
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tId); tId = setTimeout(() => t.classList.remove("show"), 2200); }
+
+  $("date").value = today();
+  render();
+  if ("serviceWorker" in navigator) { navigator.serviceWorker.register("keihi-sw.js").catch(() => {}); }
+})();
+</script>
+</body>
+</html>
