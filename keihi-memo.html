@@ -68,6 +68,21 @@
   </section>
 
   <section class="card">
+    <h2>SuicaのPDFから読み込む</h2>
+    <p class="note" style="margin-top:0">モバイルSuicaの「残高ご利用明細」のPDFを選ぶと、電車の乗車と物販が一覧になります。経費にするものを選んで追加します（チャージは読み込みません）。</p>
+    <label class="btn2" style="display:inline-block;cursor:pointer">PDFを選ぶ<input id="suicaFile" type="file" accept="application/pdf" hidden></label>
+    <div id="suicaBox" hidden>
+      <p class="judge" id="suicaSum" style="font-weight:400"></p>
+      <div class="tools-row" style="margin-top:6px">
+        <button class="btn2" type="button" id="suicaTrain">電車・バスをすべて選ぶ</button>
+        <button class="btn2" type="button" id="suicaNone">すべて外す</button>
+      </div>
+      <ul class="list" id="suicaList"></ul>
+      <button class="save" type="button" id="suicaAdd" style="margin-top:12px">選んだものを経費メモに追加</button>
+    </div>
+  </section>
+
+  <section class="card">
     <div class="month"><span id="monthLabel">今月の合計</span><b id="monthTotal">¥0</b></div>
     <ul class="list" id="list"></ul>
     <div class="tools-row">
@@ -83,6 +98,7 @@
       <li>ホーム画面に追加すると、アプリのように開けます（iPhone：共有ボタン→「ホーム画面に追加」／Android：メニュー→「ホーム画面に追加」）。電波がない場所でも記録できます。</li>
       <li>記録はこのスマホのブラウザの中だけに保存され、どこにも送信されません。ブラウザのデータを消すと記録も消えるので、月に1回くらいはCSVに書き出しておくと安心です。</li>
       <li>支払方法の「クレジットカード」は、カード明細のCSVを取り込む場合は二重になるので、明細にない支払い（現金・Suicaなど）を中心に記録するのがおすすめです。</li>
+      <li>Suicaの電車代は、モバイルSuicaの「残高ご利用明細」のPDF（アプリやサイトから保存できます）を「PDFを選ぶ」で読み込むと、まとめて追加できます。PDFはこのスマホの中で読み取ります。</li>
       <li>記録をタップすると、修正や削除ができます。</li>
     </ul>
   </section>
@@ -209,6 +225,128 @@
 
   let tId;
   function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tId); tId = setTimeout(() => t.classList.remove("show"), 2200); }
+
+  // ---- SuicaのPDF（モバイルSuica 残高ご利用明細）
+  const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  const SUICA_CATS = ["旅費交通費", "会議費", "消耗品費", "接待交際費", "新聞図書費", "雑費"];
+  let suica = [];
+  function loadPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise((ok, ng) => {
+      const s = document.createElement("script");
+      s.src = PDFJS + "pdf.min.js";
+      s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; ok(window.pdfjsLib); };
+      s.onerror = () => ng(new Error("PDFを読む部品を読み込めませんでした（電波のある場所で開いてください）"));
+      document.head.appendChild(s);
+    });
+  }
+  // 見出し（月・日・種別・利用駅・種別・利用駅・残高・入金・利用額）の位置から列を決めて、行ごとに読む
+  async function parseSuica(buf) {
+    const lib = await loadPdfJs();
+    const pdf = await lib.getDocument({ data: buf }).promise;
+    const rows = [];
+    let issued = null, cols = null;
+    for (let n = 1; n <= pdf.numPages; n++) {
+      const page = await pdf.getPage(n);
+      const tc = await page.getTextContent();
+      const lines = new Map();
+      tc.items.forEach(it => {
+        const t = it.str.trim(); if (!t) return;
+        const y = Math.round(it.transform[5]);
+        const key = [...lines.keys()].find(k => Math.abs(k - y) <= 2) ?? y;
+        if (!lines.has(key)) lines.set(key, []);
+        lines.get(key).push({ x: it.transform[4], t });
+      });
+      const sorted = [...lines.entries()].sort((a, b) => b[0] - a[0]).map(([, v]) => v.sort((a, b) => a.x - b.x));
+      sorted.forEach(line => {
+        const text = line.map(i => i.t).join(" ");
+        const m = text.match(/(20\d\d)\/(\d{1,2})\/(\d{1,2})/);
+        if (m && !issued) issued = { y: +m[1], m: +m[2] };
+        if (text.includes("入金") && text.includes("残高")) {
+          cols = line.map(i => i.x); // 8つの見出しの左端
+        }
+      });
+      if (!cols || cols.length < 8) continue;
+      const bounds = cols.slice(1).map((x, i) => (cols[i] + x) / 2);
+      // 金額は右寄せなので、残高と金額の境目は「金額」見出しの左端より少し左
+      bounds[6] = cols[7] - 12;
+      sorted.forEach(line => {
+        if (!/^\d{1,2}$/.test(line[0].t) || line[0].x > cols[1]) return;
+        const c = ["", "", "", "", "", "", "", ""];
+        line.forEach(i => { let k = bounds.findIndex(b => i.x < b); if (k < 0) k = 7; c[k] += i.t; });
+        if (!/^\d{1,2}$/.test(c[1])) return;
+        rows.push({ m: +c[0], d: +c[1], t1: c[2], s1: c[3], t2: c[4], s2: c[5], amt: parseInt(c[7].replace(/[,\s]/g, ""), 10) });
+      });
+    }
+    if (!rows.length) throw new Error("Suicaの残高ご利用明細として読み取れませんでした");
+    const base = issued || { y: new Date().getFullYear(), m: new Date().getMonth() + 1 };
+    return rows.map(r => {
+      const y = r.m > base.m ? base.y - 1 : base.y;
+      const date = `${y}-${String(r.m).padStart(2, "0")}-${String(r.d).padStart(2, "0")}`;
+      const train = /入/.test(r.t1) || r.t2 === "出";
+      const bus = /ﾊﾞｽ|バス/.test(r.t1);
+      let kind = "skip";
+      if (r.t1 === "繰" || isNaN(r.amt) || r.amt === 0) kind = "skip";
+      else if (r.amt > 0) kind = "charge";
+      else if (train || bus) kind = "train";
+      else if (r.t1 === "物販") kind = "buy";
+      else kind = "other";
+      const memo = train ? `${r.s1}→${r.s2}`.replace(/^→|→$/g, "") : bus ? "バス" : r.t1 === "物販" ? "Suica 物販" : r.t1;
+      return { date, amount: -r.amt, kind, memo, cat: kind === "train" ? "旅費交通費" : "", on: kind === "train" };
+    }).filter(r => r.kind !== "skip");
+  }
+  function renderSuica() {
+    const use = suica.filter(r => r.kind !== "charge");
+    const sum = k => suica.filter(r => r.kind === k).reduce((s, r) => s + r.amount, 0);
+    const cnt = k => suica.filter(r => r.kind === k).length;
+    const dates = use.map(r => r.date).sort();
+    $("suicaSum").innerHTML = `${dates[0] ? dates[0].slice(5).replace("-", "/") : ""}〜${dates.length ? dates[dates.length - 1].slice(5).replace("-", "/") : ""}　`
+      + `電車・バス ${cnt("train")}件 ${yen(sum("train"))}／物販 ${cnt("buy")}件 ${yen(sum("buy"))}`
+      + (cnt("other") ? `／その他 ${cnt("other")}件` : "") + (cnt("charge") ? `<br><small>チャージ ${cnt("charge")}件は読み込みません（カード明細の取り込みで振替になります）</small>` : "");
+    const ul = $("suicaList"); ul.innerHTML = "";
+    use.forEach((r, i) => {
+      const li = document.createElement("li");
+      li.style.gridTemplateColumns = "auto auto 1fr auto";
+      const opts = ['<option value="">科目を選ぶ</option>'].concat(SUICA_CATS.map(c => `<option${c === r.cat ? " selected" : ""}>${c}</option>`)).join("");
+      li.innerHTML = `<input type="checkbox" ${r.on ? "checked" : ""} aria-label="経費にする" style="width:22px;height:22px">`
+        + `<span class="d">${r.date.slice(5).replace("-", "/")}</span>`
+        + `<span class="t">${esc(r.memo)}<small><select style="padding:4px;font-size:13px;width:auto">${opts}</select></small></span>`
+        + `<span class="a">${yen(r.amount)}</span>`;
+      const cb = li.querySelector("input"), sel = li.querySelector("select");
+      cb.onchange = () => { r.on = cb.checked; updateSuicaBtn(); };
+      sel.onchange = () => { r.cat = sel.value; if (sel.value) { r.on = true; cb.checked = true; } updateSuicaBtn(); };
+      ul.appendChild(li);
+    });
+    updateSuicaBtn();
+    $("suicaBox").hidden = false;
+  }
+  function updateSuicaBtn() {
+    const sel = suica.filter(r => r.on && r.kind !== "charge");
+    const noCat = sel.filter(r => !r.cat).length;
+    $("suicaAdd").textContent = noCat ? `科目が未選択のものが${noCat}件あります` : `選んだ${sel.length}件（${yen(sel.reduce((s, r) => s + r.amount, 0))}）を経費メモに追加`;
+    $("suicaAdd").disabled = !sel.length || noCat > 0;
+  }
+  $("suicaFile").onchange = async e => {
+    const file = e.target.files[0]; if (!file) return;
+    toast("読み取り中…");
+    try { suica = await parseSuica(await file.arrayBuffer()); renderSuica(); toast(`${suica.length}件を読み取りました`); }
+    catch (err) { toast(err.message || "読み取れませんでした"); }
+    e.target.value = "";
+  };
+  $("suicaTrain").onclick = () => { suica.forEach(r => { if (r.kind === "train") r.on = true; }); renderSuica(); };
+  $("suicaNone").onclick = () => { suica.forEach(r => { r.on = false; }); renderSuica(); };
+  $("suicaAdd").onclick = () => {
+    const key = i => [i.date, i.amount, i.memo, i.pay].join("|");
+    const have = new Set(items.map(key));
+    let added = 0, dup = 0;
+    suica.filter(r => r.on && r.kind !== "charge" && r.cat).forEach(r => {
+      const rec = { date: r.date, amount: r.amount, cat: r.cat, pay: "Suica・電子マネー", memo: r.memo, rate: "" };
+      if (have.has(key(rec))) { dup++; return; }
+      items.push(Object.assign({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), exported: false }, rec));
+      have.add(key(rec)); added++;
+    });
+    if (save()) { $("suicaBox").hidden = true; suica = []; render(); toast(`${added}件を追加しました` + (dup ? `（${dup}件は追加済み）` : "")); }
+  };
 
   $("date").value = today();
   render();
