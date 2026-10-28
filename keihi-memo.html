@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>経費メモ｜スマホで経費をすぐ記録、CSVでExcelへ</title>
-<meta name="description" content="スマホのすき間時間に経費を記録できる無料の経費メモ。日付・金額・科目・支払方法を入れるだけ。データはスマホの中だけに保存され、CSVで書き出して帳簿のExcelに取り込めます。">
+<title>経費メモ｜レシートを撮って経費を記録、CSVでExcelへ</title>
+<meta name="description" content="スマホのすき間時間に経費を記録できる無料の経費メモ。レシートを撮れば日付と金額を読み取ります。データはスマホの中だけに保存され、CSVで書き出して帳簿のExcelに取り込めます。">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="keihi-manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -35,16 +35,25 @@
   .month{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px}
   .month b{font-size:20px;font-variant-numeric:tabular-nums}
   .empty{color:var(--muted);font-size:14px;padding:12px 0}
+  .ocr{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+  .ocr .cam{display:block;text-align:center;font-size:16px;padding:12px}
+  .ocr .note{margin:0;grid-column:1/-1}
+  .ocr img{max-height:96px;max-width:96px;border-radius:8px;border:1px solid var(--line);grid-row:1;grid-column:2}
 </style>
 </head>
 <body>
 <header class="site-header"></header>
 <main>
   <h1>経費メモ</h1>
-  <p class="lead">支払ったその場で、経費をスマホに記録。たまったらCSVで書き出して、帳簿のExcelに取り込めます。</p>
+  <p class="lead">支払ったその場で、経費をスマホに記録。レシートを撮れば日付・金額を読み取ります。たまったらCSVで書き出して、帳簿のExcelに取り込めます。</p>
 
   <section class="card">
     <form class="memo-form" id="form" autocomplete="off">
+      <div class="ocr">
+        <label class="btn2 cam">レシートの写真から入力<input id="receipt" type="file" accept="image/*" hidden></label>
+        <img id="ocrImg" alt="読み取ったレシート" hidden>
+        <p class="note" id="ocrNote">レシートを撮ると、日付・合計金額・お店の名前を読み取って下に入れます。写真はこのスマホの中で読み取り、どこにも送信しません。</p>
+      </div>
       <div class="row2">
         <div><label for="date">日付</label><div class="field"><input id="date" type="date" required></div></div>
         <div class="amount"><label for="amount">金額</label><div class="field"><input id="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="0" required><span class="unit">円</span></div></div>
@@ -99,6 +108,7 @@
       <li>記録はこのスマホのブラウザの中だけに保存され、どこにも送信されません。ブラウザのデータを消すと記録も消えるので、月に1回くらいはCSVに書き出しておくと安心です。</li>
       <li>支払方法の「クレジットカード」は、カード明細のCSVを取り込む場合は二重になるので、明細にない支払い（現金・Suicaなど）を中心に記録するのがおすすめです。</li>
       <li>Suicaの電車代は、モバイルSuicaの「残高ご利用明細」のPDF（アプリやサイトから保存できます）を「PDFを選ぶ」で読み込むと、まとめて追加できます。PDFはこのスマホの中で読み取ります。</li>
+      <li>「レシートの写真から入力」は、レシートを平らに置いて、文字がはっきり写るように撮るとよく読み取れます。読み取った内容は必ず確かめてから「記録する」を押してください。初めて使うときは、文字を読み取るためのデータ（数MB）をダウンロードするので少し時間がかかります。</li>
       <li>記録をタップすると、修正や削除ができます。</li>
     </ul>
   </section>
@@ -181,6 +191,7 @@
     const keepDate = $("date").value || today();
     state = { cat: state.cat, pay: state.pay, rate: "", editing: null };
     $("amount").value = ""; $("memo").value = ""; $("date").value = keepDate;
+    $("ocrImg").hidden = true; $("ocrNote").textContent = OCR_NOTE;
     render();
   }
   $("catAll").onchange = e => { if (e.target.value) { state.cat = e.target.value; render(); } };
@@ -346,6 +357,139 @@
       have.add(key(rec)); added++;
     });
     if (save()) { $("suicaBox").hidden = true; suica = []; render(); toast(`${added}件を追加しました` + (dup ? `（${dup}件は追加済み）` : "")); }
+  };
+
+
+  // ---- レシートの写真から読み取る（Tesseract.js：このスマホの中で読み取り、写真は送信しない）
+  const TESS = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  const OCR_NOTE = $("ocrNote").textContent;
+  const RECEIPT_RULES = [
+    [/ENEOS|エネオス|出光|コスモ石油|ガソリン|給油|タクシー|交通|駐車|パーキング|タイムズ|鉄道|JR/i, "旅費交通費"],
+    [/喫茶|珈琲|コーヒー|カフェ|CAFE|スターバックス|ドトール|タリーズ|コメダ/i, "会議費"],
+    [/書店|書房|ブックス|BOOKS|紀伊國屋|丸善|ジュンク堂|蔦屋/i, "新聞図書費"],
+    [/郵便|ヤマト運輸|佐川/, "荷造運賃"],
+    [/文具|ダイソー|セリア|ホームセンター|カインズ|コーナン|ヨドバシ|ビックカメラ|ロフト|東急ハンズ|ハンズ/, "消耗品費"],
+  ];
+  let tessWorker = null;
+  function loadTess() {
+    if (window.Tesseract) return Promise.resolve(window.Tesseract);
+    return new Promise((ok, ng) => {
+      const s = document.createElement("script");
+      s.src = TESS;
+      s.onload = () => ok(window.Tesseract);
+      s.onerror = () => ng(new Error("文字を読む部品を読み込めませんでした（電波のある場所で開いてください）"));
+      document.head.appendChild(s);
+    });
+  }
+  // 大きすぎる写真は縮め、白黒にして読み取りやすくする
+  async function prepImage(file) {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    const g = c.getContext("2d");
+    g.drawImage(bmp, 0, 0, c.width, c.height);
+    const img = g.getImageData(0, 0, c.width, c.height), d = img.data;
+    let lo = 255, hi = 0;
+    const gray = new Uint8ClampedArray(d.length / 4);
+    for (let i = 0; i < gray.length; i++) {
+      const v = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
+      gray[i] = v; if (v < lo) lo = v; if (v > hi) hi = v;
+    }
+    const span = Math.max(hi - lo, 1);
+    for (let i = 0; i < gray.length; i++) { const v = (gray[i] - lo) * 255 / span; d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = v; }
+    g.putImageData(img, 0, 0);
+    return c;
+  }
+  // 読み取った文字から、日付・合計金額・お店の名前・科目の候補を取り出す
+  function parseReceipt(raw, now = new Date()) {
+    const h = s => s.replace(/[０-９Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+      .replace(/[，]/g, ",").replace(/[．]/g, ".").replace(/[／]/g, "/").replace(/[：]/g, ":").replace(/[￥]/g, "¥");
+    const lines = raw.split(/\r?\n/).map(l => h(l).replace(/\s+/g, "")).filter(Boolean);
+    const all = lines.join("\n");
+    // 日付
+    let date = "";
+    const okDate = (y, m, d) => {
+      if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+      const t = new Date(y, m - 1, d), diff = (now - t) / 864e5;
+      return t.getMonth() === m - 1 && diff > -2 && diff < 400;
+    };
+    // 日付のすぐ後に時刻が続くことがあるので、日付は空白を残した文字で探す（だめなら空白を詰めた文字で）
+    const allS = raw.split(/\r?\n/).map(l => h(l).replace(/\s+/g, " ").trim()).join("\n");
+    const pats = [
+      [/(20\d\d) ?[年\/\-.] ?(\d{1,2}) ?[月\/\-.] ?(\d{1,2})(?!\d)/, m => [+m[1], +m[2], +m[3]]],
+      [/(?:令和|R) ?(\d{1,2}) ?[年\/.] ?(\d{1,2}) ?[月\/.] ?(\d{1,2})(?!\d)/, m => [2018 + +m[1], +m[2], +m[3]]],
+      [/(?:^|[^\d])(\d\d)[\/.](\d{1,2})[\/.](\d{1,2})(?!\d)/, m => [2000 + +m[1], +m[2], +m[3]]],
+    ];
+    for (const text of [allS, all]) {
+      for (const [re, f] of pats) {
+        const m = text.match(re);
+        if (m) { const [y, mo, d] = f(m); if (okDate(y, mo, d)) { date = `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`; break; } }
+      }
+      if (date) break;
+    }
+    // 金額（行の中の数字。電話番号・登録番号・日付・時刻は除く）
+    const nums = l => {
+      const t = l.replace(/T\d{13}/g, "").replace(/\d{2,4}-\d{2,4}-\d{3,4}/g, "")
+        .replace(/(20\d\d|令和\d{1,2}|R\d{1,2})[年\/\-.]\d{1,2}[月\/\-.]\d{1,2}日?/g, "").replace(/\d{1,2}:\d{2}/g, "");
+      return (t.match(/¥?\d{1,3}(?:[,.]\d{3})+|¥?\d+/g) || [])
+        .map(x => +x.replace(/[¥,.]/g, "")).filter(v => v > 0 && v < 10000000);
+    };
+    const NOT = /小計|預|釣|対象|消費税|内税|税額|税率|点数|点|個|ポイント|pt|割引|値引|クーポン|現金|カード|クレジット|電子マネー|交通系|QR|PayPay/i;
+    const LEVELS = [/合計|総計|総額/, /お買上|お買い上げ|ご請求|請求額|領収金額|お支払金額|支払金額|税込計/, /計/];
+    let amount = 0;
+    for (const re of LEVELS) {
+      for (let i = 0; i < lines.length && !amount; i++) {
+        const m = lines[i].match(re); if (!m) continue;
+        const head = lines[i].slice(0, m.index + m[0].length), rest = lines[i].slice(m.index + m[0].length);
+        if (NOT.test(head)) continue;                       // 小計 など
+        const cut = rest.split(NOT)[0];                     // 「合計¥1,980(内消費税¥180)」→「¥1,980(内」
+        if (cut !== rest && !/\d/.test(cut)) continue;      // 「合計点数3点」など
+        let v = nums(cut);
+        if (!v.length && cut === rest && lines[i + 1]) v = nums(lines[i + 1]);  // 金額が次の行にあるレシート
+        if (v.length) amount = Math.max(...v);
+      }
+      if (amount) break;
+    }
+    if (!amount) { // 見つからなければ「¥」「円」のついた金額のいちばん大きいもの（お預り・お釣りの行は除く）
+      const v = lines.filter(l => /¥|円/.test(l) && !/預|釣/.test(l)).flatMap(nums);
+      if (v.length) amount = Math.max(...v);
+    }
+    // お店の名前（上のほうの、日本語が2文字以上ある行）
+    const SKIP = /領収|レシート|明細|計|請求|金額|毎度|ありがと|いらっしゃ|電話|TEL|FAX|〒|登録番号|都|道|府|県|市|区|町|丁目|番地|\d{2,}/i;
+    const shop = (lines.slice(0, 6).find(l => /[ぁ-んァ-ヶ一-龠]{2,}/.test(l) && !SKIP.test(l)) || "").slice(0, 40);
+    const rule = RECEIPT_RULES.find(([re]) => re.test(all));
+    return { date, amount, shop, cat: rule ? rule[1] : "" };
+  }
+  $("receipt").onchange = async e => {
+    const file = e.target.files[0]; e.target.value = ""; if (!file) return;
+    const note = $("ocrNote"), img = $("ocrImg");
+    img.src = URL.createObjectURL(file); img.hidden = false;
+    note.textContent = "読み取り中…";
+    try {
+      const canvas = await prepImage(file);
+      const T = await loadTess();
+      if (!tessWorker) {
+        note.textContent = "文字を読み取るためのデータを準備中…（初回だけ少し時間がかかります）";
+        tessWorker = await T.createWorker("jpn", 1, {
+          logger: m => { if (m.status === "recognizing text") note.textContent = `読み取り中… ${Math.round(m.progress * 100)}%`; },
+        });
+      }
+      const { data } = await tessWorker.recognize(canvas);
+      const r = parseReceipt(data.text || "");
+      if (r.date) $("date").value = r.date;
+      if (r.amount) $("amount").value = r.amount;
+      if (r.shop) $("memo").value = r.shop;
+      if (r.cat) state.cat = r.cat;
+      render();
+      const got = [r.date && "日付", r.amount && "金額", r.shop && "お店"].filter(Boolean);
+      note.textContent = got.length
+        ? `${got.join("・")}を読み取りました。違っていたら直して「記録する」を押してください。` + (r.amount ? "" : "金額は読み取れなかったので入れてください。")
+        : "読み取れませんでした。明るい場所で、レシートを平らにして撮り直すか、手で入力してください。";
+      if (!r.amount) $("amount").focus();
+    } catch (err) {
+      note.textContent = err.message || "読み取れませんでした";
+    }
   };
 
   $("date").value = today();
