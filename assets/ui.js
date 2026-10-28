@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const nav = [
     ["index.html", "トップ"], ["fukugyo-tax.html", "副業の税金"], ["kaji-anbun.html", "家事按分"],
     ["genka-shokyaku.html", "減価償却"], ["kabu-tax.html", "株の税金"], ["nisa.html", "NISA枠"],
-    ["booth-fee.html", "BOOTH手数料"], ["keihi-memo.html", "経費メモ"],
+    ["booth-fee.html", "BOOTH手数料"], ["keihi-memo.html", "経費メモ"], ["seikyusho.html", "請求書作成"],
   ];
   const h = document.querySelector(".site-header");
   if (h) h.innerHTML = `<div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav">${

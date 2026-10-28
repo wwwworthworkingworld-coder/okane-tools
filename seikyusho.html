@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>請求書・見積書の無料作成ツール｜インボイス対応・スマホでPDF</title>
+<meta name="description" content="見積書・納品書・請求書・領収書をスマホやiPadでも作れる無料ツール。インボイス（適格請求書）の記載事項、税率ごとの消費税、源泉徴収の計算に対応。入力した内容はこの端末の中だけに保存され、どこにも送信されません。">
+<link rel="stylesheet" href="assets/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+<style>
+  .lines{width:100%;border-collapse:collapse;margin-top:8px}
+  .lines th{font-size:12px;color:var(--muted);text-align:left;padding:4px}
+  .lines td{padding:3px;border:0}
+  .lines input,.lines select{padding:8px;font-size:15px}
+  .lines .item{min-width:9em}
+  .lines .qty,.lines .unitc{width:4.5em}
+  .lines .price{width:7em}
+  .lines .rate{width:6em}
+  .row-del{border:0;background:none;color:var(--bad);font-size:18px;cursor:pointer}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .b{border:1px solid var(--main);background:var(--card);color:var(--main);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer}
+  .b.main{background:var(--main);color:#fff}
+  .saved{list-style:none;padding:0;margin:8px 0 0}
+  .saved li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+  .saved li small{color:var(--muted)}
+  /* 書類（印刷される部分） */
+  .paper{background:#fff;color:#222;width:100%;max-width:794px;margin:0 auto;padding:40px 44px;box-shadow:0 2px 12px rgba(0,0,0,.12);font-size:13px;line-height:1.6}
+  .paper h3{text-align:center;font-size:26px;letter-spacing:.4em;margin:0 0 22px}
+  .paper .top{display:flex;justify-content:space-between;gap:16px}
+  .paper .to{font-size:18px;font-weight:700;border-bottom:2px solid #333;padding-bottom:4px;min-width:55%}
+  .paper .me{text-align:right;font-size:12px}
+  .paper .amount{margin:18px 0 6px;font-size:13px;font-weight:700}
+  .paper .amount b{display:inline-block;font-size:26px;border-bottom:2px solid #333;min-width:240px;margin-left:12px}
+  .paper table{margin-top:14px;font-size:12px;color:#222}
+  .paper th{background:#1f5f99;color:#fff;padding:5px;text-align:center}
+  .paper td{border-bottom:1px solid #c8d0dc;padding:5px;color:#222}
+  .paper .sum{width:55%;margin-left:auto}
+  .paper .sum td{border:1px solid #c8d0dc}
+  .paper .foot{margin-top:18px;font-size:12px}
+  @media (max-width:600px){ .paper{padding:22px 16px;font-size:11px} .paper h3{font-size:20px} .paper .top{flex-direction:column} .paper .me{text-align:left} }
+  @media print{
+    @page{size:A4;margin:12mm}
+    body{background:#fff}
+    .site-header,.site-footer,.no-print,h1,.lead{display:none!important}
+    main{padding:0;max-width:none}
+    .paper{box-shadow:none;padding:0;max-width:none;font-size:12px}
+  }
+</style>
+</head>
+<body>
+<header class="site-header no-print"></header>
+<main>
+  <h1>請求書・見積書の作成</h1>
+  <p class="lead">見積書・納品書・請求書・領収書を、スマホやiPadでも作れます。インボイス（適格請求書）の記載事項に対応。入力した内容はこの端末の中だけに保存され、どこにも送信されません。</p>
+
+  <section class="card no-print">
+    <h2>書類の内容</h2>
+    <div class="grid">
+      <div><label for="kind">種類</label><div class="field"><select id="kind"><option>請求書</option><option>見積書</option><option>納品書</option><option>領収書</option></select></div></div>
+      <div><label for="no">書類番号</label><div class="field"><input id="no"></div></div>
+      <div><label for="date">発行日</label><div class="field"><input id="date" type="date"></div></div>
+      <div><label for="due" id="dueLabel">お支払期限</label><div class="field"><input id="due" type="date"></div></div>
+      <div><label for="to">取引先名</label><div class="field"><input id="to" placeholder="株式会社〇〇"></div></div>
+      <div><label for="honor">敬称</label><div class="field"><select id="honor"><option>御中</option><option>様</option></select></div></div>
+      <div><label for="subject">件名</label><div class="field"><input id="subject" placeholder="例：Webサイト制作"></div></div>
+      <div><label for="wh">源泉徴収 <small>（相手が個人への報酬から差し引くとき）</small></label><div class="field"><select id="wh"><option value="0">しない</option><option value="1">する</option></select></div></div>
+    </div>
+    <table class="lines">
+      <thead><tr><th>品目</th><th>数量</th><th>単位</th><th>単価（税抜）</th><th>税率</th><th></th></tr></thead>
+      <tbody id="lines"></tbody>
+    </table>
+    <div class="btns"><button class="b" type="button" id="addLine">＋ 行を追加</button></div>
+    <div style="margin-top:12px"><label for="memo">備考</label><div class="field"><input id="memo"></div></div>
+    <div class="btns">
+      <button class="b main" type="button" id="save">この書類を保存</button>
+      <button class="b main" type="button" id="print">印刷・PDFで保存</button>
+      <button class="b" type="button" id="newDoc">新しい書類</button>
+      <button class="b" type="button" id="toInvoice">この見積書から請求書を作る</button>
+    </div>
+    <p class="note">「印刷・PDFで保存」を押すと印刷の画面が開きます。iPhone・iPadは「共有」→「プリント」→ プレビューを2本指で広げるとPDFになり、保存・送信できます。パソコンは送信先で「PDFに保存」を選びます。</p>
+  </section>
+
+  <section class="card no-print">
+    <h2>自分の情報 <small style="font-weight:400;color:var(--muted)">（一度入れれば、次からも使われます）</small></h2>
+    <div class="grid">
+      <div><label for="me_name">屋号・名前</label><div class="field"><input id="me_name"></div></div>
+      <div><label for="me_addr">住所</label><div class="field"><input id="me_addr"></div></div>
+      <div><label for="me_tel">電話番号</label><div class="field"><input id="me_tel"></div></div>
+      <div><label for="me_mail">メール</label><div class="field"><input id="me_mail"></div></div>
+      <div><label for="me_reg">インボイス登録番号 <small>（T＋13桁。未登録なら空欄）</small></label><div class="field"><input id="me_reg" placeholder="T1234567890123"></div></div>
+      <div><label for="me_tax">消費税</label><div class="field"><select id="me_tax"><option value="1">課税事業者（消費税を記載）</option><option value="0">免税事業者（消費税を記載しない）</option></select></div></div>
+      <div style="grid-column:1/-1"><label for="me_bank">振込先 <small>（請求書に表示）</small></label><div class="field"><input id="me_bank" placeholder="〇〇銀行 〇〇支店 普通 1234567 名義"></div></div>
+    </div>
+  </section>
+
+  <section class="card no-print" id="savedBox">
+    <h2>保存した書類</h2>
+    <ul class="saved" id="saved"></ul>
+    <p class="note">タップすると呼び出せます。書類はこの端末のブラウザに保存されます。ブラウザのデータを消すと消えるので、大事な書類はPDFでも保存しておいてください。</p>
+  </section>
+
+  <div class="paper" id="paper"></div>
+
+  <section class="card article no-print" style="margin-top:22px">
+    <h2>インボイス（適格請求書）に必要なこと</h2>
+    <ul>
+      <li>登録番号（T＋13桁）、取引年月日、取引の内容（軽減税率の品目にはその旨）、税率ごとに分けた合計と消費税額、書類を受け取る相手の名前が必要です。このツールは、登録番号を入れると自動でこれらを表示します。</li>
+      <li>消費税は、税率ごとに合計してから1回だけ端数を切り捨てています（1行ごとには計算しません）。</li>
+      <li>源泉徴収は、税抜の金額が100万円以下なら10.21％、100万円を超える部分は20.42％で計算します。</li>
+      <li>5万円以上の紙の領収書には収入印紙が必要です。PDFなど電子で渡す場合は不要です。</li>
+    </ul>
+  </section>
+</main>
+<footer class="site-footer no-print"></footer>
+<script src="assets/ui.js"></script>
+<script>
+(() => {
+  const KEY = "seikyusho-v1", ME = "seikyusho-me-v1";
+  const $ = id => document.getElementById(id);
+  const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const yen = v => Math.round(v).toLocaleString("ja-JP");
+  const jdate = s => s ? `${+s.slice(0, 4)}年${+s.slice(5, 7)}月${+s.slice(8, 10)}日` : "";
+  const PRE = { "見積書": "Q", "納品書": "D", "請求書": "I", "領収書": "R" };
+  const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
+  const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { alert("保存できませんでした（プライベートモードでは保存できません）"); return false; } };
+  let docs = load(KEY, []);
+  const meFields = ["me_name", "me_addr", "me_tel", "me_mail", "me_reg", "me_tax", "me_bank"];
+  const me = load(ME, {});
+  meFields.forEach(f => { if (me[f] !== undefined) $(f).value = me[f]; });
+
+  function addLine(l = {}) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td class="item"><input data-k="item" value="${esc(l.item)}"></td>
+      <td class="qty"><input data-k="qty" type="number" inputmode="decimal" value="${esc(l.qty ?? "")}"></td>
+      <td class="unitc"><input data-k="unit" value="${esc(l.unit)}"></td>
+      <td class="price"><input data-k="price" type="number" inputmode="numeric" value="${esc(l.price ?? "")}"></td>
+      <td class="rate"><select data-k="rate"><option value="10">10%</option><option value="8">8%</option><option value="0">対象外</option></select></td>
+      <td><button class="row-del" type="button" aria-label="この行を消す">×</button></td>`;
+    tr.querySelector("select").value = String(l.rate ?? 10);
+    tr.querySelector(".row-del").onclick = () => { tr.remove(); render(); };
+    tr.querySelectorAll("input,select").forEach(e => e.addEventListener("input", render));
+    $("lines").appendChild(tr);
+  }
+  const lines = () => [...$("lines").children].map(tr => {
+    const o = {}; tr.querySelectorAll("[data-k]").forEach(e => { o[e.dataset.k] = e.value; });
+    return { item: o.item.trim(), qty: Number(o.qty || 0), unit: o.unit.trim(), price: Number(o.price || 0), rate: Number(o.rate) };
+  }).filter(l => l.item);
+  const nextNo = kind => {
+    const p = PRE[kind] + "-";
+    const mx = docs.filter(d => (d.no || "").startsWith(p)).reduce((m, d) => Math.max(m, parseInt(d.no.slice(2), 10) || 0), 0);
+    return p + String(mx + 1).padStart(3, "0");
+  };
+  const defaultDue = kind => {
+    const d = new Date();
+    if (kind === "請求書") return new Date(d.getFullYear(), d.getMonth() + 2, 0, 12).toISOString().slice(0, 10);
+    if (kind === "見積書") { d.setDate(d.getDate() + 30); return d.toISOString().slice(0, 10); }
+    return "";
+  };
+  function calc(ls, taxOn, wh) {
+    const sum = r => ls.filter(l => l.rate === r).reduce((s, l) => s + Math.round(l.qty * l.price), 0);
+    const t10 = sum(10), t8 = sum(8), t0 = sum(0);
+    const c10 = taxOn ? Math.floor(t10 * 0.10) : 0, c8 = taxOn ? Math.floor(t8 * 0.08) : 0;
+    const base = t10 + t8 + t0, total = base + c10 + c8;
+    const w = !wh ? 0 : base <= 1000000 ? Math.floor(base * 0.1021) : Math.floor((base - 1000000) * 0.2042) + 102100;
+    return { t10, t8, t0, c10, c8, base, total, w, net: total - w };
+  }
+  function current() {
+    return { kind: $("kind").value, no: $("no").value.trim(), date: $("date").value, due: $("due").value, to: $("to").value.trim(),
+      honor: $("honor").value, subject: $("subject").value.trim(), wh: $("wh").value === "1", memo: $("memo").value.trim(), lines: lines() };
+  }
+  function render() {
+    const d = current(), m = {}; meFields.forEach(f => { m[f] = $(f).value.trim(); });
+    store(ME, m);
+    const taxOn = m.me_tax === "1", c = calc(d.lines, taxOn, d.wh);
+    $("dueLabel").textContent = d.kind === "見積書" ? "有効期限" : "お支払期限";
+    $("toInvoice").hidden = d.kind !== "見積書";
+    const title = { "見積書": "御 見 積 書", "納品書": "納 品 書", "請求書": "請 求 書", "領収書": "領 収 書" }[d.kind];
+    const greet = { "見積書": "下記のとおりお見積り申し上げます。", "納品書": "下記のとおり納品いたしました。", "請求書": "下記のとおりご請求申し上げます。", "領収書": "下記の金額を正に領収いたしました。" }[d.kind];
+    const label = { "見積書": "お見積金額", "請求書": "ご請求金額", "領収書": "領収金額", "納品書": "合計金額" }[d.kind];
+    const shown = d.kind === "請求書" ? c.net : c.total;
+    const rows = d.lines.map((l, i) => `<tr><td style="text-align:center">${l.rate === 8 ? "※" : ""}${i + 1}</td><td style="text-align:left">${esc(l.item)}</td>
+      <td>${l.qty || ""}</td><td style="text-align:left">${esc(l.unit)}</td><td>${yen(l.price)}</td><td>${yen(l.qty * l.price)}</td></tr>`).join("")
+      + Array.from({ length: Math.max(0, 8 - d.lines.length) }, () => "<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>").join("");
+    const sums = [["小計（税抜）", c.base], ...(taxOn ? [["消費税（10%）", c.c10], ["消費税（8%）", c.c8]] : []), ["合計", c.total],
+      ...(d.wh ? [["源泉徴収税額", -c.w], ["差引ご請求額", c.net]] : [])];
+    const breakdown = taxOn
+      ? `<div>10%対象 ${yen(c.t10)}円　消費税 ${yen(c.c10)}円</div>${c.t8 ? `<div>8%対象 ${yen(c.t8)}円　消費税 ${yen(c.c8)}円（※は軽減税率対象）</div>` : ""}`
+      : `<div>※当方は免税事業者のため、消費税額は記載していません</div>`;
+    const foot = d.kind === "請求書" ? `<div>お振込先：${esc(m.me_bank)}</div><div>お支払期限：${jdate(d.due)}（振込手数料はご負担をお願いいたします）</div>`
+      : d.kind === "見積書" ? `<div>有効期限：${jdate(d.due)}</div>` : d.kind === "領収書" ? `<div>但し、${esc(d.subject)}として</div>` : "";
+    $("paper").innerHTML = `<h3>${title}</h3>
+      <div class="top"><div><div class="to">${esc(d.to) || "（取引先名）"}　${esc(d.honor)}</div>
+        ${d.subject ? `<div style="margin-top:8px">件名：　${esc(d.subject)}</div>` : ""}<div style="margin-top:8px">${greet}</div></div>
+        <div class="me"><div>${d.no ? "No. " + esc(d.no) : ""}</div><div>${d.date ? "発行日　" + jdate(d.date) : ""}</div><div style="margin-top:8px;font-weight:700">${esc(m.me_name)}</div>
+        <div>${esc(m.me_addr)}</div><div>${m.me_tel ? "TEL " + esc(m.me_tel) : ""}</div><div>${esc(m.me_mail)}</div><div>${m.me_reg ? "登録番号 " + esc(m.me_reg) : ""}</div></div></div>
+      <div class="amount">${label}<b>¥${yen(shown)}-</b> ${taxOn ? "（税込）" : ""}</div>
+      <table><thead><tr><th>No.</th><th>品目</th><th>数量</th><th>単位</th><th>単価</th><th>金額</th></tr></thead><tbody>${rows}</tbody></table>
+      <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap"><div style="flex:1;font-size:12px;min-width:200px">${breakdown}${c.t0 ? `<div>対象外 ${yen(c.t0)}円</div>` : ""}</div>
+      <table class="sum" style="margin-top:0">${sums.map(([k, v]) => `<tr><td style="text-align:left">${k}</td><td>${yen(v)}</td></tr>`).join("")}</table></div>
+      <div class="foot">${foot}${d.memo ? `<div>備考：${esc(d.memo)}</div>` : ""}</div>`;
+  }
+  function renderSaved() {
+    const ul = $("saved"); ul.innerHTML = "";
+    if (!docs.length) { ul.innerHTML = '<li style="cursor:default;color:var(--muted)">まだ保存した書類はありません。</li>'; return; }
+    docs.slice().sort((a, b) => (b.date + b.no).localeCompare(a.date + a.no)).forEach(d => {
+      const li = document.createElement("li");
+      const c = calc(d.lines, $("me_tax").value === "1", d.wh);
+      li.innerHTML = `<span>${esc(d.no)}　${esc(d.kind)}<small>　${esc(d.to)}　${d.date || ""}</small></span><b>¥${yen(d.kind === "請求書" ? c.net : c.total)}</b>`;
+      li.onclick = () => { fill(d); window.scrollTo({ top: 0, behavior: "smooth" }); };
+      ul.appendChild(li);
+    });
+  }
+  function fill(d) {
+    ["kind", "no", "date", "due", "to", "honor", "subject", "memo"].forEach(k => { $(k).value = d[k] ?? ""; });
+    $("wh").value = d.wh ? "1" : "0";
+    $("lines").innerHTML = ""; (d.lines.length ? d.lines : [{}]).forEach(addLine);
+    render();
+  }
+  function newDoc() {
+    const kind = $("kind").value;
+    fill({ kind, no: nextNo(kind), date: today(), due: defaultDue(kind), to: "", honor: "御中", subject: "", wh: false, memo: "", lines: [{}, {}, {}] });
+  }
+  // 種類を変えたら、その種類の番号（見積書はQ-、請求書はI-…）を振り直す（保存済みの別の書類を上書きしないため）
+  $("kind").addEventListener("change", () => { const d = current(); if (!d.no.startsWith(PRE[d.kind] + "-")) { $("no").value = nextNo(d.kind); $("due").value = defaultDue(d.kind); } render(); });
+  document.querySelectorAll("main input, main select").forEach(e => e.addEventListener("input", render));
+  $("addLine").onclick = () => { addLine(); };
+  $("newDoc").onclick = newDoc;
+  $("save").onclick = () => {
+    const d = current();
+    if (!d.no || !d.to) { alert("書類番号と取引先名を入れてください"); return; }
+    if (!d.lines.length) { alert("品目を1行以上入れてください"); return; }
+    const i = docs.findIndex(x => x.no === d.no);
+    if (i >= 0) { if (!confirm(`${d.no} を上書きしますか？`)) return; docs[i] = d; } else docs.push(d);
+    if (store(KEY, docs)) { renderSaved(); alert(`${d.no} を保存しました`); }
+  };
+  $("print").onclick = () => { render(); window.print(); };
+  $("toInvoice").onclick = () => {
+    const d = current(); const q = d.no;
+    fill(Object.assign({}, d, { kind: "請求書", no: nextNo("請求書"), date: today(), due: defaultDue("請求書") }));
+    alert(`見積書 ${q} と同じ内容で、請求書 ${$("no").value} を作りました。確かめて保存してください。`);
+  };
+  renderSaved();
+  newDoc();
+})();
+</script>
+</body>
+</html>
