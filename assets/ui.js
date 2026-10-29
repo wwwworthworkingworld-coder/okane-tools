@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sale = { "9050803": "2,980円 → 1,980円", "9051108": "1,980円 → 980円", "9050610": "980円 → 500円" };
     document.querySelectorAll(".cta").forEach(c => {
       const id = (c.querySelector("a.btn")?.href.match(/items\/(\d+)/) || [])[1];
+      if (id && !sale[id]) return;                       // セール対象でない商品（株・NISAシートなど）には出さない
       const b = document.createElement("p");
       b.className = "sale";
       b.textContent = "12/31まで発売記念セール：" + (sale[id] || "帳簿テンプレート 1,980円〜（無料お試し版あり）");
