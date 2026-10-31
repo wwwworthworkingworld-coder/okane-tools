@@ -56,6 +56,17 @@ th:first-child,td:first-child{text-align:left}
 .cta{border:2px solid var(--main)}
 .cta .sale{display:inline-block;margin:0 0 8px;padding:2px 12px;border-radius:999px;background:var(--accent);color:#fff;font-size:13px;font-weight:700}
 .cta a.btn{display:inline-block;margin-top:8px;background:var(--main);color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:700}
+.app-brand{display:flex;align-items:center;gap:16px;margin:8px 0 20px}
+.app-brand img{flex:none;border-radius:16px}
+.app-brand h1{margin:0}
+.app-brand p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.company-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.company-head img{flex:none;border-radius:12px}
+.company-head h2{margin:0}
+.company p,.company li{font-size:15px}
+.company ul{padding-left:1.2em}
+.company-links{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px;margin:14px 0 0}
+.company-links .btn{background:var(--main);color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:700}
 .ad-slot{min-height:0}
 .site-footer{max-width:960px;margin:0 auto;padding:0 16px 32px;font-size:12px;color:var(--muted)}
 .site-footer a{color:var(--muted)}
