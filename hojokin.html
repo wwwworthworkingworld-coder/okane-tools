@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>個人事業主・小さな会社が今申し込める補助金の一覧｜締切順・毎日更新</title>
+<meta name="description" content="個人事業主やひとり法人の方向けに、いま公募中の補助金を締切順に一覧にしました。地域と上限額で絞り込めて、公式ページへすぐ移動できます。データはJグランツから毎日自動で更新しています。">
+<link rel="stylesheet" href="assets/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+<style>
+#list{list-style:none;margin:12px 0 0;padding:0}
+#list li{padding:14px 0;border-top:1px solid var(--line)}
+#list a{font-weight:700}
+#list .meta{margin-top:4px;font-size:14px;color:var(--muted)}
+#list .soon{color:var(--accent);font-weight:700}
+#stale{display:none;border:2px solid var(--accent)}
+.check{display:flex;align-items:flex-start;gap:8px;font-weight:400}
+.check input{width:auto;margin-top:5px}
+</style>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>個人事業主・小さな会社が今申し込める補助金</h1>
+  <p class="lead">いま公募中の補助金を締切が近い順に並べました。名前を押すと公式ページが開きます。登録は不要です。</p>
+  <p class="note" style="margin-top:-6px">データの取得：<span id="updated">読み込み中</span>（毎日朝6時ごろに自動更新）</p>
+
+  <section class="card" id="stale"><strong>更新が止まっています。</strong>締切や内容は公式ページでご確認ください。</section>
+
+  <section class="card">
+    <h2>絞り込み</h2>
+    <div class="grid">
+      <label>地域
+        <div class="field"><select id="area"><option value="">すべて</option></select></div>
+      </label>
+      <label>上限額
+        <div class="field"><select id="max">
+          <option value="0">指定なし</option>
+          <option value="500000">50万円以上</option>
+          <option value="1000000">100万円以上</option>
+          <option value="5000000">500万円以上</option>
+        </select></div>
+      </label>
+      <label>言葉で探す
+        <div class="field"><input id="word" type="search" placeholder="例：設備、販路、省エネ"></div>
+      </label>
+    </div>
+    <label class="check" style="margin-top:12px"><input id="personal" type="checkbox" checked>本文に「個人事業」「フリーランス」の言葉がある制度だけ表示する</label>
+    <p class="note">この絞り込みは言葉の有無を機械で見ているだけで、対象になることを示すものではありません。外すと、すべての制度が表示されます。</p>
+    <p id="count" style="font-weight:700;margin-bottom:0"></p>
+    <ul id="list"></ul>
+    <noscript><p>一覧の表示にはJavaScriptが必要です。<a href="https://www.jgrants-portal.go.jp/">Jグランツ</a>でも探せます。</p></noscript>
+  </section>
+
+  <section class="card article">
+    <h2>申し込む前に確かめること</h2>
+    <ul>
+      <li><strong>対象になるか：</strong>業種、所在地、従業員数などの条件があります。公式の公募要領で確かめてください。</li>
+      <li><strong>締切：</strong>予算に達すると早く終わる制度や、申請の前に事前の手続きがいる制度があります。</li>
+      <li><strong>お金の流れ：</strong>補助金は多くの場合、先に自分で支払い、あとから受け取ります。交付が決まる前に買ったものは対象外になることがあります。</li>
+      <li><strong>GビズID：</strong>電子申請には、GビズIDプライムのアカウントが必要な制度があります。発行に時間がかかることがあるので、早めに用意すると安心です。</li>
+    </ul>
+    <p>このページは制度の情報を紹介するものです。対象かどうかの判定、申請書類の作成、申請の代行は行っていません。書類の作成を依頼するときは、行政書士など、資格のある専門家にご相談ください。</p>
+
+    <h2>この一覧にないことが多い国の制度</h2>
+    <p>次の制度は専用のサイトで公募されることがあります。公募の時期は公式サイトでご確認ください（リンクの確認日：2026年10月31日）。</p>
+    <ul>
+      <li><a href="https://s23.jizokukahojokin.info/" target="_blank" rel="noopener">小規模事業者持続化補助金（一般型）</a></li>
+      <li><a href="https://it-shien.smrj.go.jp/" target="_blank" rel="noopener">デジタル化・AI導入補助金</a></li>
+      <li><a href="https://portal.monodukuri-hojo.jp/" target="_blank" rel="noopener">ものづくり・商業・サービス生産性向上促進補助金</a></li>
+      <li><a href="https://shoryokuka.smrj.go.jp/" target="_blank" rel="noopener">中小企業省力化投資補助金</a></li>
+      <li><a href="https://shinjigyou-shinshutsu.smrj.go.jp/" target="_blank" rel="noopener">中小企業新事業進出補助金</a></li>
+      <li><a href="https://shoukei-mahojokin.go.jp/" target="_blank" rel="noopener">事業承継・M&amp;A補助金</a></li>
+      <li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index.html" target="_blank" rel="noopener">雇用関係の助成金（厚生労働省）</a></li>
+    </ul>
+    <p>ほかに、<a href="https://j-net21.smrj.go.jp/snavi/" target="_blank" rel="noopener">J-Net21</a>や<a href="https://mirasapo-plus.go.jp/" target="_blank" rel="noopener">ミラサポplus</a>でも探せます。</p>
+
+    <h2>データについて</h2>
+    <p>出典：<a href="https://www.jgrants-portal.go.jp/" target="_blank" rel="noopener">Jグランツ</a>のデータをもとに、株式会社256が編集・加工して作成しました（複数の語で集めて重複を除き、締切順に並べ替えています）。国や自治体の公式サイトではありません。Jグランツに載っていない制度は表示されません。内容の誤りや古い情報が含まれることがあるので、必ず公式ページでご確認ください。</p>
+  </section>
+
+  <section class="card cta">
+    <h2>補助金を受け取ったあとの帳簿も、Excelで</h2>
+    <p class="lead" style="margin:0">1行入力するだけで、帳簿・決算書の数字・税金の目安まで計算するExcelテンプレートを販売しています。無料のお試し版もあります。</p>
+    <a class="btn" href="https://256-co.booth.pm/" target="_blank" rel="noopener">テンプレートを見る（BOOTH）</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/ui.js"></script>
+<script>
+const PREFS = "北海道 青森県 岩手県 宮城県 秋田県 山形県 福島県 茨城県 栃木県 群馬県 埼玉県 千葉県 東京都 神奈川県 新潟県 富山県 石川県 福井県 山梨県 長野県 岐阜県 静岡県 愛知県 三重県 滋賀県 京都府 大阪府 兵庫県 奈良県 和歌山県 鳥取県 島根県 岡山県 広島県 山口県 徳島県 香川県 愛媛県 高知県 福岡県 佐賀県 長崎県 熊本県 大分県 宮崎県 鹿児島県 沖縄県".split(" ");
+const STALE_DAYS = 3;
+let items = [];
+
+const areas = i => i.area.split(" / ");
+const areaText = i => {
+  const a = areas(i);
+  if (a.includes("全国")) return "全国";
+  return a.length > 3 ? `${a.slice(0, 3).join("・")}など${a.length}地域` : a.join("・");
+};
+const jstDate = iso => new Date(iso).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
+const maxText = v => !v ? "上限額：公式で確認" : v >= 10000 ? `上限額：${(v / 10000).toLocaleString("ja-JP")}万円` : `上限額：${v.toLocaleString("ja-JP")}円`;
+
+function render() {
+  const area = UI.$("area").value, min = Number(UI.$("max").value), word = UI.$("word").value.trim().toLowerCase(), personal = UI.$("personal").checked;
+  const now = Date.now();
+  const open = items.filter(i => !i.end || Date.parse(i.end) > now);    // 取得後に締切を過ぎた制度は出さない
+  const hits = open.filter(i =>
+    (!area || areas(i).includes(area) || areas(i).includes("全国")) &&
+    (!min || i.max >= min) &&
+    (!personal || i.personal) &&
+    (!word || (i.title + i.purpose + i.institution).toLowerCase().includes(word)));
+  UI.$("count").textContent = `公募中 ${open.length} 件のうち ${hits.length} 件を表示`;
+  const list = UI.$("list");
+  list.textContent = "";
+  hits.forEach(i => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `https://www.jgrants-portal.go.jp/subsidy/${encodeURIComponent(i.id)}`;
+    a.target = "_blank"; a.rel = "noopener";
+    a.textContent = i.title;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const days = i.end ? Math.ceil((Date.parse(i.end) - now) / 86400000) : null;
+    const end = document.createElement("span");
+    end.textContent = i.end ? `締切：${jstDate(i.end)}（あと${days}日）` : "締切：公式で確認";
+    if (days !== null && days <= 14) end.className = "soon";
+    meta.append(end, `　${areaText(i)}　${maxText(i.max)}`);
+    li.append(a, meta);
+    list.append(li);
+  });
+}
+
+PREFS.forEach(p => UI.$("area").add(new Option(p, p)));
+fetch("data/hojokin.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+  items = d.items;
+  UI.$("updated").textContent = new Date(d.updated).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo", dateStyle: "long", timeStyle: "short" });
+  if (Date.now() - Date.parse(d.updated) > STALE_DAYS * 86400000) UI.$("stale").style.display = "block";
+  UI.watch(render);
+}).catch(() => {
+  UI.$("updated").textContent = "読み込めませんでした";
+  UI.$("count").textContent = "一覧を読み込めませんでした。Jグランツの公式サイトでお探しください。";
+});
+</script>
+</body>
+</html>
