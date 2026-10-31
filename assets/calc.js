@@ -288,6 +288,7 @@ const Calc = (() => {
     add("support", "妊婦のための支援給付", pregnancySupport(children), "cash");
     const ca = childAllowanceYear(children, p.older || 0);
     add("jidou", "児童手当（最初の12か月分）", ca.year, "cash");
+    add("local", "自治体の独自の給付", Math.max(0, p.localAmount || 0), "cash");
 
     const paidMaternity = p.work === "employee" || (p.work === "officer" && p.officerUnpaid);
     const ma = maternityAllowance(std, children);

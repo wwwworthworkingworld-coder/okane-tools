@@ -39,6 +39,7 @@
         <div id="boxOfficer" hidden><label for="officerUnpaid">産休中の役員報酬</label><div class="field"><select id="officerUnpaid">
           <option value="1">支払わない</option><option value="0">支払う</option></select></div></div>
         <div id="boxKokuho" hidden><label for="kokuhoMonthly">本人の国保料 <small>（1か月・均等割＋所得割）</small></label><div class="field"><input id="kokuhoMonthly" type="number" inputmode="numeric" value="20000"><span class="unit">円</span></div></div>
+        <div><label for="localAmount">自治体の独自の給付 <small>（分かれば。<a href="shussan-tokyo23ku.html">東京23区の比較</a>）</small></label><div class="field"><input id="localAmount" type="number" inputmode="numeric" value="0" min="0"><span class="unit">円</span></div></div>
       </div>
     </fieldset>
     <fieldset>
@@ -130,6 +131,7 @@
     <h2>関連する記事・ツール</h2>
     <ul>
       <li><a href="shussan-kigen.html">出産・育児の手続きの期限一覧（予定日から日付を計算）</a></li>
+      <li><a href="shussan-tokyo23ku.html">東京23区の出産・産後の支援の比較</a></li>
       <li><a href="kojin-jigyo-shussan.html">個人事業主・フリーランスの出産でもらえるお金</a></li>
       <li><a href="yakuin-shussan-ikukyu.html">法人の代表・役員の産休と育休</a></li>
       <li><a href="shussan-iryohi-kojo.html">出産費用と医療費控除</a></li>
@@ -170,6 +172,7 @@ const NOTE = {
   ichijikin: "1児につき50万円（22週未満や制度に未加入の施設は48.8万円）",
   support: "1回目5万円＋2回目（子の数×5万円）",
   jidou: "月15,000円（第3子以降は月30,000円）",
+  local: "入力した額",
   post: "賃金日額×28日×13%",
   partnerPost: "賃金日額×最大28日×13%",
 };
@@ -181,7 +184,7 @@ const NOTE = {
 function params(work) {
   return {
     work, pay: UI.num("pay"), due: UI.$("due").value, children: UI.num("children"), older: Math.max(0, UI.num("older")),
-    leaveMonths: UI.num("leaveMonths"), officerUnpaid: UI.$("officerUnpaid").value === "1", kokuhoMonthly: UI.num("kokuhoMonthly"),
+    localAmount: UI.num("localAmount"), leaveMonths: UI.num("leaveMonths"), officerUnpaid: UI.$("officerUnpaid").value === "1", kokuhoMonthly: UI.num("kokuhoMonthly"),
     partner: UI.$("partner").value, partnerPay: UI.num("partnerPay"), partnerDays: UI.num("partnerDays"),
   };
 }
