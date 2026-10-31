@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>出産・育児でもらえるお金の計算｜会社員・個人事業主・法人代表の違いを比較</title>
+<meta name="description" content="出産手当金、育児休業給付金、出産育児一時金、児童手当、保険料の免除をまとめて計算。会社員・個人事業主・法人の代表で、同じ月収でも何がどれだけ違うかを比べられます。夫婦の組み合わせにも対応。">
+<link rel="stylesheet" href="assets/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+<style>
+#detail td:nth-child(2),#detail th:nth-child(2){white-space:nowrap}
+.sub{font-size:12px;color:var(--muted)}
+.zero{color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>出産・育児でもらえるお金の計算</h1>
+  <p class="lead">出産手当金や育児休業給付金は、働き方で出る・出ないが変わります。会社員・個人事業主・法人の代表のどれでも、受け取れるお金と免除される保険料をまとめて計算します。</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <fieldset>
+      <legend>出産する人</legend>
+      <div class="grid">
+        <div><label for="work">働き方</label><div class="field"><select id="work">
+          <option value="employee">会社員</option>
+          <option value="self">個人事業主・フリーランス</option>
+          <option value="officer">法人の代表・役員</option>
+          <option value="dependent">配偶者の扶養に入っている</option></select></div></div>
+        <div><label for="pay">月収 <small>（賞与を除く・税金を引く前。比較にも使います）</small></label><div class="field"><input id="pay" type="number" inputmode="numeric" value="300000"><span class="unit">円</span></div></div>
+        <div><label for="due">出産予定日</label><div class="field"><input id="due" type="date"></div></div>
+        <div><label for="children">生まれる子の人数</label><div class="field"><select id="children">
+          <option value="1">1人</option><option value="2">2人（双子）</option><option value="3">3人（三つ子）</option></select></div></div>
+        <div><label for="older">上の子の人数 <small>（22歳の年度末まで）</small></label><div class="field"><input id="older" type="number" inputmode="numeric" value="0" min="0"><span class="unit">人</span></div></div>
+        <div id="boxLeave"><label for="leaveMonths">育休をいつまで取るか</label><div class="field"><select id="leaveMonths">
+          <option value="12">子が1歳になるまで</option><option value="10">生後10か月まで</option><option value="6">生後6か月まで</option><option value="3">生後3か月まで</option><option value="0">取らない</option></select></div></div>
+        <div id="boxOfficer" hidden><label for="officerUnpaid">産休中の役員報酬</label><div class="field"><select id="officerUnpaid">
+          <option value="1">支払わない</option><option value="0">支払う</option></select></div></div>
+        <div id="boxKokuho" hidden><label for="kokuhoMonthly">本人の国保料 <small>（1か月・均等割＋所得割）</small></label><div class="field"><input id="kokuhoMonthly" type="number" inputmode="numeric" value="20000"><span class="unit">円</span></div></div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>パートナー</legend>
+      <div class="grid">
+        <div><label for="partner">働き方</label><div class="field"><select id="partner">
+          <option value="employee">会社員</option>
+          <option value="self">個人事業主・フリーランス</option>
+          <option value="officer">法人の代表・役員</option>
+          <option value="none">いない・働いていない</option></select></div></div>
+        <div id="boxPartnerPay"><label for="partnerPay">月収</label><div class="field"><input id="partnerPay" type="number" inputmode="numeric" value="350000"><span class="unit">円</span></div></div>
+        <div id="boxPartnerDays"><label for="partnerDays">出生直後からの育休の日数</label><div class="field"><input id="partnerDays" type="number" inputmode="numeric" value="28" min="0"><span class="unit">日</span></div></div>
+      </div>
+    </fieldset>
+
+    <div class="result">
+      <div class="stat big"><div class="k">受け取れるお金の合計（目安）</div><div class="v good" id="cash">-</div></div>
+      <div class="stat"><div class="k">免除される保険料</div><div class="v" id="saving">-</div></div>
+      <div class="stat"><div class="k">児童手当（1か月）</div><div class="v" id="childMonthly">-</div></div>
+    </div>
+    <div class="judge" id="judge"></div>
+    <div class="table-wrap"><table id="detail"><thead><tr><th>内訳</th><th>金額</th><th style="text-align:left">計算のもと</th></tr></thead><tbody></tbody></table></div>
+    <p class="note">計算結果は目安です。賃金が休業前のまま同じで、休業中の給与がなく、予定日に生まれたものとして計算しています。合計には、病院に直接支払われることが多い出産育児一時金も入っています。</p>
+  </section>
+
+  <section class="card">
+    <h2>同じ月収で、働き方だけ変えると</h2>
+    <p class="note" style="margin-top:0">上の入力のうち、出産する人の働き方だけを変えた比較です。役員は産休中の報酬を支払わない場合です。</p>
+    <div class="table-wrap"><table id="compare"></table></div>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card">
+    <h2>出産費用の医療費控除</h2>
+    <p class="lead" style="margin:0 0 12px">一時金を差し引いても、その年の医療費が多ければ税金が戻ります。</p>
+    <div class="grid">
+      <div><label for="birthCost">出産にかかった費用 <small>（健診・分娩・入院）</small></label><div class="field"><input id="birthCost" type="number" inputmode="numeric" value="580000"><span class="unit">円</span></div></div>
+      <div><label for="ichijikin">受け取った一時金など</label><div class="field"><input id="ichijikin" type="number" inputmode="numeric" value="500000"><span class="unit">円</span></div></div>
+      <div><label for="otherCost">家族のほかの医療費</label><div class="field"><input id="otherCost" type="number" inputmode="numeric" value="70000"><span class="unit">円</span></div></div>
+      <div><label for="totalIncome">申告する人の所得 <small>（総所得金額等）</small></label><div class="field"><input id="totalIncome" type="number" inputmode="numeric" value="4000000"><span class="unit">円</span></div></div>
+      <div><label for="taxable">申告する人の課税所得</label><div class="field"><input id="taxable" type="number" inputmode="numeric" value="2500000"><span class="unit">円</span></div></div>
+    </div>
+    <div class="result">
+      <div class="stat"><div class="k">医療費控除の額</div><div class="v" id="medDeduction">-</div></div>
+      <div class="stat big"><div class="k">軽くなる税金（所得税＋住民税）</div><div class="v good" id="medTotal">-</div></div>
+    </div>
+    <p class="note"><a href="shussan-iryohi-kojo.html">出産費用と医療費控除の解説</a>に、対象になるものと計算例があります。</p>
+  </section>
+
+  <section class="card article">
+    <h2>働き方で変わるところ</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>お金</th><th style="text-align:center">会社員</th><th style="text-align:center">個人事業主</th><th style="text-align:center">法人の代表・役員</th></tr></thead>
+      <tbody>
+        <tr><td>出産育児一時金（50万円）</td><td style="text-align:center">○</td><td style="text-align:center">○</td><td style="text-align:center">○</td></tr>
+        <tr><td>妊婦のための支援給付・児童手当</td><td style="text-align:center">○</td><td style="text-align:center">○</td><td style="text-align:center">○</td></tr>
+        <tr><td>出産手当金</td><td style="text-align:center">○</td><td style="text-align:center">×</td><td style="text-align:center">休んで報酬なしなら対象</td></tr>
+        <tr><td>育児休業給付金</td><td style="text-align:center">○</td><td style="text-align:center">×</td><td style="text-align:center">×</td></tr>
+        <tr><td>産前産後の保険料免除</td><td style="text-align:center">○</td><td style="text-align:center">国民年金4か月＋国保</td><td style="text-align:center">○</td></tr>
+        <tr><td>育児期間の保険料免除</td><td style="text-align:center">○</td><td style="text-align:center">国民年金9か月</td><td style="text-align:center">×</td></tr>
+      </tbody>
+    </table></div>
+    <p>個人事業主は<a href="kojin-jigyo-shussan.html">個人事業主・フリーランスの出産のお金</a>、法人の代表は<a href="yakuin-shussan-ikukyu.html">法人の代表・役員の産休と育休</a>に詳しく書いています。</p>
+
+    <h2>計算のしかた</h2>
+    <ul>
+      <li><strong>出産手当金</strong>：直近12か月の標準報酬月額の平均÷30（10円未満四捨五入）×2/3（1円未満四捨五入）×日数。日数は産前42日（多胎は98日）＋産後56日です。ここでは月収を標準報酬月額の表にあてはめています。加入が12か月に満たないときは、平均と32万円の低いほうで計算します。</li>
+      <li><strong>育児休業給付金</strong>：休業開始時賃金日額×日数×67%（181日目から50%）。日額は休業前6か月の賃金÷180で、上限16,540円・下限3,203円です。1か月（30日）の上限は67%で332,454円、50%で248,100円です。この額は2027年7月31日までで、毎年8月1日に改定されます。</li>
+      <li><strong>出生後休業支援給付金</strong>：賃金日額×最大28日×13%。本人が14日以上休み、配偶者も14日以上休むか、配偶者が自営業者・フリーランスなど雇用される労働者でないときに出ます。産む人が産後休業中なら、パートナーは配偶者の要件を満たします。</li>
+      <li><strong>児童手当</strong>：3歳未満は月15,000円、第3子以降は月30,000円。所得制限はなく、2か月分ずつ偶数月に支払われます。</li>
+      <li><strong>妊婦のための支援給付</strong>：妊娠の確認後に5万円、予定日の8週間前から届け出てこどもの数×5万円です。</li>
+      <li><strong>国民年金の免除</strong>：出産する人は産前産後の4か月（多胎は6か月）に続けて9か月、パートナーは出生月から最大12か月。令和8年度の保険料（月17,920円）で計算しています。育児免除は令和8年10月分からです。</li>
+      <li><strong>社会保険料の免除</strong>：東京支部の健康保険料率（9.85%・介護保険なし）と厚生年金18.3%の本人負担分で計算しています。</li>
+    </ul>
+    <p>給付金には税金がかかりません。配偶者控除などの判定に使う合計所得金額にも入らないので、育休の年は配偶者の税金が軽くなることがあります。</p>
+
+    <h2>出産費用の無償化はいつから？</h2>
+    <p>令和8年6月5日に公布された改正法（健康保険法等の一部を改正する法律）で、出産の給付が変わることが決まりました。今の出産育児一時金に代わり、標準的な分娩の費用を健康保険から施設に直接支払う形になり、これとは別に全ての妊婦に定額の現金（出産時一時金）が支給されます。</p>
+    <ul>
+      <li><strong>始まる時期</strong>：公布から2年以内の政令で定める日、つまり遅くとも令和10年6月4日までです。日にちは2026年10月末の時点で決まっていません。</li>
+      <li><strong>金額</strong>：基本単価と現金給付の額は未定で、厚生労働省は2026年12月頃に制度全体をまとめる予定としています。</li>
+      <li><strong>当分の間の例外</strong>：施設の選択で、今の一時金のままの施設も残ります。</li>
+    </ul>
+    <p>それまでの出産は今の50万円で計算します。金額が決まったら、このページの計算を更新します。</p>
+  </section>
+
+  <section class="card">
+    <h2>関連する記事・ツール</h2>
+    <ul>
+      <li><a href="shussan-kigen.html">出産・育児の手続きの期限一覧（予定日から日付を計算）</a></li>
+      <li><a href="kojin-jigyo-shussan.html">個人事業主・フリーランスの出産でもらえるお金</a></li>
+      <li><a href="yakuin-shussan-ikukyu.html">法人の代表・役員の産休と育休</a></li>
+      <li><a href="shussan-iryohi-kojo.html">出産費用と医療費控除</a></li>
+    </ul>
+  </section>
+
+  <section class="card article">
+    <h2>参考にした資料</h2>
+    <ul>
+      <li><a href="https://www.kyoukaikenpo.or.jp/benefit/childbirth/001/index.html" target="_blank" rel="noopener">協会けんぽ 出産手当金</a></li>
+      <li><a href="https://www.kyoukaikenpo.or.jp/benefit/childbirth/002/index.html" target="_blank" rel="noopener">協会けんぽ 出産育児一時金</a></li>
+      <li><a href="https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf" target="_blank" rel="noopener">協会けんぽ 令和8年3月分からの保険料額表（東京支部）</a></li>
+      <li><a href="https://www.mhlw.go.jp/content/11600000/001461102.pdf" target="_blank" rel="noopener">厚生労働省 育児休業等給付の内容と支給申請手続（2026年8月改訂版）</a></li>
+      <li><a href="https://www.mhlw.go.jp/content/001728499.pdf" target="_blank" rel="noopener">厚生労働省 令和8年8月1日からの支給限度額</a></li>
+      <li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/shussan/index.html" target="_blank" rel="noopener">厚生労働省 出産育児一時金等について</a></li>
+      <li><a href="https://www.mhlw.go.jp/content/12401000/001759823.pdf" target="_blank" rel="noopener">厚生労働省 医療保険制度における出産に対する支援の強化について（令和8年10月16日）</a></li>
+      <li><a href="https://www.cfa.go.jp/policies/kokoseido/jidouteate/annai" target="_blank" rel="noopener">こども家庭庁 児童手当制度のご案内</a></li>
+      <li><a href="https://www.cfa.go.jp/policies/shussan-kosodate" target="_blank" rel="noopener">こども家庭庁 妊婦のための支援給付</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kokunen/menjo/ikujimenjo.html" target="_blank" rel="noopener">日本年金機構 国民年金保険料の育児免除制度</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kokunen/menjo/20180810.html" target="_blank" rel="noopener">日本年金機構 国民年金保険料の産前産後期間の免除制度</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kounen/hokenryo/menjo/20140122-01.html" target="_blank" rel="noopener">日本年金機構 厚生年金保険料等の免除（産前産後休業・育児休業等期間）</a></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1124.htm" target="_blank" rel="noopener">国税庁 No.1124 医療費控除の対象となる出産費用の具体例</a></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191_qa.htm" target="_blank" rel="noopener">国税庁 No.1191 配偶者控除 よくある質問</a></li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>個人事業主の帳簿は、Excelで1行入力</h2>
+    <p class="lead" style="margin:0">出産の年は記帳が止まりがちです。1行入力すれば複式簿記の帳簿と決算書の数字までできるExcelテンプレートに、無料のお試し版があります。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050781" target="_blank" rel="noopener">無料お試し版を見る（BOOTH）</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+const NOTE = {
+  ichijikin: "1児につき50万円（22週未満や制度に未加入の施設は48.8万円）",
+  support: "1回目5万円＋2回目（子の数×5万円）",
+  jidou: "月15,000円（第3子以降は月30,000円）",
+  post: "賃金日額×28日×13%",
+  partnerPost: "賃金日額×最大28日×13%",
+};
+// 今日から半年後を初期値にする（入力した値はどこにも送信しない）
+{
+  const t = new Date(); t.setMonth(t.getMonth() + 6);
+  UI.$("due").value = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+}
+function params(work) {
+  return {
+    work, pay: UI.num("pay"), due: UI.$("due").value, children: UI.num("children"), older: Math.max(0, UI.num("older")),
+    leaveMonths: UI.num("leaveMonths"), officerUnpaid: UI.$("officerUnpaid").value === "1", kokuhoMonthly: UI.num("kokuhoMonthly"),
+    partner: UI.$("partner").value, partnerPay: UI.num("partnerPay"), partnerDays: UI.num("partnerDays"),
+  };
+}
+UI.watch(() => {
+  const work = UI.$("work").value, partner = UI.$("partner").value;
+  UI.$("boxLeave").hidden = work !== "employee";
+  UI.$("boxOfficer").hidden = work !== "officer";
+  UI.$("boxKokuho").hidden = work !== "self";
+  UI.$("boxPartnerPay").hidden = partner !== "employee";
+  UI.$("boxPartnerDays").hidden = partner !== "employee";
+  if (!UI.$("due").value) return;
+
+  const r = Calc.birthMoney(params(work));
+  UI.set("cash", UI.yen(r.cash));
+  UI.set("saving", UI.yen(r.saving));
+  UI.set("childMonthly", UI.yen(r.childMonthly));
+
+  const notes = Object.assign({}, NOTE, {
+    teate: r.rows.find(x => x.key === "teate").amount > 0
+      ? `標準報酬月額${r.std.toLocaleString("ja-JP")}円→日額${r.maternity.daily.toLocaleString("ja-JP")}円×${r.maternity.days}日`
+      : (work === "officer" ? "報酬を支払うと、日額より少ない分の差額だけになります" : "健康保険の被保険者でないため対象外"),
+    ikukyu: r.leaveDays > 0 ? `賃金日額${Calc.wageDaily(params(work).pay).toLocaleString("ja-JP")}円×${r.leaveDays}日（180日まで67%、以降50%）` : "雇用保険の育休を取る人が対象",
+    partnerIkukyu: partner === "employee" ? `賃金日額×${Math.max(0, UI.num("partnerDays"))}日×67%` : "",
+    social: `${r.socialMonths}か月分（東京支部・40歳未満の料率）`,
+    nenkin: `${r.nenkinMonths}か月×17,920円（届出が必要）`,
+    kokuho: "産前産後の4か月（多胎は6か月）",
+    partnerSocial: "休業の月数で計算",
+    partnerNenkin: "出生月から最大12か月×17,920円",
+  });
+  const body = UI.$("detail").tBodies[0];
+  body.innerHTML = "";
+  r.rows.filter(x => x.amount > 0 || x.key === "teate" || (x.key === "ikukyu" && work !== "dependent")).forEach(x => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td></td><td></td><td class="sub" style="text-align:left"></td>`;
+    tr.children[0].textContent = x.name + (x.kind === "saving" ? "（免除）" : "");
+    tr.children[1].textContent = x.amount > 0 ? UI.yen(x.amount) : "対象外";
+    if (x.amount === 0) tr.children[1].className = "zero";
+    tr.children[2].textContent = notes[x.key] || "";
+    body.appendChild(tr);
+  });
+
+  const JUDGE = {
+    employee: "出産手当金と育児休業給付金の両方を受け取れる働き方です。休業中の社会保険料も免除されます。",
+    self: "出産手当金と育児休業給付金はありません。かわりに国民年金と国保の保険料が免除されます。届出が必要です。",
+    officer: "育児休業給付金と育休中の保険料免除はありません。産前産後の期間は、保険料の免除と出産手当金の対象になります。",
+    dependent: "ご本人の出産手当金・育児休業給付金はありません。一時金は配偶者の健康保険から支給されます。",
+  };
+  UI.$("judge").textContent = JUDGE[work];
+
+  const works = [["employee", "会社員"], ["self", "個人事業主"], ["officer", "代表・役員"]];
+  const res = works.map(([w]) => Calc.birthMoney(Object.assign(params(w), w === "officer" ? { officerUnpaid: true } : {})));
+  const line = (name, f, bold) => `<tr><td>${bold ? "<b>" + name + "</b>" : name}</td>${res.map(x => `<td>${bold ? "<b>" + UI.yen(f(x)) + "</b>" : UI.yen(f(x))}</td>`).join("")}</tr>`;
+  const amt = (x, ...keys) => x.rows.filter(y => keys.includes(y.key)).reduce((a, y) => a + y.amount, 0);
+  UI.$("compare").innerHTML = `<thead><tr><th></th>${works.map(([, n]) => `<th>${n}</th>`).join("")}</tr></thead><tbody>`
+    + line("一時金・支援給付・児童手当", x => amt(x, "ichijikin", "support", "jidou"))
+    + line("出産手当金", x => amt(x, "teate"))
+    + line("育休の給付（本人）", x => amt(x, "ikukyu", "post"))
+    + line("免除される保険料（本人）", x => amt(x, "social", "nenkin", "kokuho"))
+    + line("合計", x => amt(x, "ichijikin", "support", "jidou", "teate", "ikukyu", "post", "social", "nenkin", "kokuho"), true)
+    + `</tbody>`;
+
+  const m = Calc.birthMedicalDeduction({ birthCost: UI.num("birthCost"), ichijikin: UI.num("ichijikin"), otherCost: UI.num("otherCost"),
+    totalIncome: UI.num("totalIncome"), taxable: UI.num("taxable") });
+  UI.set("medDeduction", UI.yen(m.deduction));
+  UI.set("medTotal", UI.yen(m.total));
+});
+</script>
+</body>
+</html>

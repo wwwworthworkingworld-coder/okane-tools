@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>出産・育児の手続きの期限一覧｜予定日を入れると日付が分かる</title>
+<meta name="description" content="出生届14日、児童手当15日、扶養の届出5日など、出産・育児の手続きの期限を出産予定日から日付で計算します。会社員・個人事業主・法人の代表で必要な手続きだけを表示します。">
+<link rel="stylesheet" href="assets/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+<style>
+#list th,#list td{text-align:left;vertical-align:top}
+#list td:first-child{white-space:nowrap;font-weight:700}
+#list .where{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+#list .soon{color:var(--bad)}
+#list .past td{opacity:.55}
+</style>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>出産・育児の手続きの期限一覧</h1>
+  <p class="lead">出産予定日を入れると、やることを日付の順に並べます。生まれたら出生日を入れると、出産後の期限が正しい日付に変わります。</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <div class="grid">
+      <div><label for="due">出産予定日</label><div class="field"><input id="due" type="date"></div></div>
+      <div><label for="birth">出生日 <small>（生まれたら入力）</small></label><div class="field"><input id="birth" type="date"></div></div>
+      <div><label for="children">生まれる子の人数</label><div class="field"><select id="children">
+        <option value="1">1人</option><option value="2">2人以上</option></select></div></div>
+      <div><label for="work">出産する人の働き方</label><div class="field"><select id="work">
+        <option value="employee">会社員</option><option value="self">個人事業主・フリーランス</option>
+        <option value="officer">法人の代表・役員</option><option value="dependent">配偶者の扶養に入っている</option></select></div></div>
+      <div><label for="partner">パートナーの働き方</label><div class="field"><select id="partner">
+        <option value="employee">会社員</option><option value="self">個人事業主・フリーランス</option>
+        <option value="officer">法人の代表・役員</option><option value="none">いない・働いていない</option></select></div></div>
+    </div>
+    <div class="table-wrap"><table id="list"><thead><tr><th>期限・時期</th><th>手続き</th></tr></thead><tbody></tbody></table></div>
+    <p class="note" id="basis"></p>
+    <p class="note">市区町村の窓口が閉まっている日が期限のときは、次の開庁日までになります。市区町村や健康保険組合によって手順が違うことがあります。</p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>遅れると損をしやすいもの</h2>
+    <ul>
+      <li><strong>児童手当</strong>：生まれた日の翌日から15日以内に、住んでいる市区町村に申請します。遅れると、遅れた月の分は受け取れません。里帰り先ではなく、住民票のある市区町村です。公務員は勤務先に申請します。</li>
+      <li><strong>出生届</strong>：生まれた日を含めて14日以内です。児童手当の申請は出生届とは別なので、同じ日に窓口で済ませると忘れません。</li>
+      <li><strong>国民年金の免除</strong>：個人事業主は届出をして初めて免除になります。予定日の6か月前から出せるので、母子健康手帳を受け取ったら早めに出しましょう。国民健康保険の免除も市区町村に届け出ます。</li>
+    </ul>
+    <h2>2年の期限があるもの</h2>
+    <p>出産育児一時金は出産日の翌日から2年、出産手当金は休んだ日ごとに、その翌日から2年で申請できなくなります。妊婦のための支援給付も2年です。</p>
+    <h2>翌年の確定申告で済ませるもの</h2>
+    <p>医療費控除は、医療費を支払った年の翌年に申告します。還付だけなら翌年の1月1日から5年の間に出せます。<a href="shussan-iryohi-kojo.html">出産費用と医療費控除</a>に計算の例があります。</p>
+  </section>
+
+  <section class="card">
+    <h2>関連する記事・ツール</h2>
+    <ul>
+      <li><a href="shussan-okane.html">出産・育児でもらえるお金の計算</a></li>
+      <li><a href="kojin-jigyo-shussan.html">個人事業主・フリーランスの出産でもらえるお金</a></li>
+      <li><a href="yakuin-shussan-ikukyu.html">法人の代表・役員の産休と育休</a></li>
+      <li><a href="shussan-iryohi-kojo.html">出産費用と医療費控除</a></li>
+    </ul>
+  </section>
+
+  <section class="card article">
+    <h2>参考にした資料</h2>
+    <ul>
+      <li><a href="https://www.moj.go.jp/ONLINE/FAMILYREGISTER/5-1.html" target="_blank" rel="noopener">法務省 出生届</a></li>
+      <li><a href="https://www.cfa.go.jp/policies/kokoseido/jidouteate/faq/ippan" target="_blank" rel="noopener">こども家庭庁 児童手当Q&amp;A</a></li>
+      <li><a href="https://www.cfa.go.jp/assets/contents/node/basic_page/field_ref_resources/be80930d-51d1-4084-aa3e-b80930646538/42e36027/20250325_policies_shussan-kosodate_52.pdf" target="_blank" rel="noopener">こども家庭庁 妊婦のための支援給付のご案内</a></li>
+      <li><a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/shussan/index.html" target="_blank" rel="noopener">厚生労働省 出産育児一時金等について</a></li>
+      <li><a href="https://www.mhlw.go.jp/content/11600000/001461102.pdf" target="_blank" rel="noopener">厚生労働省 育児休業等給付の内容と支給申請手続（2026年8月改訂版）</a></li>
+      <li><a href="https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/childcare/" target="_blank" rel="noopener">厚生労働省 育児休業制度特設サイト（育児休業）</a></li>
+      <li><a href="https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/paternity/" target="_blank" rel="noopener">厚生労働省 育児休業制度特設サイト（産後パパ育休）</a></li>
+      <li><a href="https://www.kyoukaikenpo.or.jp/application_form/benefit/009/index.html" target="_blank" rel="noopener">協会けんぽ 健康保険出産手当金支給申請書</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kounen/tekiyo/hihokensha1/20141202.html" target="_blank" rel="noopener">日本年金機構 被扶養者にするときの手続き</a></li>
+      <li><a href="https://www.nenkin.go.jp/section/faq/kounen/hokenryo/20140911.html" target="_blank" rel="noopener">日本年金機構 産前産後休業中の保険料</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kokunen/menjo/20180810.html" target="_blank" rel="noopener">日本年金機構 国民年金保険料の産前産後期間の免除制度</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kokunen/menjo/ikujimenjo.html" target="_blank" rel="noopener">日本年金機構 国民年金保険料の育児免除制度</a></li>
+      <li><a href="https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/kokuho/hokenryo/04hokenryounituite.html" target="_blank" rel="noopener">横浜市 国民健康保険の保険料について（産前産後の減額の例）</a></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2030.htm" target="_blank" rel="noopener">国税庁 No.2030 還付申告</a></li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>確定申告の準備は、帳簿から</h2>
+    <p class="lead" style="margin:0">個人事業主は、出産の年も確定申告があります。1行入力で複式簿記の帳簿ができるExcelテンプレートに、無料のお試し版があります。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050781" target="_blank" rel="noopener">無料お試し版を見る（BOOTH）</a>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+const fmt = s => { const [y, m, d] = s.split("-").map(Number); return `${y}年${m}月${d}日`; };
+const iso = t => t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+{ const t = new Date(); t.setMonth(t.getMonth() + 6); UI.$("due").value = iso(t); }
+
+UI.watch(() => {
+  const due = UI.$("due").value;
+  const body = UI.$("list").tBodies[0];
+  body.innerHTML = "";
+  if (!due) return;
+  const birth = UI.$("birth").value;
+  const children = UI.num("children");
+  const work = UI.$("work").value, partner = UI.$("partner").value;
+  const d = Calc.birthDeadlines(due, birth || null, children);
+  const company = w => w === "employee" || w === "officer";
+  const anySocial = company(work) || company(partner);
+  const anySelf = work === "self" || partner === "self";
+
+  const rows = [];
+  const add = (date, label, title, where) => rows.push({ date, label, title, where });
+
+  add(null, "妊娠が分かったら", "妊婦のための支援給付の1回目（5万円）を申請する", "市区町村。妊娠届のときに申請することが多い");
+  add(null, "出産まで", "出産する施設で直接支払制度の書類を交わす（出産育児一時金を施設に直接払う手続き）", "出産する施設");
+  add(d.supportSecond, "から", "妊婦のための支援給付の2回目（こどもの数×5万円）を届け出る", "市区町村。予定日の8週間前から");
+  if (work === "self") {
+    add(d.nenkinFrom, "から", "国民年金の産前産後免除を届け出る（育児免除も一緒に）", "市区町村の国民年金窓口・マイナポータル");
+    add(d.nenkinFrom, "から", "国民健康保険の産前産後の保険料免除を届け出る", "市区町村の国保窓口。受付開始は市区町村で確認");
+  }
+  if (company(work)) add(d.prenatal, "から", "産前休業を始められる日（出産手当金と保険料免除の起点）", work === "officer" ? "自社で休む期間を決めて記録に残す" : "勤務先");
+  if (work === "employee") add(d.leaveRequest, "までに", "育児休業の申し出（休業開始の1か月前）", "勤務先");
+  if (partner === "employee") add(d.papaRequest, "までに", "パートナーの産後パパ育休の申し出（休業開始の2週間前。予定日から休むとき）", "パートナーの勤務先");
+  if (anySocial) add(d.fuyo, "までに", "子を健康保険の扶養に入れる（事実発生から5日以内）", "勤務先または自社から年金事務所・健康保険組合へ");
+  add(d.birthReport, "までに", "出生届（生まれた日を含めて14日以内）", "市区町村");
+  if (anySelf) add(d.kokuhoChild, "までに", "子を国民健康保険に入れる（子が国保に入るとき。出生届と一緒に）", "市区町村の国保窓口");
+  add(d.jidou, "までに", "児童手当の申請（生まれた日の翌日から15日以内）", "住んでいる市区町村。公務員は勤務先");
+  if (partner === "self") add(birth || due, "生まれたら","パートナーの国民年金の育児免除を届け出る（速やかに）", "市区町村の国民年金窓口・マイナポータル");
+  if (work === "employee") {
+    add(d.postnatalEnd, "まで", "産後休業（この翌日から育児休業）", "勤務先。休業開始前に保険料免除の申し出も");
+    add(d.postnatalEnd, "以後", "出産手当金を申請する（産前・産後に分けて申請してもよい）", "勤務先を通じて健康保険へ");
+    add(d.ikukyuFirst, "までに", "育児休業給付金の最初の申請（通常は勤務先が手続き）", "勤務先→ハローワーク");
+  }
+  if (work === "officer") {
+    add(d.postnatalEnd, "以後", "出産手当金を申請する（事業主の証明も自社で記入）", "協会けんぽ・健康保険組合");
+    add(d.officerRequest, "までに", "産前産後休業取得者申出書を出す（休業中か、終了後1か月以内）", "自社から年金事務所へ");
+  }
+  if (partner === "employee") add(d.papaApply, "までに", "パートナーの出生時育児休業給付金の申請（通常は勤務先が手続き）", "勤務先→ハローワーク");
+  if (work === "employee" || work === "officer") add(d.teateLimit, "ごろ", "出産手当金の期限（最初に休んだ日の分。休んだ日ごとに2年）", "健康保険");
+  add(d.ichijikinLimit, "ごろ", "出産育児一時金の申請期限（直接支払制度を使わないとき・差額の申請。出産日の翌日から2年）", "健康保険・市区町村の国保窓口");
+  add(d.taxReturn, "までに", "医療費控除の確定申告（還付だけなら5年の間に出せる）", "税務署・e-Tax");
+
+  rows.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+  const today = iso(new Date());
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td");
+    if (r.date) {
+      if (r.date < today) tr.className = "past";
+      const left = Calc.daysBetween(today, r.date);
+      td1.textContent = fmt(r.date);
+      const badge = document.createElement("span");
+      badge.className = "where";
+      badge.textContent = r.label + (left >= 0 && left <= 14 ? `（あと${left}日）` : "");
+      if (left >= 0 && left <= 14) badge.classList.add("soon");
+      td1.appendChild(badge);
+    } else {
+      td1.textContent = r.label;
+    }
+    const td2 = document.createElement("td");
+    td2.textContent = r.title;
+    const w = document.createElement("span");
+    w.className = "where";
+    w.textContent = r.where;
+    td2.appendChild(w);
+    tr.append(td1, td2);
+    body.appendChild(tr);
+  });
+  UI.$("basis").textContent = birth
+    ? `出生日${fmt(birth)}で計算しています。`
+    : `予定日${fmt(due)}に生まれたとして計算しています。実際の出生日で変わる期限があります。`;
+});
+</script>
+</body>
+</html>
