@@ -58,6 +58,8 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
 .tools button:hover:not(:disabled) { background: var(--accent-soft); }
 .tools button:disabled { opacity: .38; cursor: default; }
 .tools button.del { color: var(--danger); }
+.range { grid-column: 1 / -1; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.range.miss { color: var(--danger); font-weight: 700; }
 
 .settings { margin-top: 16px; padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; display: grid; gap: 10px 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .settings label { display: grid; gap: 3px; font-size: 13px; font-weight: 700; min-width: 0; }
@@ -88,18 +90,18 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
 .crop { position: fixed; inset: 0; z-index: 10; background: #0d1413; color: #f4f6f5; display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
   padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); gap: 10px; }
 .crop h2 { margin: 0; font-size: 16px; }
-.stage-box { min-height: 0; display: flex; align-items: center; justify-content: center; }
+.stage-box { min-height: 0; display: flex; align-items: center; justify-content: center; padding: 22px; position: relative; }
 .stage { position: relative; touch-action: none; user-select: none; line-height: 0; }
-.stage canvas { display: block; }
-.frame { position: absolute; border: 2px solid #e8b21c; box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .55); cursor: move; touch-action: none; }
-.stage { overflow: hidden; }
-.handle { position: absolute; width: 44px; height: 44px; touch-action: none; }
-.handle::after { content: ""; position: absolute; width: 22px; height: 22px; background: #e8b21c; border: 2px solid #0d1413; border-radius: 50%; }
-.handle.nw { left: 0; top: 0; cursor: nwse-resize; } .handle.nw::after { left: 0; top: 0; }
-.handle.ne { right: 0; top: 0; cursor: nesw-resize; } .handle.ne::after { right: 0; top: 0; }
-.handle.sw { left: 0; bottom: 0; cursor: nesw-resize; } .handle.sw::after { left: 0; bottom: 0; }
-.handle.se { right: 0; bottom: 0; cursor: nwse-resize; } .handle.se::after { right: 0; bottom: 0; }
-.crop .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.stage canvas.photo { display: block; max-width: none; }
+.stage svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.shade { fill: rgba(0, 0, 0, .55); fill-rule: evenodd; pointer-events: none; }
+.outline { fill: transparent; stroke: #e8b21c; stroke-width: 2; cursor: move; }
+.handle { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; touch-action: none; cursor: grab; }
+.handle::after { content: ""; position: absolute; inset: 11px; background: #e8b21c; border: 2px solid #0d1413; border-radius: 50%; }
+.loupe { position: absolute; left: 4px; top: 4px; width: 112px; height: 112px; border: 2px solid #e8b21c; border-radius: 50%; background: #0d1413; pointer-events: none; z-index: 2; }
+.loupe.right { left: auto; right: 4px; }
+.crop-note { margin: 0; font-size: 13px; color: #c8d3d0; min-height: 1.6em; }
+.crop .row4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .crop .btn { color: #f4f6f5; border-color: #8ba19d; }
 .crop .btn.main { background: #e8b21c; border-color: #e8b21c; color: #15211f; }
 @media (prefers-reduced-motion: no-preference) { .page { transition: background .15s; } }
@@ -182,19 +184,23 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
 <div id="toast" class="toast" hidden role="status"><span id="toastText"></span><button id="undo" type="button">元に戻す</button></div>
 
 <div id="crop" class="crop" hidden role="dialog" aria-modal="true" aria-labelledby="cropTitle">
-  <h2 id="cropTitle">四すみの丸を動かして、残す範囲を決めます</h2>
+  <div>
+    <h2 id="cropTitle">四すみの丸を、書類の角に合わせます</h2>
+    <p id="cropNote" class="crop-note" role="status"></p>
+  </div>
   <div class="stage-box" id="stageBox">
+    <canvas id="loupe" class="loupe" width="224" height="224" hidden></canvas>
     <div class="stage" id="stage">
-      <canvas id="cropCanvas"></canvas>
-      <div class="frame" id="frame">
-        <span class="handle nw" data-h="nw"></span><span class="handle ne" data-h="ne"></span>
-        <span class="handle sw" data-h="sw"></span><span class="handle se" data-h="se"></span>
-      </div>
+      <canvas id="cropCanvas" class="photo"></canvas>
+      <svg id="overlay" aria-hidden="true"><path id="shade" class="shade"></path><polygon id="outline" class="outline" data-move="1"></polygon></svg>
+      <span class="handle" data-i="0"></span><span class="handle" data-i="1"></span>
+      <span class="handle" data-i="2"></span><span class="handle" data-i="3"></span>
     </div>
   </div>
-  <div class="row3">
+  <div class="row4">
+    <button id="cropAuto" class="btn" type="button">自動で選び直す</button>
+    <button id="cropReset" class="btn" type="button">写真全体にする</button>
     <button id="cropCancel" class="btn" type="button">やめる</button>
-    <button id="cropReset" class="btn" type="button">全体に戻す</button>
     <button id="cropOk" class="btn main" type="button">決定</button>
   </div>
 </div>
@@ -235,9 +241,373 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     return { pageW, pageH, x: (pageW - w) / 2, y: (pageH - h) / 2, w, h };
   }
 
-  // 切り抜き範囲（0〜1の割合）を、画像を右に90度回したあとの範囲に直す。
-  function rotateCropRight(c) {
-    return { x: 1 - c.y - c.h, y: c.x, w: c.h, h: c.w };
+  // 書類の範囲は四隅の点（0〜1の割合）で持つ。順番は左上・右上・右下・左下。
+  const FULL_QUAD = [[0, 0], [1, 0], [1, 1], [0, 1]];
+
+  function fullQuad() { return FULL_QUAD.map((p) => p.slice()); }
+
+  // 範囲を、画像を右に90度回したあとの範囲に直す。
+  function rotateQuadRight(q) {
+    const r = (p) => [1 - p[1], p[0]];
+    return [r(q[3]), r(q[0]), r(q[1]), r(q[2])];
+  }
+
+  // 四隅が縦横にそろった長方形なら、切り抜きの範囲を返す。斜めなら null。
+  function quadToCrop(q) {
+    const e = 1e-6;
+    const same = Math.abs(q[0][1] - q[1][1]) < e && Math.abs(q[2][1] - q[3][1]) < e &&
+      Math.abs(q[0][0] - q[3][0]) < e && Math.abs(q[1][0] - q[2][0]) < e;
+    if (!same) return null;
+    return { x: q[0][0], y: q[0][1], w: q[1][0] - q[0][0], h: q[3][1] - q[0][1] };
+  }
+
+  // 凸の四角形か（角をドラッグしたときに形が崩れないように確かめる）
+  function isConvexQuad(q) {
+    let sign = 0;
+    for (let i = 0; i < 4; i++) {
+      const a = q[i], b = q[(i + 1) % 4], c = q[(i + 2) % 4];
+      const cross = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]);
+      if (Math.abs(cross) < 1e-9) return false;
+      if (sign && Math.sign(cross) !== sign) return false;
+      sign = Math.sign(cross);
+    }
+    return true;
+  }
+
+  // 斜めの範囲をまっすぐにしたときの大きさ。向かい合う辺の長いほうを使う。
+  function quadOutput(rotW, rotH, q, maxSide) {
+    const len = (a, b) => Math.hypot((a[0] - b[0]) * rotW, (a[1] - b[1]) * rotH);
+    const w = Math.max(len(q[0], q[1]), len(q[3], q[2]));
+    const h = Math.max(len(q[0], q[3]), len(q[1], q[2]));
+    const scale = Math.min(1, maxSide / Math.max(w, h));
+    return { scale, width: Math.max(1, Math.round(w * scale)), height: Math.max(1, Math.round(h * scale)) };
+  }
+
+  // 四角形の中身を長方形へ写す。src・dst はRGBAの配列、q はピクセル単位の四隅。
+  function warpQuad(src, sw, sh, q, dst, dw, dh) {
+    const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q;
+    const dx1 = x1 - x2, dx2 = x3 - x2, sx = x0 - x1 + x2 - x3;
+    const dy1 = y1 - y2, dy2 = y3 - y2, sy = y0 - y1 + y2 - y3;
+    const den = dx1 * dy2 - dx2 * dy1;
+    const g = (sx * dy2 - dx2 * sy) / den;
+    const h = (dx1 * sy - sx * dy1) / den;
+    const a = x1 - x0 + g * x1, b = x3 - x0 + h * x3;
+    const d = y1 - y0 + g * y1, e = y3 - y0 + h * y3;
+    let out = 0;
+    for (let j = 0; j < dh; j++) {
+      const v = (j + 0.5) / dh;
+      for (let i = 0; i < dw; i++) {
+        const u = (i + 0.5) / dw;
+        const w = g * u + h * v + 1;
+        const px = Math.min(sw - 1.001, Math.max(0, (a * u + b * v + x0) / w - 0.5));
+        const py = Math.min(sh - 1.001, Math.max(0, (d * u + e * v + y0) / w - 0.5));
+        const ix = px | 0, iy = py | 0, fx = px - ix, fy = py - iy;
+        const p00 = (iy * sw + ix) * 4, p10 = p00 + 4, p01 = p00 + sw * 4, p11 = p01 + 4;
+        for (let c = 0; c < 3; c++) {
+          const top = src[p00 + c] + (src[p10 + c] - src[p00 + c]) * fx;
+          const bottom = src[p01 + c] + (src[p11 + c] - src[p01 + c]) * fx;
+          dst[out + c] = top + (bottom - top) * fy;
+        }
+        dst[out + 3] = 255;
+        out += 4;
+      }
+    }
+  }
+
+  // ---- 書類の範囲の自動検出 ----
+  // 2通りの見つけ方（背景の色との違い／輪郭）で候補を作り、四角形らしいほうを選ぶ。見つからなければ null。
+
+  function boxBlur(a, w, h) {
+    const t = new Float32Array(a.length);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const l = a[y * w + Math.max(0, x - 1)], c = a[y * w + x], r = a[y * w + Math.min(w - 1, x + 1)];
+        t[y * w + x] = (l + c + r) / 3;
+      }
+    }
+    for (let y = 0; y < h; y++) {
+      const up = Math.max(0, y - 1) * w, here = y * w, down = Math.min(h - 1, y + 1) * w;
+      for (let x = 0; x < w; x++) a[here + x] = (t[up + x] + t[here + x] + t[down + x]) / 3;
+    }
+  }
+
+  function median(values) {
+    const s = Array.from(values).sort((p, q) => p - q);
+    return s[s.length >> 1];
+  }
+
+  // 大津の方法：値を2つの群に分けるしきい値
+  function otsu(values) {
+    const hist = new Float64Array(256);
+    for (let i = 0; i < values.length; i++) hist[Math.min(255, values[i] | 0)]++;
+    let sum = 0;
+    for (let v = 0; v < 256; v++) sum += v * hist[v];
+    let bgN = 0, bgSum = 0, best = 0, bestT = 0;
+    for (let v = 0; v < 256; v++) {
+      bgN += hist[v];
+      if (!bgN) continue;
+      const fgN = values.length - bgN;
+      if (!fgN) break;
+      bgSum += v * hist[v];
+      const diff = bgSum / bgN - (sum - bgSum) / fgN;
+      const between = bgN * fgN * diff * diff;
+      if (between > best) { best = between; bestT = v; }
+    }
+    return bestT;
+  }
+
+  // 外周から wall でない画素をたどり、たどり着けなかった部分を返す（穴埋め）
+  function enclosed(wall, w, h) {
+    const seen = new Uint8Array(w * h);
+    const stack = new Int32Array(w * h);
+    let top = 0;
+    const push = (i) => { if (!wall[i] && !seen[i]) { seen[i] = 1; stack[top++] = i; } };
+    for (let x = 0; x < w; x++) { push(x); push((h - 1) * w + x); }
+    for (let y = 0; y < h; y++) { push(y * w); push(y * w + w - 1); }
+    while (top) {
+      const i = stack[--top], x = i % w, y = (i - x) / w;
+      if (x > 0) push(i - 1);
+      if (x < w - 1) push(i + 1);
+      if (y > 0) push(i - w);
+      if (y < h - 1) push(i + w);
+    }
+    const out = new Uint8Array(w * h);
+    for (let i = 0; i < out.length; i++) out[i] = seen[i] ? 0 : 1;
+    return out;
+  }
+
+  function morph(mask, w, h, erode) {
+    const out = new Uint8Array(mask.length);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        const l = x > 0 ? mask[i - 1] : 0, r = x < w - 1 ? mask[i + 1] : 0;
+        const u = y > 0 ? mask[i - w] : 0, d = y < h - 1 ? mask[i + w] : 0;
+        out[i] = erode ? (mask[i] && l && r && u && d ? 1 : 0) : (mask[i] || l || r || u || d ? 1 : 0);
+      }
+    }
+    return out;
+  }
+
+  // 細いつながり（影や机の模様）を切る
+  function openMask(mask, w, h, r) {
+    let m = mask;
+    for (let i = 0; i < r; i++) m = morph(m, w, h, true);
+    for (let i = 0; i < r; i++) m = morph(m, w, h, false);
+    return m;
+  }
+
+  function largestComponent(mask, w, h) {
+    const label = new Int32Array(w * h);
+    const stack = new Int32Array(w * h);
+    let bestId = 0, bestArea = 0, id = 0;
+    for (let s = 0; s < mask.length; s++) {
+      if (!mask[s] || label[s]) continue;
+      id++;
+      let top = 0, area = 0;
+      stack[top++] = s;
+      label[s] = id;
+      while (top) {
+        const i = stack[--top], x = i % w, y = (i - x) / w;
+        area++;
+        const visit = (j) => { if (mask[j] && !label[j]) { label[j] = id; stack[top++] = j; } };
+        if (x > 0) visit(i - 1);
+        if (x < w - 1) visit(i + 1);
+        if (y > 0) visit(i - w);
+        if (y < h - 1) visit(i + w);
+      }
+      if (area > bestArea) { bestArea = area; bestId = id; }
+    }
+    return { label, id: bestId, area: bestArea };
+  }
+
+  function convexHull(points) {
+    const pts = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const half = (list) => {
+      const out = [];
+      for (const p of list) {
+        while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], p) <= 0) out.pop();
+        out.push(p);
+      }
+      out.pop();
+      return out;
+    };
+    return half(pts).concat(half(pts.reverse()));
+  }
+
+  function polygonArea(q) {
+    let s = 0;
+    for (let i = 0; i < q.length; i++) {
+      const a = q[i], b = q[(i + 1) % q.length];
+      s += a[0] * b[1] - a[1] * b[0];
+    }
+    return Math.abs(s) / 2;
+  }
+
+  // 凸包の中で面積が最大に近い四角形を選ぶ
+  function largestQuad(hull) {
+    const pick = (f) => hull.reduce((best, p) => (f(p) > f(best) ? p : best), hull[0]);
+    let q = [pick((p) => -p[0] - p[1]), pick((p) => p[0] - p[1]), pick((p) => p[0] + p[1]), pick((p) => p[1] - p[0])];
+    for (let round = 0; round < 6; round++) {
+      let changed = false;
+      for (let i = 0; i < 4; i++) {
+        let best = q[i], bestArea = polygonArea(q);
+        for (const p of hull) {
+          const trial = q.slice();
+          trial[i] = p;
+          const area = polygonArea(trial);
+          if (area > bestArea + 1e-6) { bestArea = area; best = p; }
+        }
+        if (best !== q[i]) { q[i] = best; changed = true; }
+      }
+      if (!changed) break;
+    }
+    return q;
+  }
+
+  // 左上から時計回りに並べる
+  function orderQuad(q) {
+    const cx = q.reduce((s, p) => s + p[0], 0) / 4, cy = q.reduce((s, p) => s + p[1], 0) / 4;
+    const sorted = q.slice().sort((a, b) => Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx));
+    let first = 0, least = Infinity;
+    sorted.forEach((p, i) => { const v = p[0] + p[1]; if (v < least) { least = v; first = i; } });
+    return [0, 1, 2, 3].map((i) => sorted[(first + i) % 4]);
+  }
+
+  // 各辺の近くの輪郭に直線を当てはめ、角を交点へ動かす（角の丸みや指の影響を減らす）
+  function refineQuad(q, boundary, long) {
+    const near = long * 0.03;
+    const lines = q.map((a, i) => {
+      const b = q[(i + 1) % 4];
+      const dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy);
+      let n = 0, mx = 0, my = 0;
+      const pts = [];
+      for (const p of boundary) {
+        const t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (len * len);
+        const dist = Math.abs((p[0] - a[0]) * dy - (p[1] - a[1]) * dx) / len;
+        if (t > 0.08 && t < 0.92 && dist < near) { pts.push(p); n++; mx += p[0]; my += p[1]; }
+      }
+      if (n < 8) return { px: a[0], py: a[1], dx, dy };
+      mx /= n; my /= n;
+      let sxx = 0, sxy = 0, syy = 0;
+      for (const p of pts) {
+        const x = p[0] - mx, y = p[1] - my;
+        sxx += x * x; sxy += x * y; syy += y * y;
+      }
+      const theta = Math.atan2(2 * sxy, sxx - syy) / 2;
+      return { px: mx, py: my, dx: Math.cos(theta), dy: Math.sin(theta) };
+    });
+    return q.map((corner, i) => {
+      const l1 = lines[(i + 3) % 4], l2 = lines[i];
+      const den = l1.dx * l2.dy - l1.dy * l2.dx;
+      if (Math.abs(den) < 1e-6) return corner;
+      const t = ((l2.px - l1.px) * l2.dy - (l2.py - l1.py) * l2.dx) / den;
+      const x = l1.px + t * l1.dx, y = l1.py + t * l1.dy;
+      return Math.hypot(x - corner[0], y - corner[1]) > long * 0.06 ? corner : [x, y];
+    });
+  }
+
+  function quadFromMask(mask, w, h) {
+    const long = Math.max(w, h);
+    const comp = largestComponent(mask, w, h);
+    if (comp.area < w * h * 0.1) return null;
+    const inside = (x, y) => x >= 0 && y >= 0 && x < w && y < h && comp.label[y * w + x] === comp.id;
+    const boundary = [];
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (inside(x, y) && !(inside(x - 1, y) && inside(x + 1, y) && inside(x, y - 1) && inside(x, y + 1))) boundary.push([x + 0.5, y + 0.5]);
+      }
+    }
+    const hull = convexHull(boundary);
+    if (hull.length < 4) return null;
+    const q = orderQuad(refineQuad(orderQuad(largestQuad(hull)), boundary, long));
+    const area = polygonArea(q);
+    const frac = area / (w * h);
+    if (frac < 0.1 || frac > 0.97 || !isConvexQuad(q)) return null;
+    const fill = comp.area / area;
+    if (fill < 0.86 || fill > 1.08) return null;
+    for (let i = 0; i < 4; i++) {
+      const a = q[(i + 3) % 4], b = q[i], c = q[(i + 1) % 4];
+      const ux = a[0] - b[0], uy = a[1] - b[1], vx = c[0] - b[0], vy = c[1] - b[1];
+      const lu = Math.hypot(ux, uy), lv = Math.hypot(vx, vy);
+      if (lu < long * 0.12 || lv < long * 0.12) return null;
+      if (Math.abs((ux * vx + uy * vy) / (lu * lv)) > 0.55) return null; // 角が約57〜123度の範囲
+    }
+    return { q, frac, fill, score: Math.min(1, fill) * (0.6 + 0.4 * Math.sqrt(frac)) };
+  }
+
+  function detectDocument(rgba, w, h) {
+    const n = w * h;
+    const Y = new Float32Array(n), U = new Float32Array(n), V = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const r = rgba[i * 4], g = rgba[i * 4 + 1], b = rgba[i * 4 + 2];
+      Y[i] = 0.299 * r + 0.587 * g + 0.114 * b;
+      U[i] = (b - Y[i]) * 0.56;
+      V[i] = (r - Y[i]) * 0.71;
+    }
+    for (const a of [Y, U, V]) { boxBlur(a, w, h); boxBlur(a, w, h); }
+
+    // 候補1：外周（背景）の色との違い
+    const margin = Math.max(2, Math.round(Math.min(w, h) * 0.03));
+    const ring = [[], [], []];
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (x < margin || y < margin || x >= w - margin || y >= h - margin) {
+          const i = y * w + x;
+          ring[0].push(Y[i]); ring[1].push(U[i]); ring[2].push(V[i]);
+        }
+      }
+    }
+    const my = median(ring[0]), mu = median(ring[1]), mv = median(ring[2]);
+    const dist = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      dist[i] = Math.min(255, Math.sqrt((Y[i] - my) ** 2 + 2 * (U[i] - mu) ** 2 + 2 * (V[i] - mv) ** 2));
+    }
+    const t = otsu(dist);
+    const wallAt = (limit) => {
+      const wall = new Uint8Array(n);
+      for (let i = 0; i < n; i++) wall[i] = dist[i] > limit ? 1 : 0;
+      return wall;
+    };
+
+    // 候補2：輪郭で囲まれた部分
+    const grad = new Float32Array(n);
+    for (let y = 1; y < h - 1; y++) {
+      for (let x = 1; x < w - 1; x++) {
+        const i = y * w + x;
+        let sum = 0;
+        for (const a of [Y, U, V]) {
+          const gx = a[i - w + 1] + 2 * a[i + 1] + a[i + w + 1] - a[i - w - 1] - 2 * a[i - 1] - a[i + w - 1];
+          const gy = a[i + w - 1] + 2 * a[i + w] + a[i + w + 1] - a[i - w - 1] - 2 * a[i - w] - a[i - w + 1];
+          sum += gx * gx + gy * gy;
+        }
+        grad[i] = Math.min(255, Math.sqrt(sum) / 2);
+      }
+    }
+    const edgeT = Math.max(otsu(grad), 6);
+    const edgeWall = new Uint8Array(n);
+    for (let i = 0; i < n; i++) edgeWall[i] = grad[i] > edgeT ? 1 : 0;
+    const closed = morph(edgeWall, w, h, false);
+
+    const candidates = [];
+    for (const [wall, r] of [[wallAt(Math.max(t, 14)), 2], [wallAt(Math.max(t * 0.45, 14)), 2], [closed, 3]]) {
+      const found = quadFromMask(openMask(enclosed(wall, w, h), w, h, r), w, h);
+      if (found) candidates.push(found);
+    }
+    if (!candidates.length) return null;
+    // 紙の一部（濃い帯など）が背景に似ると狭い候補ができるので、きれいな四角形なら広いほうを優先する
+    const clean = candidates.filter((c) => c.fill >= 0.92);
+    const best = clean.length
+      ? clean.reduce((a, b) => (b.frac > a.frac ? b : a))
+      : candidates.reduce((a, b) => (b.score > a.score ? b : a));
+    // ぼかしの分だけ外へ広がるので、机の色が縁に残らないよう少し内側へ寄せる
+    const cx = best.q.reduce((s, p) => s + p[0], 0) / 4, cy = best.q.reduce((s, p) => s + p[1], 0) / 4;
+    const inset = Math.max(w, h) * 0.012;
+    return best.q.map((p) => {
+      const k = 1 - inset / Math.hypot(p[0] - cx, p[1] - cy);
+      return [Math.min(1, Math.max(0, (cx + (p[0] - cx) * k) / w)), Math.min(1, Math.max(0, (cy + (p[1] - cy) * k) / h))];
+    });
   }
 
   // 回転と切り抜きのあとの大きさと、書き出すときの縮小率を決める。
@@ -369,7 +739,7 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     return s + ".pdf";
   }
 
-  const api = { PAPERS, QUALITY, placeImage, rotateCropRight, outputSize, enhanceDocument, readJpegInfo, buildPdf, formatBytes, safeFilename };
+  const api = { PAPERS, QUALITY, placeImage, fullQuad, rotateQuadRight, quadToCrop, isConvexQuad, quadOutput, warpQuad, detectDocument, outputSize, enhanceDocument, readJpegInfo, buildPdf, formatBytes, safeFilename };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.CameraPdf = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);
@@ -378,7 +748,6 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
 (function () {
   const C = window.CameraPdf;
   const $ = (id) => document.getElementById(id);
-  const FULL = { x: 0, y: 0, w: 1, h: 1 };
   let pages = [];
   let nextId = 1;
   let pdf = null; // { bytes, filename }
@@ -406,22 +775,55 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     });
   }
 
+  function makeCanvas(w, h) {
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.imageSmoothingQuality = "high";
+    return { canvas, ctx };
+  }
+
+  function drawRotated(ctx, page, rotW, rotH) {
+    ctx.translate(rotW / 2, rotH / 2);
+    ctx.rotate((page.rotation * Math.PI) / 180);
+    ctx.drawImage(page.img, -page.img.naturalWidth / 2, -page.img.naturalHeight / 2);
+  }
+
   function renderPage(page, maxSide, finish) {
     const img = page.img;
-    const s = C.outputSize(img.naturalWidth, img.naturalHeight, page.rotation, page.crop, maxSide);
-    const canvas = document.createElement("canvas");
-    canvas.width = s.width;
-    canvas.height = s.height;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, s.width, s.height);
-    ctx.imageSmoothingQuality = "high";
-    ctx.scale(s.width / s.cropW, s.height / s.cropH);
-    ctx.translate(-s.cropX, -s.cropY);
-    ctx.translate(s.rotW / 2, s.rotH / 2);
-    ctx.rotate((page.rotation * Math.PI) / 180);
-    ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
+    const crop = C.quadToCrop(page.quad);
+    let canvas, ctx;
+    if (crop) {
+      const s = C.outputSize(img.naturalWidth, img.naturalHeight, page.rotation, crop, maxSide);
+      ({ canvas, ctx } = makeCanvas(s.width, s.height));
+      ctx.scale(s.width / s.cropW, s.height / s.cropH);
+      ctx.translate(-s.cropX, -s.cropY);
+      drawRotated(ctx, page, s.rotW, s.rotH);
+    } else {
+      // 斜めの範囲：出力に合う大きさの写真から、長方形へ写す
+      const turned = page.rotation % 180 !== 0;
+      const rotW = turned ? img.naturalHeight : img.naturalWidth;
+      const rotH = turned ? img.naturalWidth : img.naturalHeight;
+      const out = C.quadOutput(rotW, rotH, page.quad, maxSide);
+      // 写す元は少し大きめにして、細い文字がギザギザになるのを防ぐ
+      const srcScale = Math.min(1, out.scale * 1.6);
+      const sw = Math.max(2, Math.round(rotW * srcScale));
+      const sh = Math.max(2, Math.round(rotH * srcScale));
+      const src = makeCanvas(sw, sh);
+      src.ctx.scale(sw / rotW, sh / rotH);
+      drawRotated(src.ctx, page, rotW, rotH);
+      const srcData = src.ctx.getImageData(0, 0, sw, sh);
+      ({ canvas, ctx } = makeCanvas(out.width, out.height));
+      const dst = ctx.createImageData(out.width, out.height);
+      C.warpQuad(srcData.data, sw, sh, page.quad.map((p) => [p[0] * sw, p[1] * sh]), dst.data, out.width, out.height);
+      ctx.putImageData(dst, 0, 0);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
     if (finish === "doc") {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       const data = ctx.getImageData(0, 0, s.width, s.height);
       C.enhanceDocument(data.data);
       ctx.putImageData(data, 0, 0);
@@ -462,8 +864,15 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
       add("前へ", () => move(i, -1), { disabled: i === 0 });
       add("後ろへ", () => move(i, 1), { disabled: i === pages.length - 1 });
       add("右に回す", () => rotate(page));
-      add("切り抜く", () => openCrop(page));
+      add("範囲を直す", () => openCrop(page));
       add("削除", () => remove(i), { cls: "del" });
+      const range = document.createElement("div");
+      const miss = page.range === "miss";
+      range.className = miss ? "range miss" : "range";
+      range.textContent = miss ? "書類の範囲を見つけられませんでした。「範囲を直す」で選べます。" :
+        page.range === "auto" ? "書類の範囲を自動で選びました。" :
+        page.range === "manual" ? "自分で選んだ範囲です。" : "写真全体です。";
+      tools.appendChild(range);
       li.append(thumb, tools);
       list.appendChild(li);
     });
@@ -485,7 +894,7 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
 
   function rotate(page) {
     page.rotation = (page.rotation + 90) % 360;
-    page.crop = C.rotateCropRight(page.crop);
+    page.quad = C.rotateQuadRight(page.quad);
     clearResult();
     draw();
   }
@@ -514,13 +923,28 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     draw();
   });
 
+  // 小さくした写真で書類の四隅を探す。回転後の向きで探すので、選び直しにも使える。
+  function detectRange(page) {
+    try {
+      const whole = { img: page.img, rotation: page.rotation, quad: C.fullQuad() };
+      const small = renderPage(whole, 320, "photo");
+      const data = small.getContext("2d").getImageData(0, 0, small.width, small.height);
+      return C.detectDocument(data.data, small.width, small.height);
+    } catch (e) {
+      return null;
+    }
+  }
+
   async function addBlobs(blobs) {
     let failed = 0;
     say("写真を読み込んでいます");
     for (const blob of blobs) {
       try {
         const { img, url } = await loadImage(blob);
-        pages.push({ id: nextId++, img, url, rotation: 0, crop: { ...FULL } });
+        const page = { id: nextId++, img, url, rotation: 0, quad: C.fullQuad(), range: "miss" };
+        const found = detectRange(page);
+        if (found) { page.quad = found; page.range = "auto"; }
+        pages.push(page);
       } catch (e) {
         failed++;
       }
@@ -542,12 +966,17 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
   }
 
   // 架空の書類を描いて、撮った写真の代わりにする
-  function sampleBlob(title, rows, tint, wide) {
+  function sampleBlob(title, rows, tint, wide, tilt) {
     const w = wide ? 1400 : 1000;
     const h = wide ? 1000 : 1414;
     const c = document.createElement("canvas");
-    c.width = w; c.height = h;
+    c.width = wide ? 1800 : 1300;
+    c.height = wide ? 1350 : 1750;
     const x = c.getContext("2d");
+    x.fillStyle = "#3b4644"; x.fillRect(0, 0, c.width, c.height);
+    x.translate(c.width / 2, c.height / 2);
+    x.rotate((tilt * Math.PI) / 180);
+    x.translate(-w / 2, -h / 2);
     x.fillStyle = tint; x.fillRect(0, 0, w, h);
     x.fillStyle = "#2b2b2b";
     x.font = "bold 56px sans-serif"; x.fillText(title, 80, 130);
@@ -565,9 +994,9 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     $("sample").disabled = true;
     say("見本を用意しています");
     const blobs = await Promise.all([
-      sampleBlob("納品書", [["ノート 3冊", "1,200円"], ["ペン 5本", "750円"], ["封筒 20枚", "400円"], ["合計", "2,350円"]], "#d9d4c5"),
-      sampleBlob("打ち合わせメモ", [["日時", "11月5日 10時"], ["場所", "第2会議室"], ["次回", "11月19日"]], "#cfd6d8"),
-      sampleBlob("横長の見取り図", [["入口", "左"], ["受付", "中央"]], "#d8d2d0", true),
+      sampleBlob("納品書", [["ノート 3冊", "1,200円"], ["ペン 5本", "750円"], ["封筒 20枚", "400円"], ["合計", "2,350円"]], "#efeee6", false, -5),
+      sampleBlob("打ち合わせメモ", [["日時", "11月5日 10時"], ["場所", "第2会議室"], ["次回", "11月19日"]], "#e8eef0", false, 4),
+      sampleBlob("横長の見取り図", [["入口", "左"], ["受付", "中央"]], "#f0ecea", true, 3),
     ]);
     await addBlobs(blobs);
     $("sample").disabled = false;
@@ -649,23 +1078,37 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     }
   });
 
-  // 切り抜き
+  // 範囲を直す画面。pts は表示上のピクセルで持ち、決定のときに割合へ戻す。
   let cropPage = null;
-  let box = null; // 表示上の px
+  let cropRange = "manual";
+  let pts = null;
   let view = null;
+  const handles = Array.from(document.querySelectorAll(".handle"));
 
-  function placeFrame() {
-    const f = $("frame").style;
-    f.left = box.x + "px"; f.top = box.y + "px"; f.width = box.w + "px"; f.height = box.h + "px";
+  function placeRange() {
+    const line = pts.map((p) => p[0] + "," + p[1]).join(" ");
+    $("outline").setAttribute("points", line);
+    const path = "M0 0H" + view.w + "V" + view.h + "H0Z M" + pts.map((p) => p[0] + " " + p[1]).join(" L") + "Z";
+    $("shade").setAttribute("d", path);
+    handles.forEach((h, i) => { h.style.left = pts[i][0] + "px"; h.style.top = pts[i][1] + "px"; });
+  }
+
+  function setRange(quad) {
+    pts = quad.map((p) => [p[0] * view.w, p[1] * view.h]);
+    placeRange();
   }
 
   function openCrop(page) {
     cropPage = page;
-    const whole = { ...page, crop: { ...FULL } };
+    cropRange = page.range;
     $("crop").hidden = false;
-    const area = $("stageBox").getBoundingClientRect();
-    const src = renderPage(whole, 1400, "photo");
-    const scale = Math.min(area.width / src.width, area.height / src.height);
+    $("cropNote").textContent = page.range === "miss" ? "自動では見つけられませんでした。丸を動かして選んでください。" : "";
+    const box = $("stageBox");
+    const style = getComputedStyle(box);
+    const areaW = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const areaH = box.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    const src = renderPage({ img: page.img, rotation: page.rotation, quad: C.fullQuad() }, 1400, "photo");
+    const scale = Math.min(areaW / src.width, areaH / src.height);
     const canvas = $("cropCanvas");
     canvas.width = src.width;
     canvas.height = src.height;
@@ -673,51 +1116,98 @@ header p { margin: 2px 0 14px; color: var(--muted); font-size: 13px; }
     view = { w: Math.floor(src.width * scale), h: Math.floor(src.height * scale) };
     canvas.style.width = view.w + "px";
     canvas.style.height = view.h + "px";
-    box = { x: page.crop.x * view.w, y: page.crop.y * view.h, w: page.crop.w * view.w, h: page.crop.h * view.h };
-    placeFrame();
+    $("stage").style.width = view.w + "px";
+    $("stage").style.height = view.h + "px";
+    $("overlay").setAttribute("viewBox", "0 0 " + view.w + " " + view.h);
+    setRange(page.quad);
     $("cropOk").focus();
   }
   function closeCrop() {
     $("crop").hidden = true;
+    $("loupe").hidden = true;
     cropPage = null;
   }
 
-  const MIN = 40;
+  // 指で角が隠れるので、動かしている所を拡大して見せる
+  function drawLoupe(p) {
+    const lens = $("loupe");
+    const photo = $("cropCanvas");
+    const zoom = 3;
+    const sx = photo.width / view.w;
+    const half = 56 / zoom;
+    lens.hidden = false;
+    // 指と重ならないよう、左半分を触っているときは右に出す
+    lens.classList.toggle("right", p[0] < view.w / 2);
+    const ctx = lens.getContext("2d");
+    ctx.fillStyle = "#0d1413";
+    ctx.fillRect(0, 0, 224, 224);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(112, 112, 112, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(photo, (p[0] - half) * sx, (p[1] - half) * sx, half * 2 * sx, half * 2 * sx, 0, 0, 224, 224);
+    ctx.strokeStyle = "#e8b21c";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(112, 84); ctx.lineTo(112, 140); ctx.moveTo(84, 112); ctx.lineTo(140, 112);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   let drag = null;
-  $("frame").addEventListener("pointerdown", (e) => {
+  $("stage").addEventListener("pointerdown", (e) => {
+    const t = e.target;
+    const corner = t.dataset && t.dataset.i !== undefined ? Number(t.dataset.i) : null;
+    if (corner === null && !(t.dataset && t.dataset.move)) return;
     e.preventDefault();
-    $("frame").setPointerCapture(e.pointerId);
-    drag = { id: e.pointerId, kind: e.target.dataset.h || "move", sx: e.clientX, sy: e.clientY, start: { ...box } };
+    $("stage").setPointerCapture(e.pointerId);
+    drag = { id: e.pointerId, corner, sx: e.clientX, sy: e.clientY, start: pts.map((p) => p.slice()) };
+    if (corner !== null) drawLoupe(pts[corner]);
   });
-  $("frame").addEventListener("pointermove", (e) => {
+  $("stage").addEventListener("pointermove", (e) => {
     if (!drag || e.pointerId !== drag.id) return;
     const dx = e.clientX - drag.sx;
     const dy = e.clientY - drag.sy;
-    const s = drag.start;
-    if (drag.kind === "move") {
-      box.x = Math.min(view.w - s.w, Math.max(0, s.x + dx));
-      box.y = Math.min(view.h - s.h, Math.max(0, s.y + dy));
+    if (drag.corner === null) {
+      const xs = drag.start.map((p) => p[0]), ys = drag.start.map((p) => p[1]);
+      const mx = Math.min(view.w - Math.max(...xs), Math.max(-Math.min(...xs), dx));
+      const my = Math.min(view.h - Math.max(...ys), Math.max(-Math.min(...ys), dy));
+      pts = drag.start.map((p) => [p[0] + mx, p[1] + my]);
     } else {
-      let left = s.x, top = s.y, right = s.x + s.w, bottom = s.y + s.h;
-      if (drag.kind.includes("w")) left = Math.max(0, Math.min(right - MIN, left + dx));
-      if (drag.kind.includes("e")) right = Math.min(view.w, Math.max(left + MIN, right + dx));
-      if (drag.kind.includes("n")) top = Math.max(0, Math.min(bottom - MIN, top + dy));
-      if (drag.kind.includes("s")) bottom = Math.min(view.h, Math.max(top + MIN, bottom + dy));
-      box = { x: left, y: top, w: right - left, h: bottom - top };
+      const next = pts.map((p) => p.slice());
+      const from = drag.start[drag.corner];
+      next[drag.corner] = [Math.min(view.w, Math.max(0, from[0] + dx)), Math.min(view.h, Math.max(0, from[1] + dy))];
+      if (!C.isConvexQuad(next)) return; // ねじれる位置には動かさない
+      pts = next;
+      drawLoupe(pts[drag.corner]);
     }
-    placeFrame();
+    cropRange = "manual";
+    $("cropNote").textContent = "";
+    placeRange();
   });
-  const endDrag = () => { drag = null; };
-  $("frame").addEventListener("pointerup", endDrag);
-  $("frame").addEventListener("pointercancel", endDrag);
+  const endDrag = () => { drag = null; $("loupe").hidden = true; };
+  $("stage").addEventListener("pointerup", endDrag);
+  $("stage").addEventListener("pointercancel", endDrag);
 
   $("cropCancel").addEventListener("click", closeCrop);
   $("cropReset").addEventListener("click", () => {
-    box = { x: 0, y: 0, w: view.w, h: view.h };
-    placeFrame();
+    setRange(C.fullQuad());
+    cropRange = "whole";
+    $("cropNote").textContent = "";
+  });
+  $("cropAuto").addEventListener("click", () => {
+    const found = detectRange(cropPage);
+    if (found) {
+      setRange(found);
+      cropRange = "auto";
+      $("cropNote").textContent = "書類の範囲を選び直しました。";
+    } else {
+      $("cropNote").textContent = "自動では見つけられませんでした。丸を動かして選んでください。";
+    }
   });
   $("cropOk").addEventListener("click", () => {
-    cropPage.crop = { x: box.x / view.w, y: box.y / view.h, w: box.w / view.w, h: box.h / view.h };
+    cropPage.quad = pts.map((p) => [p[0] / view.w, p[1] / view.h]);
+    cropPage.range = cropRange;
     closeCrop();
     clearResult();
     draw();

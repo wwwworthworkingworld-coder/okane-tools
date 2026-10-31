@@ -1,4 +1,4 @@
-const CACHE = "camera-pdf-5fd37bbdcd56";
+const CACHE = "camera-pdf-531761283084";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES))));
 self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) =>
