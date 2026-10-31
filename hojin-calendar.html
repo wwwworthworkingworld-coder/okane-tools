@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ひとり法人の年間カレンダー2027｜決算月を選ぶと期限が分かる</title>
+<meta name="description" content="決算月を選ぶと、ひとり法人の2027年の期限（法人税・消費税・源泉所得税・法定調書・算定基礎届など）が日付順に出ます。土日祝と年末年始の繰り下げ込み。">
+<link rel="stylesheet" href="assets/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>ひとり法人の年間カレンダー2027</h1>
+  <p class="lead">決算月を選ぶと、自分の会社の2027年の期限が日付順に出ます。土日祝と年末年始は繰り下げ済みです。従業員のいない会社を想定しています。</p>
+  <p class="note" style="margin-top:-6px">最終更新：2026年11月</p>
+
+  <section class="card">
+    <h2>入力</h2>
+    <div class="grid">
+      <div><label for="kind">会社の種類</label><div class="field"><select id="kind"><option>株式会社</option><option>合同会社</option></select></div></div>
+      <div><label for="month">決算月</label><div class="field"><select id="month"></select><span class="unit">月</span></div></div>
+      <div><label for="gen">源泉所得税</label><div class="field"><select id="gen"><option>納期の特例</option><option>毎月納付</option></select></div></div>
+      <div><label for="jumin">住民税の天引き</label><div class="field"><select id="jumin"><option>なし</option><option>納期の特例</option><option>毎月納付</option></select></div></div>
+      <div><label for="sho">消費税</label><div class="field"><select id="sho"><option>納める</option><option>納めない（免税）</option></select></div></div>
+    </div>
+    <p class="note">納期の特例は、税務署や市区町村の承認を受けて年2回にまとめて納める方法です。役員報酬を払っていない会社は、源泉と住民税の行は関係ありません。</p>
+  </section>
+
+  <section class="card">
+    <h2>2027年の期限</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>期限</th><th>やること</th><th>出し先</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card">
+    <h2>毎月のこと</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>月</th><th>源泉所得税</th><th>住民税</th><th>社会保険料</th></tr></thead>
+      <tbody id="months"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card article">
+    <h2>日付が会社ごとに決まるもの</h2>
+    <ul>
+      <li><strong>取締役の再任</strong>：株式会社は任期が来たら、再任でも2週間以内に登記します。任期は原則2年で、定款で10年まで延ばせます。</li>
+      <li><strong>決算公告</strong>：株式会社は定時株主総会のあとすぐに行います。</li>
+      <li><strong>賞与支払届</strong>：賞与を払ったら5日以内です。</li>
+      <li><strong>年末調整</strong>：役員報酬を払っているなら12月の報酬で行います。</li>
+      <li><strong>均等割</strong>：赤字でもかかり、確定申告と一緒に納めます。</li>
+    </ul>
+    <h2>参考にした資料</h2>
+    <ul>
+      <li><a href="https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/shinkoku/01.htm" target="_blank" rel="noopener">国税庁 法人税の申告</a></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm" target="_blank" rel="noopener">国税庁 No.2505 源泉所得税の納付期限と納期の特例</a></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6609.htm" target="_blank" rel="noopener">国税庁 No.6609 消費税の中間申告</a></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5211.htm" target="_blank" rel="noopener">国税庁 No.5211 役員に対する給与</a></li>
+      <li><a href="https://www.nenkin.go.jp/service/kounen/hokenryo/hoshu/20121017.html" target="_blank" rel="noopener">日本年金機構 算定基礎届</a></li>
+      <li><a href="https://www.moj.go.jp/MINJI/minji06_00091.html" target="_blank" rel="noopener">法務省 役員の変更の登記</a></li>
+    </ul>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<script src="assets/ui.js"></script>
+<script src="assets/hojin-calendar.js"></script>
+<script>
+const sel = UI.$("month");
+for (let i = 1; i <= 12; i++) sel.add(new Option(i, i, i === 3, i === 3));
+UI.watch(() => {
+  const r = HojinCalendar.calc(UI.$("kind").value, Number(sel.value), UI.$("gen").value, UI.$("jumin").value, UI.$("sho").value);
+  const esc = (s) => s;
+  UI.$("rows").innerHTML = r.rows.map((x) => `<tr><td style="white-space:nowrap"><strong>${HojinCalendar.fmt(x.date)}</strong></td><td>${esc(x.text)}</td><td>${esc(x.to)}</td></tr>`).join("");
+  const d = (v) => (v ? HojinCalendar.fmt(v) : "―");
+  UI.$("months").innerHTML = r.months.map((x) => `<tr><td>${x.m}月</td><td>${d(x.gen)}</td><td>${d(x.jumin)}</td><td>${d(x.sha)}</td></tr>`).join("");
+});
+</script>
+</body>
+</html>
