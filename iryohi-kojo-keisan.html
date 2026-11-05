@@ -23,14 +23,15 @@
       <div class="grid">
         <div><label for="other">病院・歯科・薬局の医療費 <small>（家族全員分。出産と入院・手術は下の欄に）</small></label><div class="field"><input id="other" type="number" inputmode="numeric" value="120000"><span class="unit">円</span></div></div>
         <div><label for="transport">通院の交通費 <small>（電車・バス。付き添いの分も）</small></label><div class="field"><input id="transport" type="number" inputmode="numeric" value="8000"><span class="unit">円</span></div></div>
-        <div><label for="birthCost">出産の費用 <small>（妊婦健診・分娩・入院の合計。一時金を引く前の、病院に払った全額。なければ0）</small></label><div class="field"><input id="birthCost" type="number" inputmode="numeric" value="580000"><span class="unit">円</span></div></div>
-        <div><label for="birthComp">出産育児一時金 <small>（1児50万円。病院に直接払われた分も含む。自治体の出産費用助成があれば足す。上の費用から自動で引きます）</small></label><div class="field"><input id="birthComp" type="number" inputmode="numeric" value="500000"><span class="unit">円</span></div></div>
-        <div><label for="hospCost">入院・手術の費用 <small>（出産以外。保険金を引く前の、病院に払った全額。なければ0）</small></label><div class="field"><input id="hospCost" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+        <div><label for="birthCost">出産にかかった費用の総額 <small>（妊婦健診・分娩・入院の合計。病院の明細の「合計」で、一時金が病院に直接払われた分も含めます。窓口で払った差額ではありません。なければ0）</small></label><div class="field"><input id="birthCost" type="number" inputmode="numeric" value="580000"><span class="unit">円</span></div></div>
+        <div><label for="birthComp">出産育児一時金 <small>（1児50万円。病院に直接払われた場合も50万円と入れます。自治体の出産費用助成があれば足す。上の総額から自動で引きます）</small></label><div class="field"><input id="birthComp" type="number" inputmode="numeric" value="500000"><span class="unit">円</span></div></div>
+        <div><label for="hospCost">入院・手術の費用の総額 <small>（出産以外。病院の明細の合計。高額療養費が窓口で引かれていたら、引かれる前の額。なければ0）</small></label><div class="field"><input id="hospCost" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
         <div><label for="hospComp">その入院・手術で受け取った保険金 <small>（医療保険の入院給付金・手術給付金、高額療養費、健保の付加給付。<a href="#hoten">何を入れるか</a>）</small></label><div class="field"><input id="hospComp" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
         <div><label for="otc">セルフメディケーション対象の市販薬 <small>（レシートに対象の印がある薬）</small></label><div class="field"><input id="otc" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
         <div><label for="otcQualified">健康診断・予防接種などを受けた <small>（申告する本人。セルフメディケーション税制の条件）</small></label><div class="field"><select id="otcQualified"><option value="1">受けた</option><option value="0">受けていない</option></select></div></div>
       </div>
     </fieldset>
+    <p class="note" style="margin-top:0">例：病院の請求が58万円で、一時金50万円が病院に直接払われ、窓口で8万円を払った場合は「総額58万円」「一時金50万円」と入れます。対象になるのは差額の8万円です。</p>
     <fieldset>
       <legend>申告する人の候補（源泉徴収票から）</legend>
       <p class="note" style="margin-top:0">「給与所得控除後の金額」と「所得控除の額の合計額」は源泉徴収票に載っています。給与以外の所得がある人は、総所得金額等と所得控除の合計を入れてください。</p>
