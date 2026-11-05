@@ -398,6 +398,66 @@ const Calc = (() => {
     return { net, otcBase, persons, best };
   }
 
+  /* 給与所得（給与収入 − 給与所得控除）。year："r7"（令和7年分）| "r8"（令和8年分・令和9年分）。国税庁 No.1410
+   * 660万円未満は本来は別表第五で求めるが、ここでは計算式で近似する */
+  function salaryIncome(revenue, year) {
+    const x = Math.max(0, revenue || 0);
+    const min = year === "r7" ? 650000 : 740000, flat = year === "r7" ? 1900000 : 2200000;
+    let ded;
+    if (x <= flat) ded = min;
+    else if (x <= 3600000) ded = x * 0.3 + 80000;
+    else if (x <= 6600000) ded = x * 0.2 + 440000;
+    else if (x <= 8500000) ded = x * 0.1 + 1100000;
+    else ded = 1950000;
+    return Math.max(0, fl(x - ded));
+  }
+  // 基礎控除（令和7年分）。令和8年分以後は basicDeduction
+  function basicDeductionR7(x) {
+    if (x <= 1320000) return 950000;
+    if (x <= 3360000) return 880000;
+    if (x <= 4890000) return 680000;
+    if (x <= 6550000) return 630000;
+    if (x <= 23500000) return 580000;
+    return basicDeduction(x);
+  }
+
+  /* 配偶者控除・配偶者特別控除（国税庁 No.1191・No.1195）
+   * p: { year（"r7"|"r8"）, spouseSalary（配偶者の給与収入）, spouseOther（配偶者の給与以外の所得）,
+   *      selfSalary（本人の給与収入）, selfOther（本人の給与以外の所得）, selfTaxable（本人の課税所得。0なら概算） }
+   * 返り値: kind（"haigusha"|"tokubetsu"|"none"）, deduction（所得税）, residentDeduction（住民税）, 減る税金の目安 など
+   */
+  function spouseDeduction(p) {
+    const year = p.year === "r7" ? "r7" : "r8";
+    const spouseIncome = salaryIncome(p.spouseSalary, year) + Math.max(0, p.spouseOther || 0);
+    const selfIncome = salaryIncome(p.selfSalary, year) + Math.max(0, p.selfOther || 0);
+    const limit = year === "r7" ? 580000 : 620000;
+    const col = selfIncome <= 9000000 ? 0 : selfIncome <= 9500000 ? 1 : selfIncome <= 10000000 ? 2 : -1;
+    const FULL = [380000, 260000, 130000], RES = [330000, 220000, 110000];
+    const BANDS = [[950000, [38, 26, 13]], [1000000, [36, 24, 12]], [1050000, [31, 21, 11]], [1100000, [26, 18, 9]],
+      [1150000, [21, 14, 7]], [1200000, [16, 11, 6]], [1250000, [11, 8, 4]], [1300000, [6, 4, 2]], [1330000, [3, 2, 1]]];
+    let kind = "none", deduction = 0, residentDeduction = 0, reason = "";
+    if (col < 0) reason = "selfIncome";
+    else if (spouseIncome <= limit) { kind = "haigusha"; deduction = FULL[col]; residentDeduction = RES[col]; }
+    else {
+      const band = BANDS.find(([top]) => spouseIncome <= top);
+      if (band) { kind = "tokubetsu"; deduction = band[1][col] * 10000; residentDeduction = Math.min(deduction, RES[col]); }
+      else reason = "spouseIncome";
+    }
+    // 本人の税金が減る目安：課税所得が分からなければ、給与所得 − 社会保険料（給与の15%）− 基礎控除 で概算
+    const social = fl(Math.max(0, p.selfSalary || 0) * 0.15);
+    const basic = year === "r7" ? basicDeductionR7(selfIncome) : basicDeduction(selfIncome);
+    const taxable = p.selfTaxable > 0 ? p.selfTaxable : Math.max(0, selfIncome - social - basic);
+    const d = Math.min(deduction, taxable);
+    const incomeTaxCut = incomeTaxWithReconstruction(taxable) - incomeTaxWithReconstruction(taxable - d);
+    const residentCut = fl(Math.min(residentDeduction, taxable) * 0.1);
+    // 配偶者控除が受けられる給与収入の上限と、配偶者特別控除の上限（合計所得133万円）
+    const min = year === "r7" ? 650000 : 740000;
+    const salaryForFull = limit + min;
+    const salaryForPartial = year === "r7" ? fl((1330000 + 80000) / 0.7) : 1330000 + min;
+    return { year, spouseIncome, selfIncome, kind, deduction, residentDeduction, reason, taxable, estimated: !(p.selfTaxable > 0),
+             incomeTaxCut, residentCut, total: incomeTaxCut + residentCut, salaryForFull, salaryForPartial };
+  }
+
   /* 手続きの期限（日付）。due：出産予定日、birth：出生日（未定なら予定日で計算） */
   function birthDeadlines(due, birth, children = 1) {
     const b = birth || due;
@@ -421,6 +481,6 @@ const Calc = (() => {
   return { incomeTax, incomeTaxWithReconstruction, basicDeduction, sideJob, depreciation, shogakuLimit, boothFee,
            stockGain, dividendCompare, nisa, TEIGAKU,
            addDays, addMonths, monthEnd, daysBetween, stdMonthly, maternityAllowance, wageDaily, childcareLeaveBenefit, postBirthBenefit,
-           childAllowanceYear, pregnancySupport, nenkinMonths, socialExemptMonths, socialMonthly, birthMoney, birthMedicalDeduction, medicalCompare, birthDeadlines };
+           childAllowanceYear, pregnancySupport, nenkinMonths, socialExemptMonths, socialMonthly, birthMoney, birthMedicalDeduction, medicalCompare, salaryIncome, spouseDeduction, birthDeadlines };
 })();
 if (typeof module !== "undefined") module.exports = Calc;
