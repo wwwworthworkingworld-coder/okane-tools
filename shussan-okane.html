@@ -39,7 +39,7 @@
         <div id="boxPartKoyo" hidden><label for="partKoyo">雇用保険 <small>（給与明細に雇用保険料があるか）</small></label><div class="field"><select id="partKoyo">
           <option value="1">入っている</option>
           <option value="0">入っていない</option></select></div></div>
-        <div><label for="pay">月収 <small>（賞与を除く・税金を引く前。比較にも使います）</small></label><div class="field"><input id="pay" type="number" inputmode="numeric" value="300000"><span class="unit">円</span></div></div>
+        <div><label for="pay">月収 <small>（賞与を除く・税金を引く前。月ごとに変わる人は直近6か月の平均。比較にも使います）</small></label><div class="field"><input id="pay" type="number" inputmode="numeric" value="300000"><span class="unit">円</span></div></div>
         <div><label for="due">出産予定日</label><div class="field"><input id="due" type="date"></div></div>
         <div><label for="children">生まれる子の人数</label><div class="field"><select id="children">
           <option value="1">1人</option><option value="2">2人（双子）</option><option value="3">3人（三つ子）</option></select></div></div>
@@ -49,7 +49,8 @@
         <div id="boxOfficer" hidden><label for="officerUnpaid">産休中の役員報酬</label><div class="field"><select id="officerUnpaid">
           <option value="1">支払わない</option><option value="0">支払う</option></select></div></div>
         <div id="boxKokuho" hidden><label for="kokuhoMonthly">本人の国保料 <small>（1か月・均等割＋所得割）</small></label><div class="field"><input id="kokuhoMonthly" type="number" inputmode="numeric" value="20000"><span class="unit">円</span></div></div>
-        <div><label for="localAmount">自治体の独自の給付 <small>（分かれば。<a href="shussan-tokyo23ku.html">東京23区</a>・<a href="shussan-todofuken.html">47都道府県</a>の比較）</small></label><div class="field"><input id="localAmount" type="number" inputmode="numeric" value="0" min="0"><span class="unit">円</span></div></div>
+        <div><label for="localArea">住んでいる自治体 <small>（選ぶと独自の給付が入ります）</small></label><div class="field"><select id="localArea"><option value="">選ばない</option></select></div></div>
+        <div><label for="localAmount">自治体の独自の給付 <small>（自分で直せます。<a href="shussan-tokyo23ku.html">東京23区</a>・<a href="shussan-todofuken.html">47都道府県</a>の比較）</small></label><div class="field"><input id="localAmount" type="number" inputmode="numeric" value="0" min="0"><span class="unit">円</span></div><small id="localNote" class="sub"></small></div>
       </div>
     </fieldset>
     <fieldset>
@@ -133,6 +134,12 @@
       </tbody>
     </table></div>
     <p>育児休業給付金は、休業前の2年間に雇用保険に入って月11日以上働いた月が12か月以上あることが条件です。期間を決めて働いている人は、子が1歳6か月になるまでに契約が終わると決まっていないことも必要です。入っているかどうかは、給与明細に「雇用保険料」「健康保険料」の控除があるかで分かります。</p>
+    <h3>月収が月ごとに変わるときの計算</h3>
+    <ul>
+      <li><strong>育児休業給付金</strong>は、休業に入る前6か月の賃金の合計÷180が「賃金日額」になります。シフトが減った月も多かった月もならして平均になり、通勤手当や残業代は入り、賞与は入りません。産休に入る直前の6か月なので、妊娠中に時間を減らしていると日額が下がります。</li>
+      <li><strong>出産手当金</strong>は、給与そのものではなく「標準報酬月額」で計算します。ふつうは毎年4〜6月の給与の平均で決まり（その年の9月から1年間使う）、大きく変わったときに見直されます。加入して12か月に満たないときは、平均と32万円の低いほうです。</li>
+      <li>このページでは、月収に直近6か月の平均を入れると、どちらもおおむね同じ目安になります。</li>
+    </ul>
     <p>個人事業主は<a href="kojin-jigyo-shussan.html">個人事業主・フリーランスの出産のお金</a>、法人の代表は<a href="yakuin-shussan-ikukyu.html">法人の代表・役員の産休と育休</a>に詳しく書いています。</p>
 
     <h2>計算のしかた</h2>
@@ -207,6 +214,52 @@ const NOTE = {
   post: "賃金日額×28日×13%",
   partnerPost: "賃金日額×最大28日×13%",
 };
+// 自治体の独自の給付（2026年10月31日に各自治体のページで確認。現金・商品券・ポイントで、ふつうの世帯が受け取れる額。上限のあるものは上限）
+// [名前, 金額, 内訳]。0は独自の現金給付が公式で見つからなかった自治体
+const TOKYO_COMMON = 130000, TOKYO_NOTE = "東京都の赤ちゃんファースト13万円相当";
+const LOCAL = {
+  "東京23区": [
+    ["千代田区", 355000, "出産費用助成 最大31万円＋誕生準備手当 45,000円"], ["中央区", 62000, "買物・食事券5万円分＋タクシー券1.2万円分"],
+    ["港区", 310000, "出産費用助成 最大31万円"], ["新宿区", 0, ""], ["文京区", 0, ""], ["台東区", 50000, "出産費用助成 5万円"],
+    ["墨田区", 0, ""], ["江東区", 10000, "こども商品券1万円分"], ["品川区", 0, ""], ["目黒区", 20000, "新生児誕生祝金 2万円"],
+    ["大田区", 0, ""], ["世田谷区", 10000, "子育て利用券1万円分"], ["渋谷区", 100000, "出産助成金 上限10万円"], ["中野区", 0, ""],
+    ["杉並区", 30000, "子育て応援券3万円分"], ["豊島区", 0, ""], ["北区", 0, ""], ["荒川区", 0, ""], ["板橋区", 0, ""], ["練馬区", 0, ""],
+    ["足立区", 100000, "出産費助成 最大10万円"], ["葛飾区", 50000, "出産応援給付金 5万円"], ["江戸川区", 156000, "乳児養育手当 月13,000円×12回"],
+  ],
+  "都道府県（県庁所在地）": [
+    ["北海道 札幌市", 0, ""], ["青森県 青森市", 0, ""], ["岩手県 盛岡市", 0, ""], ["宮城県 仙台市", 0, ""],
+    ["秋田県 秋田市", 20000, "あきた出産・子育て応援給付金 こども1人2万円"], ["山形県 山形市", 0, ""], ["福島県 福島市", 0, ""],
+    ["茨城県 水戸市", 0, ""], ["栃木県 宇都宮市", 0, ""], ["群馬県 前橋市", 0, ""], ["埼玉県 さいたま市", 0, ""], ["千葉県 千葉市", 0, ""],
+    ["神奈川県 横浜市", 90000, "横浜市 出産費用助成金 最大9万円"], ["新潟県 新潟市", 0, ""],
+    ["富山県 富山市", 30000, "富山県 子育て支援ポイント 1歳半で3万円分"], ["石川県 金沢市", 0, ""], ["福井県 福井市", 0, ""],
+    ["山梨県 甲府市", 0, ""], ["長野県 長野市", 0, ""], ["岐阜県 岐阜市", 0, "第二子以降の出産祝金は2026年3月で終了"], ["静岡県 静岡市", 0, ""],
+    ["愛知県 名古屋市", 0, "愛知県の子育て応援給付金5万円は低所得世帯のみ"], ["三重県 津市", 0, ""], ["滋賀県 大津市", 0, ""],
+    ["京都府 京都市", 0, ""], ["大阪府 大阪市", 0, ""], ["兵庫県 神戸市", 0, ""], ["奈良県 奈良市", 0, ""], ["和歌山県 和歌山市", 0, ""],
+    ["鳥取県 鳥取市", 0, ""], ["島根県 松江市", 0, ""], ["岡山県 岡山市", 0, ""], ["広島県 広島市", 0, ""], ["山口県 山口市", 0, ""],
+    ["徳島県 徳島市", 0, ""], ["香川県 高松市", 0, ""], ["愛媛県 松山市", 0, ""], ["高知県 高知市", 0, ""],
+    ["福岡県 福岡市", 0, ""], ["佐賀県 佐賀市", 0, ""], ["長崎県 長崎市", 0, ""], ["熊本県 熊本市", 0, ""], ["大分県 大分市", 0, ""],
+    ["宮崎県 宮崎市", 0, ""], ["鹿児島県 鹿児島市", 0, ""], ["沖縄県 那覇市", 0, ""],
+  ],
+};
+{
+  const sel = UI.$("localArea");
+  Object.entries(LOCAL).forEach(([group, rows]) => {
+    const og = document.createElement("optgroup"); og.label = group;
+    rows.forEach(([name], i) => { const o = document.createElement("option"); o.value = group + ":" + i; o.textContent = name; og.appendChild(o); });
+    sel.appendChild(og);
+  });
+  sel.addEventListener("change", () => {
+    const note = UI.$("localNote");
+    if (!sel.value) { note.textContent = ""; return; }
+    const [group, i] = sel.value.split(":");
+    const [name, amount, detail] = LOCAL[group][+i];
+    const tokyo = group === "東京23区";
+    UI.$("localAmount").value = amount + (tokyo ? TOKYO_COMMON : 0);
+    const parts = [tokyo ? TOKYO_NOTE : "", detail].filter(Boolean);
+    note.textContent = parts.length ? name + "：" + parts.join("＋") : name + "：独自の現金給付は公式ページで見つかりませんでした（産後ケアの減免などは別）";
+    UI.$("localAmount").dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
 // 今日から半年後を初期値にする（入力した値はどこにも送信しない）
 {
   const t = new Date(); t.setMonth(t.getMonth() + 6);
