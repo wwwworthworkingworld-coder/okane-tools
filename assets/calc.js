@@ -368,6 +368,34 @@ const Calc = (() => {
     return { net, threshold, deduction, incomeTaxCut, residentCut, total: incomeTaxCut + residentCut };
   }
 
+  /* 医療費控除：夫婦のどちらで申告するか、セルフメディケーション税制とどちらが有利かの比較
+   * p: { other（補てんのない医療費・交通費の合計）, covered（一時金・保険金が出た分の医療費）, compensation（その一時金・保険金の額）,
+   *      otc（セルフメディケーション対象の医薬品の購入額）, otcQualified（健診・予防接種などの取組をした）,
+   *      persons: [{ label, income（総所得金額等。給与だけなら給与所得控除後の金額）, deductions（所得控除の額の合計額） }] }
+   * 補てんは対象の医療費が上限（余りを他の医療費から引かない）。住民税は所得税と同じ課税所得で10%として概算
+   */
+  function medicalCompare(p) {
+    const net = Math.max(0, (p.covered || 0) - (p.compensation || 0)) + Math.max(0, p.other || 0);
+    const otcBase = p.otcQualified ? Math.min(88000, Math.max(0, (p.otc || 0) - 12000)) : 0;
+    const cut = (taxable, deduction) => {
+      const d = Math.min(deduction, taxable);
+      const incomeTaxCut = incomeTaxWithReconstruction(taxable) - incomeTaxWithReconstruction(taxable - d);
+      const residentCut = fl(d * 0.1);
+      return { deduction, incomeTaxCut, residentCut, total: incomeTaxCut + residentCut };
+    };
+    const persons = p.persons.map(q => {
+      const income = Math.max(0, q.income || 0);
+      const taxable = Math.max(0, income - Math.max(0, q.deductions || 0));
+      const threshold = income < 2000000 ? fl(income * 0.05) : 100000;
+      const normal = cut(taxable, Math.min(2000000, Math.max(0, net - threshold)));
+      const otc = cut(taxable, otcBase);
+      return { label: q.label, income, taxable, threshold, normal, otc, best: otc.total > normal.total ? "otc" : "normal" };
+    });
+    let best = null;
+    persons.forEach((q, i) => { const t = Math.max(q.normal.total, q.otc.total); if (!best || t > best.total) best = { index: i, total: t, method: q.best }; });
+    return { net, otcBase, persons, best };
+  }
+
   /* 手続きの期限（日付）。due：出産予定日、birth：出生日（未定なら予定日で計算） */
   function birthDeadlines(due, birth, children = 1) {
     const b = birth || due;
@@ -391,6 +419,6 @@ const Calc = (() => {
   return { incomeTax, incomeTaxWithReconstruction, basicDeduction, sideJob, depreciation, shogakuLimit, boothFee,
            stockGain, dividendCompare, nisa, TEIGAKU,
            addDays, addMonths, monthEnd, daysBetween, stdMonthly, maternityAllowance, wageDaily, childcareLeaveBenefit, postBirthBenefit,
-           childAllowanceYear, pregnancySupport, nenkinMonths, socialExemptMonths, socialMonthly, birthMoney, birthMedicalDeduction, birthDeadlines };
+           childAllowanceYear, pregnancySupport, nenkinMonths, socialExemptMonths, socialMonthly, birthMoney, birthMedicalDeduction, medicalCompare, birthDeadlines };
 })();
 if (typeof module !== "undefined") module.exports = Calc;
