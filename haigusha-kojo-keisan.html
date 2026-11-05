@@ -24,7 +24,7 @@
         <option value="r7">令和7年分（2025年）</option></select></div></div>
       <div><label for="spouseSalary">配偶者の給与収入 <small>（1〜12月の給与と賞与の合計。源泉徴収票の「支払金額」。給付金は入れない）</small></label><div class="field"><input id="spouseSalary" type="number" inputmode="numeric" value="1200000"><span class="unit">円</span></div></div>
       <div><label for="spouseOther">配偶者の給与以外の所得 <small>（副業や事業の所得。なければ0）</small></label><div class="field"><input id="spouseOther" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
-      <div><label for="selfSalary">控除を受ける人の給与収入 <small>（年収。賞与込み）</small></label><div class="field"><input id="selfSalary" type="number" inputmode="numeric" value="6000000"><span class="unit">円</span></div></div>
+      <div><label for="selfSalary">控除を受ける人（夫など）の給与収入 <small>（年収。賞与込み。ここが0だと減る税金も0になります）</small></label><div class="field"><input id="selfSalary" type="number" inputmode="numeric" value="6000000"><span class="unit">円</span></div></div>
       <div><label for="selfOther">控除を受ける人の給与以外の所得 <small>（なければ0）</small></label><div class="field"><input id="selfOther" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
       <div><label for="selfTaxable">控除を受ける人の課税所得 <small>（分かれば。源泉徴収票の「給与所得控除後の金額」−「所得控除の額の合計額」。0なら概算します）</small></label><div class="field"><input id="selfTaxable" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
     </div>
@@ -124,6 +124,8 @@ UI.watch(() => {
   else if (r.kind === "tokubetsu") j = `配偶者の合計所得は${UI.yen(r.spouseIncome)}で、配偶者控除の上限（給与${yen(r.salaryForFull)}）を超えていますが、配偶者特別控除${UI.yen(r.deduction)}の対象です。給与${yen(r.salaryForPartial)}まで段階的に受けられます。`;
   else if (r.reason === "selfIncome") j = `控除を受ける人の合計所得が${UI.yen(r.selfIncome)}で1,000万円を超えているため、配偶者控除・配偶者特別控除は受けられません。`;
   else j = `配偶者の合計所得が${UI.yen(r.spouseIncome)}で133万円（給与${yen(r.salaryForPartial)}）を超えているため、対象外です。`;
+  if (r.kind !== "none" && r.selfIncome === 0) j += "控除を受ける人の給与収入が入っていません。年収を入れると、減る税金が出ます。";
+  else if (r.kind !== "none" && r.taxable === 0) j += "控除を受ける人の課税所得が0円なので、控除しても減る税金はありません。";
   UI.$("judge").textContent = j;
   const rows = [
     ["配偶者の給与所得", UI.yen(Calc.salaryIncome(UI.num("spouseSalary"), r.year))],
