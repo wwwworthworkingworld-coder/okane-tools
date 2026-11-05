@@ -49,7 +49,8 @@
         <div id="boxOfficer" hidden><label for="officerUnpaid">産休中の役員報酬</label><div class="field"><select id="officerUnpaid">
           <option value="1">支払わない</option><option value="0">支払う</option></select></div></div>
         <div id="boxKokuho" hidden><label for="kokuhoMonthly">本人の国保料 <small>（1か月・均等割＋所得割）</small></label><div class="field"><input id="kokuhoMonthly" type="number" inputmode="numeric" value="20000"><span class="unit">円</span></div></div>
-        <div><label for="localArea">住んでいる自治体 <small>（選ぶと独自の給付が入ります）</small></label><div class="field"><select id="localArea"><option value="">選ばない</option></select></div></div>
+        <div><label for="localPref">住んでいる都道府県 <small>（選ぶと独自の給付が入ります）</small></label><div class="field"><select id="localPref"><option value="">選ばない</option></select></div></div>
+        <div id="boxLocalCity" hidden><label for="localCity">市区町村</label><div class="field"><select id="localCity"></select></div></div>
         <div><label for="localAmount">自治体の独自の給付 <small>（自分で直せます。<a href="shussan-tokyo23ku.html">東京23区</a>・<a href="shussan-todofuken.html">47都道府県</a>の比較）</small></label><div class="field"><input id="localAmount" type="number" inputmode="numeric" value="0" min="0"><span class="unit">円</span></div><small id="localNote" class="sub"></small></div>
       </div>
     </fieldset>
@@ -215,50 +216,56 @@ const NOTE = {
   partnerPost: "賃金日額×最大28日×13%",
 };
 // 自治体の独自の給付（2026年10月31日に各自治体のページで確認。現金・商品券・ポイントで、ふつうの世帯が受け取れる額。上限のあるものは上限）
-// [名前, 金額, 内訳]。0は独自の現金給付が公式で見つからなかった自治体
-const TOKYO_COMMON = 130000, TOKYO_NOTE = "東京都の赤ちゃんファースト13万円相当";
-const LOCAL = {
-  "東京23区": [
-    ["千代田区", 355000, "出産費用助成 最大31万円＋誕生準備手当 45,000円"], ["中央区", 62000, "買物・食事券5万円分＋タクシー券1.2万円分"],
-    ["港区", 310000, "出産費用助成 最大31万円"], ["新宿区", 0, ""], ["文京区", 0, ""], ["台東区", 50000, "出産費用助成 5万円"],
-    ["墨田区", 0, ""], ["江東区", 10000, "こども商品券1万円分"], ["品川区", 0, ""], ["目黒区", 20000, "新生児誕生祝金 2万円"],
-    ["大田区", 0, ""], ["世田谷区", 10000, "子育て利用券1万円分"], ["渋谷区", 100000, "出産助成金 上限10万円"], ["中野区", 0, ""],
-    ["杉並区", 30000, "子育て応援券3万円分"], ["豊島区", 0, ""], ["北区", 0, ""], ["荒川区", 0, ""], ["板橋区", 0, ""], ["練馬区", 0, ""],
-    ["足立区", 100000, "出産費助成 最大10万円"], ["葛飾区", 50000, "出産応援給付金 5万円"], ["江戸川区", 156000, "乳児養育手当 月13,000円×12回"],
-  ],
-  "都道府県（県庁所在地）": [
-    ["北海道 札幌市", 0, ""], ["青森県 青森市", 0, ""], ["岩手県 盛岡市", 0, ""], ["宮城県 仙台市", 0, ""],
-    ["秋田県 秋田市", 20000, "あきた出産・子育て応援給付金 こども1人2万円"], ["山形県 山形市", 0, ""], ["福島県 福島市", 0, ""],
-    ["茨城県 水戸市", 0, ""], ["栃木県 宇都宮市", 0, ""], ["群馬県 前橋市", 0, ""], ["埼玉県 さいたま市", 0, ""], ["千葉県 千葉市", 0, ""],
-    ["神奈川県 横浜市", 90000, "横浜市 出産費用助成金 最大9万円"], ["新潟県 新潟市", 0, ""],
-    ["富山県 富山市", 30000, "富山県 子育て支援ポイント 1歳半で3万円分"], ["石川県 金沢市", 0, ""], ["福井県 福井市", 0, ""],
-    ["山梨県 甲府市", 0, ""], ["長野県 長野市", 0, ""], ["岐阜県 岐阜市", 0, "第二子以降の出産祝金は2026年3月で終了"], ["静岡県 静岡市", 0, ""],
-    ["愛知県 名古屋市", 0, "愛知県の子育て応援給付金5万円は低所得世帯のみ"], ["三重県 津市", 0, ""], ["滋賀県 大津市", 0, ""],
-    ["京都府 京都市", 0, ""], ["大阪府 大阪市", 0, ""], ["兵庫県 神戸市", 0, ""], ["奈良県 奈良市", 0, ""], ["和歌山県 和歌山市", 0, ""],
-    ["鳥取県 鳥取市", 0, ""], ["島根県 松江市", 0, ""], ["岡山県 岡山市", 0, ""], ["広島県 広島市", 0, ""], ["山口県 山口市", 0, ""],
-    ["徳島県 徳島市", 0, ""], ["香川県 高松市", 0, ""], ["愛媛県 松山市", 0, ""], ["高知県 高知市", 0, ""],
-    ["福岡県 福岡市", 0, ""], ["佐賀県 佐賀市", 0, ""], ["長崎県 長崎市", 0, ""], ["熊本県 熊本市", 0, ""], ["大分県 大分市", 0, ""],
-    ["宮崎県 宮崎市", 0, ""], ["鹿児島県 鹿児島市", 0, ""], ["沖縄県 那覇市", 0, ""],
-  ],
-};
+// PREF: [都道府県, 都道府県の給付, その内訳, 県庁所在地, 市の給付, その内訳]。0は独自の現金給付が公式で見つからなかった自治体
+const PREF = [
+  ["北海道", 0, "", "札幌市", 0, ""], ["青森県", 0, "", "青森市", 0, ""], ["岩手県", 0, "", "盛岡市", 0, ""], ["宮城県", 0, "", "仙台市", 0, ""],
+  ["秋田県", 20000, "あきた出産・子育て応援給付金 こども1人2万円", "秋田市", 0, ""], ["山形県", 0, "", "山形市", 0, ""], ["福島県", 0, "", "福島市", 0, ""],
+  ["茨城県", 0, "", "水戸市", 0, ""], ["栃木県", 0, "", "宇都宮市", 0, ""], ["群馬県", 0, "", "前橋市", 0, ""], ["埼玉県", 0, "", "さいたま市", 0, ""],
+  ["千葉県", 0, "", "千葉市", 0, ""], ["東京都", 130000, "赤ちゃんファースト 13万円相当", null, 0, ""],
+  ["神奈川県", 0, "", "横浜市", 90000, "出産費用助成金 最大9万円"], ["新潟県", 0, "", "新潟市", 0, ""],
+  ["富山県", 30000, "子育て支援ポイント 1歳半で3万円分", "富山市", 0, ""], ["石川県", 0, "", "金沢市", 0, ""], ["福井県", 0, "", "福井市", 0, ""],
+  ["山梨県", 0, "", "甲府市", 0, ""], ["長野県", 0, "", "長野市", 0, ""], ["岐阜県", 0, "第二子以降の出産祝金は2026年3月で終了", "岐阜市", 0, ""],
+  ["静岡県", 0, "", "静岡市", 0, ""], ["愛知県", 0, "子育て応援給付金5万円は低所得世帯のみ", "名古屋市", 0, ""], ["三重県", 0, "", "津市", 0, ""],
+  ["滋賀県", 0, "", "大津市", 0, ""], ["京都府", 0, "", "京都市", 0, ""], ["大阪府", 0, "", "大阪市", 0, ""], ["兵庫県", 0, "", "神戸市", 0, ""],
+  ["奈良県", 0, "", "奈良市", 0, ""], ["和歌山県", 0, "", "和歌山市", 0, ""], ["鳥取県", 0, "", "鳥取市", 0, ""], ["島根県", 0, "", "松江市", 0, ""],
+  ["岡山県", 0, "", "岡山市", 0, ""], ["広島県", 0, "", "広島市", 0, ""], ["山口県", 0, "", "山口市", 0, ""], ["徳島県", 0, "", "徳島市", 0, ""],
+  ["香川県", 0, "", "高松市", 0, ""], ["愛媛県", 0, "", "松山市", 0, ""], ["高知県", 0, "", "高知市", 0, ""], ["福岡県", 0, "", "福岡市", 0, ""],
+  ["佐賀県", 0, "", "佐賀市", 0, ""], ["長崎県", 0, "", "長崎市", 0, ""], ["熊本県", 0, "", "熊本市", 0, ""], ["大分県", 0, "", "大分市", 0, ""],
+  ["宮崎県", 0, "", "宮崎市", 0, ""], ["鹿児島県", 0, "", "鹿児島市", 0, ""], ["沖縄県", 0, "", "那覇市", 0, ""],
+];
+// 東京23区：[区, 区の給付, 内訳]
+const WARDS = [
+  ["千代田区", 355000, "出産費用助成 最大31万円＋誕生準備手当 45,000円"], ["中央区", 62000, "買物・食事券5万円分＋タクシー券1.2万円分"],
+  ["港区", 310000, "出産費用助成 最大31万円"], ["新宿区", 0, ""], ["文京区", 0, ""], ["台東区", 50000, "出産費用助成 5万円"],
+  ["墨田区", 0, ""], ["江東区", 10000, "こども商品券1万円分"], ["品川区", 0, ""], ["目黒区", 20000, "新生児誕生祝金 2万円"],
+  ["大田区", 0, ""], ["世田谷区", 10000, "子育て利用券1万円分"], ["渋谷区", 100000, "出産助成金 上限10万円"], ["中野区", 0, ""],
+  ["杉並区", 30000, "子育て応援券3万円分"], ["豊島区", 0, ""], ["北区", 0, ""], ["荒川区", 0, ""], ["板橋区", 0, ""], ["練馬区", 0, ""],
+  ["足立区", 100000, "出産費助成 最大10万円"], ["葛飾区", 50000, "出産応援給付金 5万円"], ["江戸川区", 156000, "乳児養育手当 月13,000円×12回"],
+];
 {
-  const sel = UI.$("localArea");
-  Object.entries(LOCAL).forEach(([group, rows]) => {
-    const og = document.createElement("optgroup"); og.label = group;
-    rows.forEach(([name], i) => { const o = document.createElement("option"); o.value = group + ":" + i; o.textContent = name; og.appendChild(o); });
-    sel.appendChild(og);
-  });
-  sel.addEventListener("change", () => {
-    const note = UI.$("localNote");
-    if (!sel.value) { note.textContent = ""; return; }
-    const [group, i] = sel.value.split(":");
-    const [name, amount, detail] = LOCAL[group][+i];
-    const tokyo = group === "東京23区";
-    UI.$("localAmount").value = amount + (tokyo ? TOKYO_COMMON : 0);
-    const parts = [tokyo ? TOKYO_NOTE : "", detail].filter(Boolean);
-    note.textContent = parts.length ? name + "：" + parts.join("＋") : name + "：独自の現金給付は公式ページで見つかりませんでした（産後ケアの減免などは別）";
+  const pref = UI.$("localPref"), city = UI.$("localCity"), note = UI.$("localNote");
+  PREF.forEach(([name], i) => { const o = document.createElement("option"); o.value = i; o.textContent = name; pref.appendChild(o); });
+  const cities = p => p[3] ? [[p[3], p[4], p[5]]].concat([["その他の市町村", null, ""]]) : WARDS.concat([["23区以外の市町村", null, ""]]);
+  const fill = () => {
+    UI.$("boxLocalCity").hidden = pref.value === "";
+    if (pref.value === "") { note.textContent = ""; return; }
+    const p = PREF[+pref.value];
+    const [cname, camount, cdetail] = cities(p)[+city.value];
+    const known = camount !== null;
+    UI.$("localAmount").value = p[1] + (known ? camount : 0);
+    const parts = [p[2] && p[1] > 0 ? p[0] + "の" + p[2] : "", known && cdetail ? cname + "の" + cdetail : ""].filter(Boolean);
+    let text = parts.length ? parts.join("＋") : "都道府県と" + (known ? cname : "県庁所在地") + "の独自の現金給付は、公式ページで見つかりませんでした";
+    if (p[2] && p[1] === 0) text += "（" + p[0] + "の" + p[2] + "）";
+    if (!known) text += "。市町村の分は、お住まいの市町村の「出産 祝金」「出産 助成」のページで確かめて足してください";
+    note.textContent = text + "。産後ケアの減免などは別です";
     UI.$("localAmount").dispatchEvent(new Event("input", { bubbles: true }));
+  };
+  pref.addEventListener("change", () => {
+    city.innerHTML = "";
+    if (pref.value !== "") cities(PREF[+pref.value]).forEach(([name], i) => { const o = document.createElement("option"); o.value = i; o.textContent = name; city.appendChild(o); });
+    fill();
   });
+  city.addEventListener("change", fill);
 }
 // 今日から半年後を初期値にする（入力した値はどこにも送信しない）
 {
