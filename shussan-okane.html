@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>出産・育児でもらえるお金の計算｜会社員・個人事業主・法人代表の違いを比較</title>
-<meta name="description" content="出産手当金、育児休業給付金、出産育児一時金、児童手当、保険料の免除をまとめて計算。会社員・個人事業主・法人の代表で、同じ月収でも何がどれだけ違うかを比べられます。夫婦の組み合わせにも対応。">
+<title>出産・育児でもらえるお金の計算｜会社員・パート・個人事業主・法人代表の違いを比較</title>
+<meta name="description" content="出産手当金、育児休業給付金、出産育児一時金、児童手当、保険料の免除をまとめて計算。会社員・パート・アルバイト・個人事業主・法人の代表で、同じ月収でも何がどれだけ違うかを比べられます。パートは健康保険と雇用保険の加入で判定。夫婦の組み合わせにも対応。">
 <link rel="stylesheet" href="assets/style.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
 <style>
@@ -19,7 +19,7 @@
 <header class="site-header"></header>
 <main>
   <h1>出産・育児でもらえるお金の計算</h1>
-  <p class="lead">出産手当金や育児休業給付金は、働き方で出る・出ないが変わります。会社員・個人事業主・法人の代表のどれでも、受け取れるお金と免除される保険料をまとめて計算します。</p>
+  <p class="lead">出産手当金や育児休業給付金は、働き方で出る・出ないが変わります。会社員・パート・アルバイト・個人事業主・法人の代表のどれでも、受け取れるお金と免除される保険料をまとめて計算します。パート・アルバイトは、健康保険と雇用保険に入っているかで判定します。</p>
 
   <section class="card">
     <h2>入力</h2>
@@ -27,10 +27,18 @@
       <legend>出産する人</legend>
       <div class="grid">
         <div><label for="work">働き方</label><div class="field"><select id="work">
-          <option value="employee">会社員</option>
+          <option value="employee">会社員（正社員・契約社員）</option>
+          <option value="part">パート・アルバイト</option>
           <option value="self">個人事業主・フリーランス</option>
           <option value="officer">法人の代表・役員</option>
+          <option value="dependent">働いていない（配偶者の扶養）</option></select></div></div>
+        <div id="boxPartHealth" hidden><label for="partHealth">健康保険 <small>（保険証の種類）</small></label><div class="field"><select id="partHealth">
+          <option value="shakai">勤め先の健康保険に入っている</option>
+          <option value="kokuho">国民健康保険</option>
           <option value="dependent">配偶者の扶養に入っている</option></select></div></div>
+        <div id="boxPartKoyo" hidden><label for="partKoyo">雇用保険 <small>（給与明細に雇用保険料があるか）</small></label><div class="field"><select id="partKoyo">
+          <option value="1">入っている</option>
+          <option value="0">入っていない</option></select></div></div>
         <div><label for="pay">月収 <small>（賞与を除く・税金を引く前。比較にも使います）</small></label><div class="field"><input id="pay" type="number" inputmode="numeric" value="300000"><span class="unit">円</span></div></div>
         <div><label for="due">出産予定日</label><div class="field"><input id="due" type="date"></div></div>
         <div><label for="children">生まれる子の人数</label><div class="field"><select id="children">
@@ -48,10 +56,18 @@
       <legend>パートナー</legend>
       <div class="grid">
         <div><label for="partner">働き方</label><div class="field"><select id="partner">
-          <option value="employee">会社員</option>
+          <option value="employee">会社員（正社員・契約社員）</option>
+          <option value="part">パート・アルバイト</option>
           <option value="self">個人事業主・フリーランス</option>
           <option value="officer">法人の代表・役員</option>
           <option value="none">いない・働いていない</option></select></div></div>
+        <div id="boxPartnerHealth" hidden><label for="partnerHealth">健康保険</label><div class="field"><select id="partnerHealth">
+          <option value="shakai">勤め先の健康保険に入っている</option>
+          <option value="kokuho">国民健康保険</option>
+          <option value="dependent">配偶者の扶養に入っている</option></select></div></div>
+        <div id="boxPartnerKoyo" hidden><label for="partnerKoyo">雇用保険</label><div class="field"><select id="partnerKoyo">
+          <option value="1">入っている</option>
+          <option value="0">入っていない</option></select></div></div>
         <div id="boxPartnerPay"><label for="partnerPay">月収</label><div class="field"><input id="partnerPay" type="number" inputmode="numeric" value="350000"><span class="unit">円</span></div></div>
         <div id="boxPartnerDays"><label for="partnerDays">出生直後からの育休の日数</label><div class="field"><input id="partnerDays" type="number" inputmode="numeric" value="28" min="0"><span class="unit">日</span></div></div>
       </div>
@@ -105,6 +121,18 @@
         <tr><td>育児期間の保険料免除</td><td style="text-align:center">○</td><td style="text-align:center">国民年金9か月</td><td style="text-align:center">×</td></tr>
       </tbody>
     </table></div>
+    <h3>パート・アルバイトは、入っている保険で決まる</h3>
+    <p>パート・アルバイトは法律上は雇われている人なので、「会社員」の列のうち、入っている保険の分が受け取れます。</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>入っている保険</th><th>受け取れるもの</th><th>目安になる働き方</th></tr></thead>
+      <tbody>
+        <tr><td>勤め先の健康保険＋雇用保険</td><td>会社員と同じ（出産手当金・育児休業給付金・保険料の免除）</td><td>週20時間以上で、従業員51人以上の会社など</td></tr>
+        <tr><td>雇用保険だけ</td><td>育児休業給付金。出産手当金はなし。国保なら国民年金と国保の免除</td><td>週20時間以上だが社会保険の加入要件を満たさない</td></tr>
+        <tr><td>勤め先の健康保険だけ</td><td>出産手当金と保険料の免除。育児休業給付金はなし</td><td>まれ（雇用保険の加入要件のほうが広い）</td></tr>
+        <tr><td>どちらも入っていない</td><td>一時金・支援給付・児童手当。国保なら国民年金と国保の免除。扶養なら免除はなし（保険料を払っていないため）</td><td>週20時間未満</td></tr>
+      </tbody>
+    </table></div>
+    <p>育児休業給付金は、休業前の2年間に雇用保険に入って月11日以上働いた月が12か月以上あることが条件です。期間を決めて働いている人は、子が1歳6か月になるまでに契約が終わると決まっていないことも必要です。入っているかどうかは、給与明細に「雇用保険料」「健康保険料」の控除があるかで分かります。</p>
     <p>個人事業主は<a href="kojin-jigyo-shussan.html">個人事業主・フリーランスの出産のお金</a>、法人の代表は<a href="yakuin-shussan-ikukyu.html">法人の代表・役員の産休と育休</a>に詳しく書いています。</p>
 
     <h2>計算のしかた</h2>
@@ -188,16 +216,26 @@ function params(work) {
   return {
     work, pay: UI.num("pay"), due: UI.$("due").value, children: UI.num("children"), older: Math.max(0, UI.num("older")),
     localAmount: UI.num("localAmount"), leaveMonths: UI.num("leaveMonths"), officerUnpaid: UI.$("officerUnpaid").value === "1", kokuhoMonthly: UI.num("kokuhoMonthly"),
+    partHealth: UI.$("partHealth").value, partKoyo: UI.$("partKoyo").value === "1",
     partner: UI.$("partner").value, partnerPay: UI.num("partnerPay"), partnerDays: UI.num("partnerDays"),
+    partnerHealth: UI.$("partnerHealth").value, partnerKoyo: UI.$("partnerKoyo").value === "1",
   };
 }
 UI.watch(() => {
   const work = UI.$("work").value, partner = UI.$("partner").value;
-  UI.$("boxLeave").hidden = work !== "employee";
+  const partKoyo = work === "part" && UI.$("partKoyo").value === "1";
+  const partKokuho = work === "part" && UI.$("partHealth").value === "kokuho";
+  const partHealth = work === "part" && UI.$("partHealth").value === "shakai";
+  UI.$("boxPartHealth").hidden = work !== "part";
+  UI.$("boxPartKoyo").hidden = work !== "part";
+  UI.$("boxLeave").hidden = !(work === "employee" || partKoyo);
   UI.$("boxOfficer").hidden = work !== "officer";
-  UI.$("boxKokuho").hidden = work !== "self";
-  UI.$("boxPartnerPay").hidden = partner !== "employee";
-  UI.$("boxPartnerDays").hidden = partner !== "employee";
+  UI.$("boxKokuho").hidden = !(work === "self" || partKokuho);
+  const partnerKoyo = partner === "employee" || (partner === "part" && UI.$("partnerKoyo").value === "1");
+  UI.$("boxPartnerHealth").hidden = partner !== "part";
+  UI.$("boxPartnerKoyo").hidden = partner !== "part";
+  UI.$("boxPartnerPay").hidden = !partnerKoyo;
+  UI.$("boxPartnerDays").hidden = !partnerKoyo;
   if (!UI.$("due").value) return;
 
   const r = Calc.birthMoney(params(work));
@@ -208,9 +246,10 @@ UI.watch(() => {
   const notes = Object.assign({}, NOTE, {
     teate: r.rows.find(x => x.key === "teate").amount > 0
       ? `標準報酬月額${r.std.toLocaleString("ja-JP")}円→日額${r.maternity.daily.toLocaleString("ja-JP")}円×${r.maternity.days}日`
-      : (work === "officer" ? "報酬を支払うと、日額より少ない分の差額だけになります" : "健康保険の被保険者でないため対象外"),
-    ikukyu: r.leaveDays > 0 ? `賃金日額${Calc.wageDaily(params(work).pay).toLocaleString("ja-JP")}円×${r.leaveDays}日（180日まで67%、以降50%）` : "雇用保険の育休を取る人が対象",
-    partnerIkukyu: partner === "employee" ? `賃金日額×${Math.max(0, UI.num("partnerDays"))}日×67%` : "",
+      : (work === "officer" ? "報酬を支払うと、日額より少ない分の差額だけになります" : "勤め先の健康保険に入っている人が対象"),
+    ikukyu: r.leaveDays > 0 ? `賃金日額${Calc.wageDaily(params(work).pay).toLocaleString("ja-JP")}円×${r.leaveDays}日（180日まで67%、以降50%）`
+      : (work === "part" && !partKoyo ? "雇用保険に入っていないため対象外" : "雇用保険に入って育休を取る人が対象"),
+    partnerIkukyu: partnerKoyo ? `賃金日額×${Math.max(0, UI.num("partnerDays"))}日×67%` : "",
     social: `${r.socialMonths}か月分（東京支部・40歳未満の料率）`,
     nenkin: `${r.nenkinMonths}か月×17,920円（届出が必要）`,
     kokuho: "産前産後の4か月（多胎は6か月）",
@@ -234,6 +273,10 @@ UI.watch(() => {
     self: "出産手当金と育児休業給付金はありません。かわりに国民年金と国保の保険料が免除されます。届出が必要です。",
     officer: "育児休業給付金と育休中の保険料免除はありません。産前産後の期間は、保険料の免除と出産手当金の対象になります。",
     dependent: "ご本人の出産手当金・育児休業給付金はありません。一時金は配偶者の健康保険から支給されます。",
+    part: (partHealth ? "勤め先の健康保険に入っているので、出産手当金と産休・育休中の社会保険料の免除は会社員と同じです。"
+        : partKokuho ? "出産手当金はありません。かわりに国民年金と国保の保険料が免除されます。届出が必要です。"
+        : "出産手当金はありません。一時金は配偶者の健康保険から支給されます。")
+      + (partKoyo ? "雇用保険に入っているので、育児休業給付金も会社員と同じ計算です。" : "雇用保険に入っていないので、育児休業給付金はありません。"),
   };
   UI.$("judge").textContent = JUDGE[work];
 

@@ -274,15 +274,25 @@ const Calc = (() => {
   const socialMonthly = std => fl(std * 0.0985 / 2) + fl(Math.min(std, 650000) * 0.183 / 2);
 
   /* 出産・育児のお金のまとめ
-   * p: { work（"employee"|"self"|"officer"|"dependent"）, pay（月給）, due（出産予定日）, children, older,
+   * p: { work（"employee"|"part"|"self"|"officer"|"dependent"）, pay（月給）, due（出産予定日）, children, older,
    *      leaveMonths（産む人の育休：生後何か月まで。0は取らない）, officerUnpaid（役員が産休中の報酬を止める）, kokuhoMonthly（本人の国保料の月額）,
-   *      partner（"employee"|"self"|"officer"|"none"）, partnerPay, partnerDays（パートナーの育休の日数） }
+   *      partHealth（パートの健康保険："shakai" 勤め先 | "kokuho" 国保 | "dependent" 配偶者の扶養）, partKoyo（パートが雇用保険に入っている）,
+   *      partner（"employee"|"part"|"self"|"officer"|"none"）, partnerPay, partnerDays（パートナーの育休の日数）,
+   *      partnerHealth, partnerKoyo（パートナーがパートのとき） }
+   * パート・アルバイトは、勤め先の健康保険に入っていれば出産手当金と社会保険料の免除、雇用保険に入っていれば育児休業給付が会社員と同じ計算になる
    */
   function birthMoney(p) {
     const rows = [];
     const add = (key, name, amount, kind) => rows.push({ key, name, amount, kind });
     const children = Math.max(1, p.children || 1);
     const std = stdMonthly(p.pay);
+    // 本人：勤め先の健康保険に入っているか、雇用保険に入っているか
+    const isPart = p.work === "part";
+    const hasHealth = p.work === "employee" || (isPart && p.partHealth === "shakai");
+    const hasKoyo = p.work === "employee" || (isPart && !!p.partKoyo);
+    // パートナー：雇用保険に入っていなければ育休給付はなく、本人の出生後休業支援給付では「育休をできない配偶者」になる
+    const partnerKoyo = p.partner === "employee" || (p.partner === "part" && !!p.partnerKoyo);
+    const partnerHealth = p.partner === "employee" || (p.partner === "part" && p.partnerHealth === "shakai");
 
     add("ichijikin", "出産育児一時金", 500000 * children, "cash");
     add("support", "妊婦のための支援給付", pregnancySupport(children), "cash");
@@ -290,20 +300,20 @@ const Calc = (() => {
     add("jidou", "児童手当（最初の12か月分）", ca.year, "cash");
     add("local", "自治体の独自の給付", Math.max(0, p.localAmount || 0), "cash");
 
-    const paidMaternity = p.work === "employee" || (p.work === "officer" && p.officerUnpaid);
+    const paidMaternity = hasHealth || (p.work === "officer" && p.officerUnpaid);
     const ma = maternityAllowance(std, children);
     add("teate", "出産手当金", paidMaternity ? ma.total : 0, "cash");
 
     // 産む人の育休：産後56日の翌日から
     const leaveStart = addDays(p.due, 57);
     const leaveEnd = p.leaveMonths > 0 ? addDays(addMonths(p.due, p.leaveMonths), -2) : null;
-    const leaveDays = p.work === "employee" && leaveEnd ? Math.max(0, daysBetween(leaveStart, leaveEnd) + 1) : 0;
+    const leaveDays = hasKoyo && leaveEnd ? Math.max(0, daysBetween(leaveStart, leaveEnd) + 1) : 0;
     add("ikukyu", "育児休業給付金", childcareLeaveBenefit(p.pay, leaveDays), "cash");
 
-    // 出生後休業支援給付：配偶者が14日以上休むか、配偶者が雇用される労働者でないなら本人の分も出る
-    const partnerNotEmployee = p.partner !== "employee";
-    const partnerDays = p.partner === "employee" ? Math.max(0, p.partnerDays || 0) : 0;
-    const selfPost = p.work === "employee" && leaveDays >= 14 && (partnerNotEmployee || partnerDays >= 14)
+    // 出生後休業支援給付：配偶者が14日以上休むか、配偶者が育休をできない（雇用保険に入っていない）なら本人の分も出る
+    const partnerNotEmployee = !partnerKoyo;
+    const partnerDays = partnerKoyo ? Math.max(0, p.partnerDays || 0) : 0;
+    const selfPost = hasKoyo && leaveDays >= 14 && (partnerNotEmployee || partnerDays >= 14)
       ? postBirthBenefit(p.pay, Math.min(leaveDays, 28)) : 0;
     add("post", "出生後休業支援給付金", selfPost, "cash");
 
@@ -315,13 +325,14 @@ const Calc = (() => {
     const prenatalStart = addDays(p.due, children >= 2 ? -98 : -42);
     const postnatalEnd = addDays(p.due, 56);
     let social = 0, socialMonths = 0, nenkin = { total: 0 }, kokuho = 0;
-    if (p.work === "employee") {
+    if (hasHealth) {
       socialMonths = socialExemptMonths(prenatalStart, leaveDays > 0 ? leaveEnd : postnatalEnd);
       social = socialMonths * socialMonthly(std);
     } else if (p.work === "officer") {
       socialMonths = socialExemptMonths(prenatalStart, postnatalEnd);
       social = socialMonths * socialMonthly(std);
-    } else if (p.work === "self") {
+    } else if (p.work === "self" || (isPart && p.partHealth === "kokuho")) {
+      // 国民年金の第1号被保険者：産前産後と育児の免除。国保は産前産後の分
       nenkin = nenkinMonths(p.due, children, "mother");
       kokuho = (children >= 2 ? 6 : 4) * Math.max(0, p.kokuhoMonthly || 0);
     }
@@ -330,9 +341,9 @@ const Calc = (() => {
     add("kokuho", "国民健康保険料（本人分）", kokuho, "saving");
 
     let partnerSocial = 0, partnerNenkin = 0;
-    if (p.partner === "employee" && partnerDays > 0) {
+    if (partnerHealth && partnerDays > 0) {
       partnerSocial = socialExemptMonths(p.due, addDays(p.due, partnerDays - 1)) * socialMonthly(stdMonthly(p.partnerPay));
-    } else if (p.partner === "self") {
+    } else if (p.partner === "self" || (p.partner === "part" && p.partnerHealth === "kokuho")) {
       partnerNenkin = nenkinMonths(p.due, children, "partner").total * KOKUNEN_MONTHLY;
     }
     add("partnerSocial", "パートナーの健康保険・厚生年金の保険料", partnerSocial, "saving");
