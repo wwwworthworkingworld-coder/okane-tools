@@ -33,6 +33,7 @@ label small{font-weight:400;color:var(--muted)}
 input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--input);color:var(--text);font-size:16px}
 input[type=number]{text-align:right}
 .unit{color:var(--muted);font-size:13px;min-width:2em}
+.yomi{display:block;text-align:right;padding-right:2.4em;color:var(--muted);font-size:13px;min-height:1.2em}
 fieldset{border:1px dashed var(--line);border-radius:10px;padding:12px 14px 14px;margin:14px 0 0}
 legend{font-size:13px;font-weight:700;color:var(--main);padding:0 6px}
 .result{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:16px}
