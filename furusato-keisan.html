@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ふるさと納税の上限計算と寄付の記録｜年収と家族構成から控除上限の目安、残り枠、ワンストップ5自治体の管理</title>
+<meta name="description" content="年収と家族構成、または源泉徴収票の数字から、ふるさと納税で全額控除される上限の目安を計算します。寄付した自治体・金額・ワンストップ特例の申請を記録して、残り枠と5自治体の数を管理。データはスマホの中だけに保存、CSVで書き出せます。">
+<link rel="stylesheet" href="assets/style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+<style>
+.mode{display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap}
+.mode label{flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer;font-size:14px}
+.mode input{width:auto;padding:0;margin:0}
+.mode label:has(input:checked){background:var(--main);border-color:var(--main);color:#fff}
+.hidden{display:none !important}
+.today{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.today .stat .v{font-size:20px}
+.btn2{display:inline-block;padding:10px 16px;border-radius:999px;border:1px solid var(--main);background:var(--card);color:var(--main);font-weight:700;font-size:14px;cursor:pointer}
+.btn2.primary{background:var(--main);color:#fff}
+.btn2.danger{border-color:var(--bad);color:var(--bad)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.check{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px}
+.check input{width:auto}
+.list{list-style:none;padding:0;margin:14px 0 0}
+.list li{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.list li .name{font-weight:700}
+.list li .meta{color:var(--muted);font-size:12px;grid-column:1/-1}
+.list li .amt{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+.list li .ops{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.list li .ops button{padding:4px 10px;font-size:12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;background:var(--main-weak);color:var(--main);font-weight:700}
+.tag.off{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+.warn{color:var(--bad);font-weight:700}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ETB5R7NFRR');</script>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>ふるさと納税の上限計算と寄付の記録</h1>
+  <p class="lead">年収と家族構成を入れると、自己負担2,000円で済む寄付の上限の目安が出ます。寄付した自治体と金額を記録すると、残り枠とワンストップ特例の自治体数（5まで）が分かります。入力した数字と記録はこの端末の中だけに保存され、どこにも送信されません。</p>
+  <p class="note" style="margin-top:-6px">計算式の確認日：2026年11月7日（総務省ふるさと納税ポータル・国税庁タックスアンサー）。令和8年分（2026年1〜12月の寄付）の控除額で計算しています。</p>
+
+  <section class="card">
+    <h2>今年の残り日数と期限</h2>
+    <div class="today">
+      <div class="stat"><div class="k">今年の寄付の締め（12月31日）まで</div><div class="v" id="daysLeft">-</div></div>
+      <div class="stat"><div class="k">ワンストップ特例の申請期限</div><div class="v" id="onestopDeadline">-</div></div>
+      <div class="stat"><div class="k">確定申告の期間</div><div class="v" id="shinkokuPeriod">-</div></div>
+    </div>
+    <p class="note" id="todayNote">その年の控除になるのは12月31日までに決済（受領）された寄付です。年末は自治体側の受付日が年明けになることがあるので、余裕を持って。ワンストップ特例の申請書は寄付した翌年1月10日までに寄付先の自治体に届く必要があります。</p>
+  </section>
+
+  <section class="card" id="calcCard">
+    <h2>1. 控除上限の目安を計算</h2>
+    <div class="mode">
+      <label><input type="radio" name="mode" value="simple" checked>簡易版（年収と家族構成）</label>
+      <label><input type="radio" name="mode" value="detail">詳細版（源泉徴収票から）</label>
+    </div>
+    <div class="grid">
+      <div class="simple"><label for="salary">給与収入（年収） <small>（1〜12月の給与と賞与の合計。税金や社会保険料を引く前。源泉徴収票の「支払金額」）</small></label><div class="field"><input id="salary" type="number" inputmode="numeric" value="5000000"><span class="unit">円</span></div></div>
+      <div class="detail hidden"><label for="dSalary">支払金額 <small>（源泉徴収票の左上）</small></label><div class="field"><input id="dSalary" type="number" inputmode="numeric" value="5000000"><span class="unit">円</span></div></div>
+      <div class="detail hidden"><label for="dSalaryIncome">給与所得控除後の金額 <small>（空なら支払金額から計算）</small></label><div class="field"><input id="dSalaryIncome" type="number" inputmode="numeric" placeholder="空でも可"><span class="unit">円</span></div></div>
+      <div class="detail hidden"><label for="dDeductions">所得控除の額の合計額 <small>（社会保険料・配偶者控除・扶養控除・基礎控除・生命保険料控除などの合計。源泉徴収票のとおり）</small></label><div class="field"><input id="dDeductions" type="number" inputmode="numeric" placeholder="空なら下の項目から計算"><span class="unit">円</span></div></div>
+      <div><label for="spouse">配偶者 <small>（配偶者控除は配偶者の給与収入136万円以下。令和8年分）</small></label><div class="field"><select id="spouse">
+        <option value="none">いない／控除の対象外（配偶者の年収が高い）</option>
+        <option value="kojo">配偶者控除の対象（配偶者の給与136万円以下）</option>
+        <option value="tokubetsu">配偶者特別控除の対象（給与136万円超〜207万円）</option></select></div></div>
+      <div><label for="depGeneral">扶養家族：16〜18歳、23〜69歳 <small>（一般の扶養。15歳以下は控除なしなので入れない）</small></label><div class="field"><input id="depGeneral" type="number" inputmode="numeric" min="0" value="0"><span class="unit">人</span></div></div>
+      <div><label for="depSpecific">扶養家族：19〜22歳 <small>（特定扶養。大学生など）</small></label><div class="field"><input id="depSpecific" type="number" inputmode="numeric" min="0" value="0"><span class="unit">人</span></div></div>
+      <div><label for="depElderly">扶養家族：70歳以上 <small>（老人扶養。同居の親など）</small></label><div class="field"><input id="depElderly" type="number" inputmode="numeric" min="0" value="0"><span class="unit">人</span></div></div>
+      <div class="simple"><label for="social">社会保険料 <small>（年額。源泉徴収票の「社会保険料等の金額」。空なら年収の15%で概算）</small></label><div class="field"><input id="social" type="number" inputmode="numeric" placeholder="空なら年収の15%"><span class="unit">円</span></div></div>
+      <div class="simple"><label for="other">その他の所得控除 <small>（iDeCo・小規模企業共済・生命保険料控除・地震保険料控除など。分からなければ0）</small></label><div class="field"><input id="other" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+      <div><label for="loan">住宅ローン控除の額 <small>（年間。源泉徴収票の「住宅借入金等特別控除の額」。なければ0）</small></label><div class="field"><input id="loan" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+      <div><label for="medical">医療費控除の額 <small>（確定申告で使う人だけ。医療費−補てん−10万円。なければ0）</small></label><div class="field"><input id="medical" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+      <div class="detail hidden"><label for="otherIncome">給与以外の所得 <small>（副業・事業などの所得。なければ0。目安の計算です）</small></label><div class="field"><input id="otherIncome" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
+    </div>
+    <div class="result">
+      <div class="stat big"><div class="k">全額控除される寄付の上限（目安）</div><div class="v good" id="limit">-</div></div>
+      <div class="stat"><div class="k">安全に使うなら（1,000円単位に切り捨て）</div><div class="v" id="limitSafe">-</div></div>
+      <div class="stat"><div class="k">上限いっぱい寄付したときの自己負担</div><div class="v" id="selfPay">-</div></div>
+    </div>
+    <div class="judge" id="judge"></div>
+    <div class="table-wrap"><table id="detail"><tbody></tbody></table></div>
+    <p class="note">この金額は目安です。正確な上限は、他の控除（ふるさと納税以外の寄附金、配当控除、外国税額控除など）や住民税の計算で変わります。確実に知りたいときは、お住まいの市区町村の住民税担当か税理士に確認してください。上限を超えた分は控除されず、全額が自己負担になります。</p>
+  </section>
+
+  <section class="card">
+    <h2>2. 寄付の記録</h2>
+    <p class="lead" style="margin:0 0 10px">寄付したら記録しましょう。上の計算の上限と比べて、残り枠が出ます。</p>
+    <div class="grid">
+      <div><label for="rName">自治体名 <small>（例：北海道紋別市）</small></label><div class="field"><input id="rName" type="text" placeholder="〇〇県〇〇市"></div></div>
+      <div><label for="rAmount">寄付額</label><div class="field"><input id="rAmount" type="number" inputmode="numeric" placeholder="10000"><span class="unit">円</span></div></div>
+      <div><label for="rDate">寄付した日</label><div class="field"><input id="rDate" type="date"></div></div>
+      <div><label for="rMemo">返礼品メモ <small>（任意）</small></label><div class="field"><input id="rMemo" type="text" placeholder="例：ホタテ1kg、12月中旬に届く予定"></div></div>
+    </div>
+    <label class="check"><input type="checkbox" id="rOnestop">ワンストップ特例を申請した（または申請書を送った）</label>
+    <div class="btns"><button class="btn2 primary" type="button" id="add">記録する</button></div>
+
+    <div class="result">
+      <div class="stat"><div class="k"><span id="yearLabel">今年</span>の寄付の合計</div><div class="v" id="sumAmount">-</div></div>
+      <div class="stat"><div class="k">残り枠（上限の目安−合計）</div><div class="v" id="remain">-</div></div>
+      <div class="stat"><div class="k">寄付先の自治体数（ワンストップは5まで）</div><div class="v" id="munis">-</div></div>
+      <div class="stat"><div class="k">ワンストップ未申請の寄付</div><div class="v" id="noOnestop">-</div></div>
+    </div>
+    <div class="judge" id="recJudge"></div>
+
+    <div class="grid" style="margin-top:14px"><div><label for="year">表示する年</label><div class="field"><select id="year"></select></div></div></div>
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty">まだ記録がありません。</p>
+    <div class="btns">
+      <button class="btn2" type="button" id="exportCsv">CSVに書き出す</button>
+      <button class="btn2 danger" type="button" id="clearAll">この年の記録を全部消す</button>
+    </div>
+    <p class="note">記録はこの端末のブラウザの中だけに保存され、どこにも送信されません。ブラウザのデータを消すと記録も消えるので、年末にCSVに書き出しておくと安心です。CSVは確定申告やワンストップの申請漏れの確認に使えます（寄附金受領証明書の代わりにはなりません）。</p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>確定申告が必要になる人（ワンストップ特例が使えない人）</h2>
+    <p>ワンストップ特例は「確定申告をしなくてよい給与所得者などで、寄付先が5自治体以内」の人だけが使えます。次のどれかに当たる人は、ふるさと納税の控除を受けるために確定申告が必要です。</p>
+    <ul>
+      <li><strong>寄付先が6自治体以上</strong>（同じ自治体に何回寄付しても1自治体と数えます）</li>
+      <li><strong>医療費控除</strong>や<strong>住宅ローン控除の1年目</strong>など、ほかの理由で確定申告をする人。申告をするとワンストップの申請は無効になるので、申請した分も含めてすべての寄付を申告書に書きます</li>
+      <li><strong>個人事業主・フリーランス</strong>、<strong>副業の所得が20万円を超える会社員</strong>、年収2,000万円超の会社員など、もともと確定申告をする人</li>
+      <li>ワンストップの申請書が<strong>1月10日に間に合わなかった</strong>人、引っ越しで住所が変わったのに変更届を出していない人</li>
+    </ul>
+    <p>確定申告のやり方と注意点は <a href="furusato-kakutei-shinkoku.html">ふるさと納税の確定申告のやり方と、ワンストップ特例との違い</a> にまとめています。確定申告をしても控除の合計額は変わりません（所得税の還付と翌年度の住民税の減額に分かれるだけです）。</p>
+
+    <h2>上限の計算のしかた</h2>
+    <p>総務省の計算式では、寄付額から2,000円を引いた残りが、次の3つに分かれて控除されます。</p>
+    <ul>
+      <li>所得税からの控除 ＝（寄付額−2,000円）× 所得税率（復興特別所得税を含めた率）</li>
+      <li>住民税からの控除（基本分）＝（寄付額−2,000円）× 10%</li>
+      <li>住民税からの控除（特例分）＝（寄付額−2,000円）×（100%−10%−所得税率）。<strong>住民税の所得割額の20%が上限</strong></li>
+    </ul>
+    <p>3つ目の「所得割額の20%」を超えた分は控除されないので、ここが上限を決めます。式を逆算すると、<strong>上限 ＝ 住民税所得割額 × 20% ÷（90%−所得税率×1.021）＋ 2,000円</strong> です。このツールは、年収から給与所得・社会保険料・各控除を引いて住民税の所得割額と所得税率を出し、この式で上限を計算しています（住民税の所得割額は、調整控除と住宅ローン控除の住民税分を引いた後の額。特例分の所得税率は、総務省の説明どおり、住民税の課税所得から人的控除差を引いた額で判定）。</p>
+    <p>所得が大きく変わった年（転職・産休・育休・退職）は、今年の見込み年収で計算してください。源泉徴収票は12月か翌年1月にもらうので、年内は昨年の源泉徴収票を参考にしつつ、少なめに寄付するのが安全です。</p>
+
+    <h2>よくある質問</h2>
+    <ul>
+      <li><strong>ワンストップ特例を使うと上限は変わる？</strong> 変わりません。所得税から控除される分も含めて、翌年度の住民税から控除されます。</li>
+      <li><strong>夫婦で寄付するときは？</strong> 上限は一人ひとりの収入で決まります。寄付と控除は本人の名義で。配偶者の名義で寄付した分は、もう一方の控除にはなりません。</li>
+      <li><strong>返礼品に税金はかかる？</strong> 返礼品は一時所得です。ほかの一時所得と合わせて年間50万円を超えると課税されます（総務省 よくある質問 Q12）。</li>
+      <li><strong>12月31日ぎりぎりでも大丈夫？</strong> その年の寄付になるのは、自治体が受領した日（決済日）が12月31日までのもの。銀行振込や払込票は年内に着金しないことがあるので、年末はクレジットカード決済が安全です。</li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>確定申告が必要な人は、帳簿づけからExcelで</h2>
+    <p class="lead" style="margin:0">個人事業主・副業の人は、ふるさと納税も確定申告で控除します。帳簿から青色申告決算書・確定申告の数字まで、1行入力で計算するExcelテンプレートです。無料のお試し版があります。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9050781" target="_blank" rel="noopener">無料お試し版を見る（BOOTH）</a>
+  </section>
+
+  <section class="card article">
+    <h2>参考にした資料（2026年11月7日に確認）</h2>
+    <ul>
+      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/deduction.html" target="_blank" rel="noopener">総務省 ふるさと納税ポータルサイト「税金の控除について」</a>（控除額の計算式。所得税・住民税基本分・特例分と、所得割額の2割の上限）</li>
+      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/procedure.html" target="_blank" rel="noopener">総務省「ふるさと納税の流れ」</a>（ワンストップ特例は確定申告の不要な給与所得者等で5団体以内）</li>
+      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/topics/20150401.html" target="_blank" rel="noopener">総務省「ふるさと納税ワンストップ特例制度」</a>（申請書・変更届出書は翌年1月10日まで）</li>
+      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/faq/" target="_blank" rel="noopener">総務省「よくある質問」</a>（2,000円は年間の寄付の合計に対して1回、返礼品は一時所得）</li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1150.htm" target="_blank" rel="noopener">国税庁 No.1150 一定の寄附金を支払ったとき（寄附金控除）</a>（総所得金額等の40%が上限）</li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm" target="_blank" rel="noopener">国税庁 No.1410 給与所得控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1180.htm" target="_blank" rel="noopener">No.1180 扶養控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm" target="_blank" rel="noopener">No.1191 配偶者控除</a>（令和8年分の控除額）</li>
+    </ul>
+    <p class="note">免責：このページの計算結果は目安であり、正確な控除上限は所得や控除の状況で変わります。寄付の前に、お住まいの市区町村の住民税担当や税理士に確認してください。計算結果や記録を使って生じた損害について、運営者は責任を負いません。制度や控除額は年度で変わるため、確認日以後の改正は反映されていないことがあります。</p>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<div class="toast" id="toast"></div>
+<script src="assets/calc.js"></script>
+<script src="assets/furusato.js"></script>
+<script src="assets/ui.js"></script>
+<script src="assets/yomi.js"></script>
+<script>
+(() => {
+  const $ = UI.$;
+  const CALC_KEY = "furusato-calc-v1", REC_KEY = "furusato-v1";
+  const toastEl = $("toast"); let toastTimer;
+  const toast = m => { toastEl.textContent = m; toastEl.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200); };
+  const pad = n => String(n).padStart(2, "0");
+  const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const now = new Date(); const thisYear = now.getFullYear();
+
+  /* 今年の残り日数と期限 */
+  (() => {
+    const t0 = new Date(thisYear, now.getMonth(), now.getDate());
+    const dec31 = new Date(thisYear, 11, 31);
+    const days = Math.round((dec31 - t0) / 86400000);
+    UI.set("daysLeft", days === 0 ? "今日が最終日" : `あと${days}日`, days <= 14 ? "bad" : "");
+    // 1月1日〜10日はワンストップの期限が今年の1月10日（前年の寄付の分）
+    const jan10 = now.getMonth() === 0 && now.getDate() <= 10 ? new Date(thisYear, 0, 10) : new Date(thisYear + 1, 0, 10);
+    const dl = Math.round((jan10 - t0) / 86400000);
+    UI.set("onestopDeadline", `${jan10.getFullYear()}年1月10日（あと${dl}日）`, dl <= 14 ? "bad" : "");
+    const sy = jan10.getFullYear();
+    UI.set("shinkokuPeriod", `${sy}年2月16日〜3月16日`);
+    // 3月15日が土日のときはずれる（2027年3月15日は月曜なので3月15日）
+    if (sy === 2027) UI.set("shinkokuPeriod", "2027年2月16日〜3月15日");
+  })();
+
+  /* 1. 上限の計算 */
+  let lastLimit = 0;
+  const yen = UI.yen;
+  const pct = r => (Math.round(r * 1000) / 10) + "%";
+  function readInputs() {
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    const num = id => { const v = $(id).value; return v === "" ? null : Number(v) || 0; };
+    const p = { mode, spouse: $("spouse").value, depGeneral: num("depGeneral") || 0, depSpecific: num("depSpecific") || 0, depElderly: num("depElderly") || 0,
+      loanCredit: num("loan") || 0, medical: num("medical") || 0 };
+    if (mode === "simple") {
+      p.salary = num("salary") || 0; p.social = $("social").value === "" ? null : num("social"); p.otherDeductions = num("other") || 0;
+    } else {
+      p.salary = num("dSalary") || 0; p.salaryIncome = num("dSalaryIncome") || 0; p.deductionsTotal = num("dDeductions") || 0; p.otherIncome = num("otherIncome") || 0;
+      p.social = null;
+    }
+    return p;
+  }
+  function calc() {
+    const p = readInputs();
+    document.querySelectorAll(".simple").forEach(e => e.classList.toggle("hidden", p.mode !== "simple"));
+    document.querySelectorAll(".detail").forEach(e => e.classList.toggle("hidden", p.mode !== "detail"));
+    const r = Furusato.limit(p);
+    lastLimit = r.max;
+    UI.set("limit", r.max > 0 ? yen(r.max) : "0円", r.max > 0 ? "good" : "");
+    UI.set("limitSafe", yen(Furusato.safe(r.max)));
+    UI.set("selfPay", r.max > 0 ? "2,000円" : "-");
+    let j;
+    if (r.total === 0) j = "年収を入れると上限が出ます。";
+    else if (r.max === 0) j = "住民税の所得割がかからないため、ふるさと納税をしても控除される税金がありません（全額が自己負担になります）。";
+    else {
+      j = `${yen(r.max)}までの寄付なら、2,000円を超える部分が所得税と住民税から控除されます（目安）。`;
+      if (r.capped) j += "寄付金控除の対象が総所得金額等の30%までなので、その上限になっています。";
+      if (p.mode === "simple" && r.socialEstimated) j += "社会保険料は年収の15%で概算しています。源泉徴収票の金額を入れると精度が上がります。";
+      if (p.medical > 0) j += "医療費控除を使う年は確定申告が必要なので、ワンストップ特例は使えません。";
+      if (r.loanRT > 0) j += "住宅ローン控除が所得税から引き切れず住民税からも控除されているため、上限が小さくなっています。";
+    }
+    $("judge").textContent = j;
+    const rows = [
+      ["給与所得（給与収入−給与所得控除）", yen(r.salaryIncome)],
+      ...(p.otherIncome > 0 ? [["合計所得金額", yen(r.total)]] : []),
+      ["社会保険料" + (r.socialEstimated && !r.usedTotal ? "（年収の15%で概算）" : ""), r.usedTotal ? "所得控除の合計額に含む" : yen(r.social)],
+      ["所得控除の合計（所得税）", yen(r.dedIT)],
+      ["所得控除の合計（住民税。基礎控除43万円など）", yen(r.dedRT)],
+      ["課税所得（所得税）", yen(r.taxableIT)],
+      ["所得税率（復興特別所得税を除く）", pct(r.itRate)],
+      ["課税所得（住民税）", yen(r.taxableRT)],
+      ["住民税の調整控除", yen(r.adjust)],
+      ...(r.loanRT > 0 ? [["住宅ローン控除（住民税分）", yen(r.loanRT)]] : []),
+      ["住民税の所得割額（控除前）", yen(r.shotokuwari)],
+      ["所得割額の20%（特例分の上限）", yen(Math.floor(r.shotokuwari * 0.2))],
+      ["特例分の計算に使う所得税率", pct(r.rate)],
+      ["上限いっぱい寄付したときの控除：所得税", yen(r.breakdown.incomeTax)],
+      ["同：住民税の基本分", yen(r.breakdown.residentBasic)],
+      ["同：住民税の特例分", yen(r.breakdown.residentSpecial)],
+    ];
+    $("detail").tBodies[0].innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+    try { localStorage.setItem(CALC_KEY, JSON.stringify({ mode: p.mode, v: Object.fromEntries(["salary", "dSalary", "dSalaryIncome", "dDeductions", "spouse", "depGeneral", "depSpecific", "depElderly", "social", "other", "loan", "medical", "otherIncome"].map(id => [id, $(id).value])), max: r.max })); } catch (e) {}
+    renderRecords();
+  }
+  // 前回の入力を戻す
+  try {
+    const s = JSON.parse(localStorage.getItem(CALC_KEY) || "null");
+    if (s && s.v) { Object.entries(s.v).forEach(([id, v]) => { if ($(id)) $(id).value = v; }); const m = document.querySelector(`input[name="mode"][value="${s.mode}"]`); if (m) m.checked = true; }
+  } catch (e) {}
+  document.querySelectorAll('#calcCard input, #calcCard select').forEach(el => el.addEventListener("input", calc));
+  document.querySelectorAll('input[name="mode"]').forEach(el => el.addEventListener("change", calc));
+
+  /* 2. 寄付の記録 */
+  let items = [];
+  try { items = JSON.parse(localStorage.getItem(REC_KEY) || "[]"); } catch (e) { items = []; }
+  const save = () => { try { localStorage.setItem(REC_KEY, JSON.stringify(items)); return true; } catch (e) { toast("保存できませんでした（プライベートモードでは保存できません）"); return false; } };
+  $("rDate").value = ymd(now);
+  const yearOf = i => (i.date || "").slice(0, 4);
+  function fillYears() {
+    const sel = $("year"); const cur = sel.value || String(thisYear);
+    const years = new Set([String(thisYear), ...items.map(yearOf).filter(Boolean)]);
+    sel.innerHTML = [...years].sort().reverse().map(y => `<option value="${y}">${y}年（${y}年1月1日〜12月31日の寄付）</option>`).join("");
+    sel.value = years.has(cur) ? cur : String(thisYear);
+  }
+  function renderRecords() {
+    fillYears();
+    const y = $("year").value;
+    $("yearLabel").textContent = y === String(thisYear) ? "今年" : y + "年";
+    const list = items.filter(i => yearOf(i) === y).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    const sum = list.reduce((s, i) => s + i.amount, 0);
+    const munis = new Set(list.map(i => i.name.trim())).size;
+    const noOne = list.filter(i => !i.onestop);
+    UI.set("sumAmount", yen(sum));
+    const remain = lastLimit - sum;
+    UI.set("remain", lastLimit > 0 ? (remain >= 0 ? yen(remain) : "超過 " + yen(-remain)) : "上限を計算すると出ます", lastLimit > 0 ? (remain >= 0 ? "good" : "bad") : "");
+    UI.set("munis", `${munis}自治体`, munis > 5 ? "bad" : "");
+    UI.set("noOnestop", `${noOne.length}件`, noOne.length ? "bad" : "good");
+    let j = "";
+    if (munis > 5) j = `寄付先が${munis}自治体で、ワンストップ特例は使えません。確定申告で全部の寄付を申告してください（申請済みのワンストップも無効になります）。`;
+    else if (munis === 5) j = "寄付先が5自治体になりました。ワンストップ特例を使うなら、これ以上は同じ自治体への追加寄付にしてください。";
+    else if (lastLimit > 0 && remain < 0) j = `上限の目安を${yen(-remain)}超えています。超えた分は控除されず自己負担です。`;
+    else if (list.length && noOne.length) j = `ワンストップ特例の申請がまだの寄付が${noOne.length}件あります。申請書は寄付先の自治体に翌年1月10日必着です。`;
+    else if (list.length) j = "すべての寄付でワンストップ特例を申請済みです。医療費控除などで確定申告をする場合は、申請済みの分も申告書に書いてください。";
+    $("recJudge").textContent = j; $("recJudge").style.display = j ? "" : "none";
+    const ul = $("list");
+    ul.innerHTML = list.map(i => `<li data-id="${i.id}"><span class="name">${esc(i.name)} <span class="tag ${i.onestop ? "" : "off"}">${i.onestop ? "ワンストップ申請済" : "未申請"}</span></span><span class="amt">${yen(i.amount)}</span><span class="meta">${i.date.replace(/-/g, "/")}${i.memo ? "　" + esc(i.memo) : ""}</span><span class="ops"><button type="button" data-op="toggle">${i.onestop ? "未申請に戻す" : "申請済みにする"}</button><button type="button" data-op="del">削除</button></span></li>`).join("");
+    $("empty").style.display = list.length ? "none" : "";
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  $("add").addEventListener("click", () => {
+    const name = $("rName").value.trim(), amount = Math.round(Number($("rAmount").value)), date = $("rDate").value;
+    if (!name) { toast("自治体名を入れてください"); $("rName").focus(); return; }
+    if (!(amount > 0)) { toast("寄付額を入れてください"); $("rAmount").focus(); return; }
+    if (!date) { toast("寄付した日を入れてください"); return; }
+    items.push({ id: Date.now(), name, amount, date, onestop: $("rOnestop").checked, memo: $("rMemo").value.trim() });
+    if (!save()) return;
+    $("rName").value = ""; $("rAmount").value = ""; $("rMemo").value = ""; $("rOnestop").checked = false;
+    $("year").value = date.slice(0, 4);
+    renderRecords(); toast("記録しました");
+  });
+  $("list").addEventListener("click", e => {
+    const b = e.target.closest("button[data-op]"); if (!b) return;
+    const id = Number(b.closest("li").dataset.id); const i = items.find(x => x.id === id); if (!i) return;
+    if (b.dataset.op === "toggle") i.onestop = !i.onestop;
+    else if (confirm(`${i.name} ${yen(i.amount)} の記録を削除しますか？`)) items = items.filter(x => x.id !== id);
+    save(); renderRecords();
+  });
+  $("year").addEventListener("change", renderRecords);
+  $("clearAll").addEventListener("click", () => {
+    const y = $("year").value; const n = items.filter(i => yearOf(i) === y).length;
+    if (!n) { toast("この年の記録はありません"); return; }
+    if (!confirm(`${y}年の記録${n}件をすべて消します。元に戻せません。よいですか？`)) return;
+    items = items.filter(i => yearOf(i) !== y); save(); renderRecords(); toast("消しました");
+  });
+  function csv(list) {
+    const q = s => /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    const lines = ["寄付した日,自治体名,寄付額,ワンストップ特例,返礼品メモ"].concat(
+      list.slice().sort((a, b) => a.date.localeCompare(b.date)).map(i => [i.date.replace(/-/g, "/"), q(i.name), i.amount, i.onestop ? "申請済" : "未申請", q(i.memo || "")].join(",")));
+    return "﻿" + lines.join("\r\n") + "\r\n";
+  }
+  $("exportCsv").addEventListener("click", async () => {
+    const y = $("year").value; const list = items.filter(i => yearOf(i) === y);
+    if (!list.length) { toast("書き出す記録がありません"); return; }
+    const name = `furusato_${y}.csv`;
+    const file = new File([csv(list)], name, { type: "text/csv" });
+    let done = false;
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "ふるさと納税の記録" }); done = true; } catch (e) { if (e.name === "AbortError") return; }
+    }
+    if (!done) {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = name;
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }
+    toast(`${list.length}件を書き出しました`);
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
