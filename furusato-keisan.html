@@ -6,6 +6,11 @@
 <title>ふるさと納税の上限計算と寄付の記録｜年収と家族構成から控除上限の目安、残り枠、ワンストップ5自治体の管理</title>
 <meta name="description" content="年収と家族構成、または源泉徴収票の数字から、ふるさと納税で全額控除される上限の目安を計算します。寄付した自治体・金額・ワンストップ特例の申請を記録して、残り枠と5自治体の数を管理。データはスマホの中だけに保存、CSVで書き出せます。">
 <link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="furusato-manifest.json">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="theme-color" content="#1f5f99">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ふるさと納税">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
 <style>
 .mode{display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap}
@@ -34,6 +39,19 @@
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
 .toast.show{opacity:1}
 .warn{color:var(--bad);font-weight:700}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin:-6px 0 16px}
+.jump a{flex:1;min-width:140px;text-align:center;padding:12px 10px;border-radius:12px;background:var(--main);color:#fff;text-decoration:none;font-weight:700;font-size:15px}
+.jump a.sub{background:var(--card);color:var(--main);border:1px solid var(--main)}
+.howto ol{padding-left:1.3em;margin:6px 0 0}
+.howto li{font-size:15px}
+@media (max-width:600px){
+  .btn2{min-height:48px;font-size:16px}
+  .btns{flex-direction:column}
+  .btns .btn2{width:100%}
+  .mode label{min-height:44px}
+  .list li .ops button{min-height:40px;padding:6px 14px}
+  input,select{min-height:48px}
+}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ETB5R7NFRR');</script>
@@ -44,6 +62,8 @@
   <h1>ふるさと納税の上限計算と寄付の記録</h1>
   <p class="lead">年収と家族構成を入れると、自己負担2,000円で済む寄付の上限の目安が出ます。寄付した自治体と金額を記録すると、残り枠とワンストップ特例の自治体数（5まで）が分かります。入力した数字と記録はこの端末の中だけに保存され、どこにも送信されません。</p>
   <p class="note" style="margin-top:-6px">計算式の確認日：2026年11月7日（総務省ふるさと納税ポータル・国税庁タックスアンサー）。令和8年分（2026年1〜12月の寄付）の控除額で計算しています。</p>
+
+  <nav class="jump" aria-label="ページ内の移動"><a href="#calcCard">上限を計算する</a><a class="sub" href="#record">寄付を記録する</a></nav>
 
   <section class="card">
     <h2>今年の残り日数と期限</h2>
@@ -89,7 +109,7 @@
     <p class="note">この金額は目安です。正確な上限は、他の控除（ふるさと納税以外の寄附金、配当控除、外国税額控除など）や住民税の計算で変わります。確実に知りたいときは、お住まいの市区町村の住民税担当か税理士に確認してください。上限を超えた分は控除されず、全額が自己負担になります。</p>
   </section>
 
-  <section class="card">
+  <section class="card" id="record">
     <h2>2. 寄付の記録</h2>
     <p class="lead" style="margin:0 0 10px">寄付したら記録しましょう。上の計算の上限と比べて、残り枠が出ます。</p>
     <div class="grid">
@@ -155,6 +175,16 @@
     <h2>確定申告が必要な人は、帳簿づけからExcelで</h2>
     <p class="lead" style="margin:0">個人事業主・副業の人は、ふるさと納税も確定申告で控除します。帳簿から青色申告決算書・確定申告の数字まで、1行入力で計算するExcelテンプレートです。無料のお試し版があります。</p>
     <a class="btn" href="https://256-co.booth.pm/items/9050781" target="_blank" rel="noopener">無料お試し版を見る（BOOTH）</a>
+  </section>
+
+  <section class="card howto" id="howto">
+    <h2>ホーム画面に追加して、1タップで開く</h2>
+    <p class="lead" style="margin:0 0 6px">アプリのように開けます。記録はこの端末の中に残り、電波がなくても開けます。</p>
+    <p style="margin:8px 0 0"><strong>iPhone（Safari）</strong></p>
+    <ol><li>画面の下（または上）の「共有」ボタン（四角から上向きの矢印）をタップ</li><li>「ホーム画面に追加」をタップ → 右上の「追加」</li></ol>
+    <p style="margin:8px 0 0"><strong>Android（Chrome）</strong></p>
+    <ol><li>右上のメニュー（点3つ）をタップ</li><li>「ホーム画面に追加」（または「アプリをインストール」）をタップ → 「追加」</li></ol>
+    <p class="note">ブラウザのデータを消すと記録も消えるので、年末にCSVに書き出しておくと安心です。</p>
   </section>
 
   <section class="card article">
@@ -354,6 +384,9 @@
   });
 
   calc();
+  // ホーム画面から開いているときは、追加の手順を隠す
+  if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("howto").classList.add("hidden");
+  if ("serviceWorker" in navigator) { navigator.serviceWorker.register("furusato-sw.js", { scope: "furusato-keisan.html" }).catch(() => {}); }
 })();
 </script>
 </body>
