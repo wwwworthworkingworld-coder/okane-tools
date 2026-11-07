@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>株の損益・配当の記録ツール｜売買と配当を記録して、年ごとの譲渡損益・配当・源泉徴収・NISA枠を集計（スマホ対応・無料）</title>
+<meta name="description" content="株の売買と配当をスマホで記録すると、総平均法に準ずる方法で取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残り、損益通算の目安を出します。データは端末の中だけに保存、CSVで書き出し・読み込みができます。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="kabu-manifest.json">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="theme-color" content="#1f5f99">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="株の記録">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
+<style>
+.mode{display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap}
+.mode label{flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer;font-size:14px}
+.mode input{width:auto;padding:0;margin:0}
+.mode label:has(input:checked){background:var(--main);border-color:var(--main);color:#fff}
+.mode label:has(input[value="sell"]:checked){background:var(--bad);border-color:var(--bad)}
+.hidden{display:none !important}
+.btn2{display:inline-block;padding:10px 16px;border-radius:999px;border:1px solid var(--main);background:var(--card);color:var(--main);font-weight:700;font-size:14px;cursor:pointer}
+.btn2.primary{background:var(--main);color:#fff}
+.btn2.danger{border-color:var(--bad);color:var(--bad)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.list{list-style:none;padding:0;margin:14px 0 0}
+.list li{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.list li .name{font-weight:700}
+.list li .meta{color:var(--muted);font-size:12px;grid-column:1/-1}
+.list li .amt{font-weight:800;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.list li .ops{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.list li .ops button{padding:4px 10px;font-size:12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;background:var(--main-weak);color:var(--main);font-weight:700}
+.tag.buy{background:#e3f1ff;color:#1f5f99}
+.tag.sell{background:#fdeaea;color:var(--bad)}
+.tag.off{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin:-6px 0 16px}
+.jump a{flex:1;min-width:110px;text-align:center;padding:12px 10px;border-radius:12px;background:var(--main);color:#fff;text-decoration:none;font-weight:700;font-size:15px}
+.jump a.sub{background:var(--card);color:var(--main);border:1px solid var(--main)}
+.howto ol{padding-left:1.3em;margin:6px 0 0}
+.howto li{font-size:15px}
+.judge ul{margin:6px 0 0;padding-left:1.2em;font-weight:400;font-size:14px}
+.judge li{margin:4px 0}
+table td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.good{color:var(--good, #1a7f4b)}
+.bad{color:var(--bad)}
+input[type=file]{font-size:14px}
+@media (max-width:600px){
+  .btn2{min-height:48px;font-size:16px}
+  .btns{flex-direction:column}
+  .btns .btn2{width:100%}
+  .mode label{min-height:44px}
+  .list li .ops button{min-height:40px;padding:6px 14px}
+  input,select{min-height:48px}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ETB5R7NFRR');</script>
+</head>
+<body>
+<header class="site-header"></header>
+<main>
+  <h1>株の損益・配当の記録ツール</h1>
+  <p class="lead">株の売買と配当をその場で記録すると、取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残りが分かります。確定申告の要否を考える目安にも。記録はこの端末の中だけに保存され、どこにも送信されません。銘柄のおすすめや売買のタイミングを示すものではありません。</p>
+  <p class="note" style="margin-top:-6px">税率・制度の確認日：2026年11月7日（国税庁タックスアンサー No.1463・1466・1474・1330・1535）。令和8年分（2026年）の制度で計算しています。</p>
+
+  <nav class="jump" aria-label="ページ内の移動"><a href="#tradeCard">取引を記録</a><a class="sub" href="#divCard">配当を記録</a><a class="sub" href="#sumCard">集計を見る</a></nav>
+
+  <section class="card" id="tradeCard">
+    <h2>1. 取引の記録（買い・売り）</h2>
+    <div class="mode">
+      <label><input type="radio" name="side" value="buy" checked>買い</label>
+      <label><input type="radio" name="side" value="sell">売り</label>
+    </div>
+    <div class="grid">
+      <div><label for="tName">銘柄名 <small>（自由入力。同じ銘柄は同じ名前で）</small></label><div class="field"><input id="tName" type="text" list="nameList" placeholder="例：トヨタ自動車"><datalist id="nameList"></datalist></div></div>
+      <div><label for="tAccount">口座区分</label><div class="field"><select id="tAccount">
+        <option value="tokutei_ari">特定口座（源泉徴収あり）</option>
+        <option value="tokutei_nashi">特定口座（源泉徴収なし）</option>
+        <option value="ippan">一般口座</option>
+        <option value="nisa_tsumitate">NISA つみたて投資枠</option>
+        <option value="nisa_seicho">NISA 成長投資枠</option></select></div></div>
+      <div><label for="tDate">約定日</label><div class="field"><input id="tDate" type="date"></div></div>
+      <div><label for="tQty">数量</label><div class="field"><input id="tQty" type="number" inputmode="numeric" min="1" step="1" placeholder="100"><span class="unit">株</span></div></div>
+      <div><label for="tPrice">単価 <small>（1株の約定価格）</small></label><div class="field"><input id="tPrice" type="number" inputmode="decimal" min="0" step="0.01" placeholder="2500"><span class="unit">円</span></div></div>
+      <div><label for="tFee">手数料 <small>（税込。なければ0）</small></label><div class="field"><input id="tFee" type="number" inputmode="numeric" min="0" value="0"><span class="unit">円</span></div></div>
+    </div>
+    <div class="judge" id="tradePreview" style="display:none"></div>
+    <div class="btns"><button class="btn2 primary" type="button" id="addTrade">記録する</button></div>
+    <p class="note">売却時の損益は「総平均法に準ずる方法」（国税庁 No.1466）で計算します：同じ銘柄・同じ口座の買いを売るまでの間で平均して1株の取得単価（1円未満切り上げ）を出し、売却代金−売却手数料−取得単価×数量＝損益。買いの手数料は取得費に含めます。投資信託や株式分割・併合・移管は手で数量を直してください。</p>
+  </section>
+
+  <section class="card" id="divCard">
+    <h2>2. 配当の記録</h2>
+    <div class="grid">
+      <div><label for="dName">銘柄名</label><div class="field"><input id="dName" type="text" list="nameList" placeholder="例：トヨタ自動車"></div></div>
+      <div><label for="dAccount">口座区分</label><div class="field"><select id="dAccount">
+        <option value="tokutei_ari">特定口座（源泉徴収あり）</option>
+        <option value="tokutei_nashi">特定口座（源泉徴収なし）</option>
+        <option value="ippan">一般口座</option>
+        <option value="nisa_tsumitate">NISA つみたて投資枠</option>
+        <option value="nisa_seicho">NISA 成長投資枠</option></select></div></div>
+      <div><label for="dDate">支払日（受取日）</label><div class="field"><input id="dDate" type="date"></div></div>
+      <div><label for="dAmount">配当金額 <small>（税引前）</small></label><div class="field"><input id="dAmount" type="number" inputmode="numeric" min="0" placeholder="5000"><span class="unit">円</span></div></div>
+      <div><label for="dWithheld">源泉徴収額 <small>（空なら20.315%で自動計算。NISAは0。通知書の額があれば上書き）</small></label><div class="field"><input id="dWithheld" type="number" inputmode="numeric" min="0" placeholder="自動計算"><span class="unit">円</span></div></div>
+    </div>
+    <div class="judge" id="divPreview" style="display:none"></div>
+    <div class="btns"><button class="btn2 primary" type="button" id="addDiv">記録する</button></div>
+    <p class="note">上場株式の配当の源泉徴収は、所得税・復興特別所得税15.315%＋住民税5%＝20.315%（国税庁 No.1330）。所得税分と住民税分を別々に1円未満切り捨てて計算しています。実際の額は「配当金計算書」や証券会社の年間取引報告書で確認してください。</p>
+  </section>
+
+  <section class="card" id="sumCard">
+    <h2>3. 年の集計</h2>
+    <div class="grid"><div><label for="year">集計する年</label><div class="field"><select id="year"></select></div></div></div>
+    <div class="result">
+      <div class="stat big"><div class="k">譲渡損益（NISA以外）</div><div class="v" id="sGain">-</div></div>
+      <div class="stat"><div class="k">配当の合計（NISA以外・税引前）</div><div class="v" id="sDiv">-</div></div>
+      <div class="stat"><div class="k">源泉徴収の合計（配当）</div><div class="v" id="sWith">-</div></div>
+      <div class="stat"><div class="k">NISA口座の譲渡損益・配当（非課税）</div><div class="v" id="sNisa">-</div></div>
+    </div>
+    <div class="judge" id="sumJudge"></div>
+
+    <h3 style="margin:18px 0 6px;font-size:16px">口座区分別の内訳</h3>
+    <div class="table-wrap"><table id="accTable"><thead><tr><th>口座区分</th><th>買い（約定代金）</th><th>売り（約定代金）</th><th>譲渡損益</th><th>配当</th><th>源泉徴収</th></tr></thead><tbody></tbody></table></div>
+
+    <h3 style="margin:18px 0 6px;font-size:16px">損益通算の目安（NISA以外の口座を合わせたとき）</h3>
+    <div class="table-wrap"><table id="offsetTable"><tbody></tbody></table></div>
+    <p class="note">譲渡損は、申告分離課税を選んだ配当と相殺でき、残った損失は確定申告で翌年以後3年間繰り越せます（国税庁 No.1474）。NISA口座の損失は「ないもの」とされ、相殺も繰越もできません（No.1535）。税額は20.315%の目安で、実際は源泉徴収あり口座の年末の精算や、他の所得・控除で変わります。</p>
+
+    <h3 style="margin:18px 0 6px;font-size:16px">NISA枠（<span id="nisaYear">今年</span>）</h3>
+    <div class="result" style="margin-top:6px">
+      <div class="stat"><div class="k">つみたて投資枠 使用額／残り（年120万円）</div><div class="v" id="nTsumi">-</div></div>
+      <div class="stat"><div class="k">成長投資枠 使用額／残り（年240万円）</div><div class="v" id="nSeicho">-</div></div>
+      <div class="stat"><div class="k">生涯の非課税保有限度額 使用額／残り（1,800万円）</div><div class="v" id="nLife">-</div></div>
+      <div class="stat"><div class="k">うち成長投資枠（1,200万円まで）</div><div class="v" id="nSeichoLife">-</div></div>
+    </div>
+    <p class="note">年間の枠は買いの約定代金（手数料を含まない）で数えています。生涯の枠は買った値段（簿価）で数え、売った分は翌年に枠が戻ります。ここでは今の保有の簿価を使用額としているので、今年売った分の枠は「残り」に入っていますが、使えるのは翌年からです。</p>
+
+    <h3 style="margin:18px 0 6px;font-size:16px">いまの保有（取得単価）</h3>
+    <div class="table-wrap"><table id="holdTable"><thead><tr><th>銘柄</th><th>口座区分</th><th>数量</th><th>取得単価</th><th>取得費の合計</th></tr></thead><tbody></tbody></table></div>
+    <p class="empty" id="holdEmpty">保有はありません。</p>
+  </section>
+
+  <section class="card">
+    <h2>4. 記録の一覧・CSVの書き出しと読み込み</h2>
+    <div class="mode">
+      <label><input type="radio" name="listKind" value="trade" checked>取引</label>
+      <label><input type="radio" name="listKind" value="div">配当</label>
+    </div>
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty">まだ記録がありません。</p>
+    <div class="btns">
+      <button class="btn2" type="button" id="exportCsv">CSVに書き出す（この年の取引と配当）</button>
+      <button class="btn2" type="button" id="importBtn">CSVを読み込む（追加）</button>
+      <input type="file" id="importFile" accept=".csv,text/csv" class="hidden">
+      <button class="btn2 danger" type="button" id="clearAll">この年の記録を全部消す</button>
+    </div>
+    <p class="note">CSVの列：種類（取引／配当）, 日付, 銘柄名, 口座区分, 売買, 数量, 単価, 手数料, 配当金額, 源泉徴収額。このツールで書き出したCSVはそのまま読み込めます。証券会社の年間取引報告書や取引履歴から転記するときは、同じ列の順でExcelに並べてCSV保存すると読み込めます（口座区分は「特定口座（源泉あり）」「特定口座（源泉なし）」「一般口座」「NISA つみたて投資枠」「NISA 成長投資枠」、売買は「買い」「売り」。日付は 2026/4/1 や 2026-04-01）。読み込みは追加なので、同じファイルを2回読むと重複します。記録はブラウザの中だけに残るので、年末にCSVに書き出しておくと安心です。</p>
+  </section>
+
+  <div class="ad-slot"></div>
+
+  <section class="card article">
+    <h2>確定申告が必要になりやすい・したほうが有利になりやすい場合</h2>
+    <p>株の税金は、口座の種類と、その年の損益で扱いが変わります。次は制度のしくみの説明で、あなたの申告が必要かどうかの判定ではありません。迷ったら税務署か税理士に確認してください。</p>
+    <ul>
+      <li><strong>特定口座（源泉徴収なし）・一般口座で利益が出た</strong>：証券会社は税金を引いていないので、原則として確定申告が必要です（会社員で給与以外の所得が20万円以下なら所得税の申告は不要な場合がありますが、住民税の申告は必要）。</li>
+      <li><strong>年間で譲渡損になった</strong>：申告は義務ではありませんが、確定申告をすると損失を翌年以後3年間繰り越して、翌年の利益や配当と相殺できます。繰り越す年は毎年続けて申告が必要です。</li>
+      <li><strong>複数の証券会社・口座を使っていて、片方が損・片方が利益</strong>：源泉徴収あり口座は口座の中だけで精算されるので、口座をまたいだ損益通算は確定申告で行います。相殺できれば、引かれすぎた税金が戻ります。</li>
+      <li><strong>譲渡損があり、配当も受け取っている</strong>：配当を申告分離課税で申告すると、譲渡損と相殺できます。同じ源泉徴収あり口座に配当を受け入れていれば、口座の中で自動で通算されます。</li>
+      <li><strong>特定口座（源泉徴収あり）だけで、利益も損もその口座の中で済んでいる</strong>：申告しなくてよい場合がほとんどです。申告すると、国民健康保険料や扶養の判定に影響することがあります。</li>
+      <li><strong>NISA口座</strong>：利益も配当も非課税なので申告は不要です。損失が出ても、他の口座の利益と相殺できません。</li>
+    </ul>
+    <p>くわしくは <a href="tokutei-koza-chigai.html">特定口座（源泉徴収あり・なし）と一般口座の違い</a>、<a href="kabu-sontsu-kurikoshi.html">株の損益通算と繰越控除のしくみ</a>、<a href="haitou-kakutei-shinkoku.html">株の配当金、確定申告したほうが得？</a>、<a href="nisa-waku-shikumi.html">新NISAの枠のしくみと、売ったときの枠の復活</a> を読んでください。売却益の税額や配当の課税方式の比較は <a href="kabu-tax.html">株の税金の計算</a> で。</p>
+
+    <h2>取得単価と損益の計算のしかた</h2>
+    <p>同じ銘柄を何回かに分けて買って一部を売ったとき、売った分の取得費は「総平均法に準ずる方法」で出します。前回売った後から今回売るまでに買った分をまとめて、<strong>（買った代金の合計＋手数料）÷ 株数</strong> を1株の取得単価にします（1円未満は切り上げ）。これに売った株数を掛けたものが取得費で、<strong>売却代金 − 売却手数料 − 取得費</strong> が譲渡損益です。証券会社の特定口座も同じ考え方で計算していますが、手数料の扱いや端数で数円の差が出ることがあります。正確な数字は年間取引報告書で確認してください。</p>
+    <p>このツールは、銘柄名と口座区分が同じ記録をひとつの銘柄として平均します。同じ銘柄を特定口座とNISAで持っているときは、口座ごとに別々に計算します（税法上もそうなります）。</p>
+
+    <h2>よくある質問</h2>
+    <ul>
+      <li><strong>配当金額は税引前と税引後のどちら？</strong> 税引前（配当金計算書の「配当金額」）を入れてください。源泉徴収額は自動で計算され、通知書の額があれば上書きできます。</li>
+      <li><strong>投資信託も記録できる？</strong> 口数と基準価額を数量・単価として入れれば記録できますが、基準価額は1万口あたりなので単価は1万口あたりの額÷10,000にするなど工夫が必要です。分配金の「特別分配金（元本払戻金）」は非課税で、取得費が減ります。このツールでは対応していないので、手で調整してください。</li>
+      <li><strong>株式分割があったら？</strong> 分割後の数量に合わせて、分割前の買いの記録の数量を増やし、単価を割ってください（取得費の合計が変わらないように）。</li>
+      <li><strong>データはどこに保存される？</strong> このブラウザの中（localStorage）だけです。別の端末やブラウザには引き継がれないので、CSVに書き出して移してください。</li>
+    </ul>
+  </section>
+
+  <section class="card cta">
+    <h2>口座ごとの損益・課税方式の比較・申告の目安までExcelで</h2>
+    <p class="lead" style="margin:0">売買と配当を記録するだけで、口座ごとの譲渡損益、配当の課税方式（申告不要・総合・申告分離）の比較、確定申告の目安、NISAの残り枠まで自動で計算するExcelシートです。このツールのCSVを貼り付けて使えます。980円の買い切りで、無料のお試し版もあります。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9061872" target="_blank" rel="noopener">株・NISAの税金と記録かんたんシート（BOOTH）</a>
+  </section>
+
+  <section class="card howto" id="howto">
+    <h2>ホーム画面に追加して、1タップで開く</h2>
+    <p class="lead" style="margin:0 0 6px">アプリのように開けます。記録はこの端末の中に残り、電波がなくても開けます。</p>
+    <p style="margin:8px 0 0"><strong>iPhone（Safari）</strong></p>
+    <ol><li>画面の下（または上）の「共有」ボタン（四角から上向きの矢印）をタップ</li><li>「ホーム画面に追加」をタップ → 右上の「追加」</li></ol>
+    <p style="margin:8px 0 0"><strong>Android（Chrome）</strong></p>
+    <ol><li>右上のメニュー（点3つ）をタップ</li><li>「ホーム画面に追加」（または「アプリをインストール」）をタップ → 「追加」</li></ol>
+    <p class="note">ブラウザのデータを消すと記録も消えるので、年末にCSVに書き出しておくと安心です。</p>
+  </section>
+
+  <section class="card article">
+    <h2>参考にした資料（2026年11月7日に確認）</h2>
+    <ul>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm" target="_blank" rel="noopener">国税庁 No.1463 株式等を譲渡したときの課税（申告分離課税）</a>（上場株式等の譲渡益は所得税15%・住民税5%、復興特別所得税は基準所得税額の2.1%）</li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1466.htm" target="_blank" rel="noopener">国税庁 No.1466 同一銘柄の株式等を2回以上にわたって購入している場合の取得費</a>（総平均法に準ずる方法、1円未満切り上げ）</li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1474.htm" target="_blank" rel="noopener">国税庁 No.1474 上場株式等に係る譲渡損失の損益通算及び繰越控除</a>（申告分離課税の配当と通算、翌年以後3年間の繰越、毎年の申告）</li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm" target="_blank" rel="noopener">国税庁 No.1330 配当金を受け取ったとき（配当所得）</a>（上場株式等の源泉徴収 15.315%＋5%、申告不要・総合課税・申告分離課税）</li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1535.htm" target="_blank" rel="noopener">国税庁 No.1535 NISA制度</a>（年間投資枠 つみたて120万円・成長240万円、非課税保有限度額1,800万円・うち成長1,200万円、NISA口座の損失はないものとみなす）</li>
+    </ul>
+    <p class="note">免責：このページの計算結果は目安であり、正確な税額は税理士や証券会社の年間取引報告書で確認してください。このツールは記録と税金の計算の補助であり、特定の銘柄の推奨、売買のタイミングの助言、個別の投資判断を示すものではありません。計算結果や記録を使って生じた損害について、運営者は責任を負いません。制度や税率は年度で変わるため、確認日以後の改正は反映されていないことがあります。</p>
+  </section>
+</main>
+<footer class="site-footer"></footer>
+<div class="toast" id="toast"></div>
+<script src="assets/kabu-kiroku.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+(() => {
+  const $ = UI.$, yen = UI.yen, K = KabuKiroku, ACC = K.ACCOUNTS;
+  const TRADE_KEY = "kabu-trades-v1", DIV_KEY = "kabu-dividends-v1";
+  const toastEl = $("toast"); let toastTimer;
+  const toast = m => { toastEl.textContent = m; toastEl.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200); };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const pad = n => String(n).padStart(2, "0");
+  const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const now = new Date(), thisYear = now.getFullYear();
+  const signed = v => (v > 0 ? "+" : "") + yen(v);
+  const cls = v => v > 0 ? "good" : v < 0 ? "bad" : "";
+
+  let trades = [], divs = [];
+  try { trades = JSON.parse(localStorage.getItem(TRADE_KEY) || "[]"); } catch (e) { trades = []; }
+  try { divs = JSON.parse(localStorage.getItem(DIV_KEY) || "[]"); } catch (e) { divs = []; }
+  const save = () => { try { localStorage.setItem(TRADE_KEY, JSON.stringify(trades)); localStorage.setItem(DIV_KEY, JSON.stringify(divs)); return true; } catch (e) { toast("保存できませんでした（プライベートモードでは保存できません）"); return false; } };
+  $("tDate").value = ymd(now); $("dDate").value = ymd(now);
+  let nextId = Date.now();
+  const newId = () => nextId++;
+
+  /* 入力中のプレビュー */
+  const side = () => document.querySelector('input[name="side"]:checked').value;
+  function tradePreview() {
+    const qty = Number($("tQty").value), price = Number($("tPrice").value), fee = Number($("tFee").value) || 0;
+    const el = $("tradePreview");
+    if (!(qty > 0 && price >= 0 && $("tPrice").value !== "")) { el.style.display = "none"; return; }
+    const amt = qty * price;
+    if (side() === "buy") { el.textContent = `約定代金 ${yen(amt)}、手数料を含めた取得費 ${yen(amt + fee)}（1株あたり ${yen(Math.ceil((amt + fee) / qty))}）`; }
+    else {
+      const name = $("tName").value.trim(), account = $("tAccount").value;
+      const { holdings } = K.compute(trades);
+      const h = holdings.find(x => x.name === name && x.account === account);
+      if (h) {
+        const q = Math.min(qty, h.qty), gain = amt - fee - h.avg * q;
+        el.innerHTML = `取得単価 ${yen(h.avg)} × ${q.toLocaleString()}株 ＝ 取得費 ${yen(h.avg * q)}。売却代金 ${yen(amt)} − 手数料 ${yen(fee)} − 取得費 ＝ <span class="${cls(gain)}">${signed(gain)}</span>${qty > h.qty ? `<br><span class="bad">保有は${h.qty.toLocaleString()}株です。超えた分は取得費0で計算されます。</span>` : ""}`;
+      } else el.innerHTML = `<span class="bad">この銘柄・口座の買いの記録がありません。</span> 先に買いを記録すると損益が計算できます（記録はできます。取得費0で計算）。`;
+    }
+    el.style.display = "";
+  }
+  document.querySelectorAll("#tradeCard input, #tradeCard select").forEach(el => el.addEventListener("input", tradePreview));
+  document.querySelectorAll('input[name="side"]').forEach(el => el.addEventListener("change", tradePreview));
+  function divPreview() {
+    const amount = Number($("dAmount").value), account = $("dAccount").value, el = $("divPreview");
+    if (!(amount > 0)) { el.style.display = "none"; return; }
+    const w = K.withholding(amount, account);
+    const manual = $("dWithheld").value !== "";
+    const withheld = manual ? Number($("dWithheld").value) : w.total;
+    el.textContent = K.isNisa(account) && !manual ? `NISA口座の配当は非課税なので源泉徴収は0円。受取額 ${yen(amount)}（配当を株式数比例配分方式で受け取っている場合）`
+      : `源泉徴収 ${yen(withheld)}${manual ? "（入力値）" : `（所得税等 ${yen(w.it)}＋住民税 ${yen(w.rt)}）`}、受取額 ${yen(amount - withheld)}`;
+    el.style.display = "";
+  }
+  document.querySelectorAll("#divCard input, #divCard select").forEach(el => el.addEventListener("input", divPreview));
+
+  /* 記録する */
+  $("addTrade").addEventListener("click", () => {
+    const name = $("tName").value.trim(), account = $("tAccount").value, date = $("tDate").value;
+    const qty = Number($("tQty").value), price = Number($("tPrice").value), fee = Math.round(Number($("tFee").value) || 0);
+    if (!name) { toast("銘柄名を入れてください"); $("tName").focus(); return; }
+    if (!date) { toast("約定日を入れてください"); return; }
+    if (!(qty > 0)) { toast("数量を入れてください"); $("tQty").focus(); return; }
+    if (!(price >= 0) || $("tPrice").value === "") { toast("単価を入れてください"); $("tPrice").focus(); return; }
+    trades.push({ id: newId(), date, name, account, side: side(), qty, price, fee });
+    if (!save()) return;
+    $("tQty").value = ""; $("tPrice").value = ""; $("tFee").value = "0"; $("tradePreview").style.display = "none";
+    $("year").value = date.slice(0, 4); render(); toast("記録しました");
+  });
+  $("addDiv").addEventListener("click", () => {
+    const name = $("dName").value.trim(), account = $("dAccount").value, date = $("dDate").value, amount = Math.round(Number($("dAmount").value));
+    if (!name) { toast("銘柄名を入れてください"); $("dName").focus(); return; }
+    if (!date) { toast("支払日を入れてください"); return; }
+    if (!(amount > 0)) { toast("配当金額を入れてください"); $("dAmount").focus(); return; }
+    const withheld = $("dWithheld").value === "" ? K.withholding(amount, account).total : Math.round(Number($("dWithheld").value) || 0);
+    divs.push({ id: newId(), date, name, account, amount, withheld });
+    if (!save()) return;
+    $("dAmount").value = ""; $("dWithheld").value = ""; $("divPreview").style.display = "none";
+    $("year").value = date.slice(0, 4); render(); toast("記録しました");
+  });
+
+  /* 表示 */
+  const yearOf = i => (i.date || "").slice(0, 4);
+  function fillYears() {
+    const sel = $("year"); const cur = sel.value || String(thisYear);
+    const years = new Set([String(thisYear), ...trades.map(yearOf), ...divs.map(yearOf)].filter(Boolean));
+    sel.innerHTML = [...years].sort().reverse().map(y => `<option value="${y}">${y}年（1月1日〜12月31日）</option>`).join("");
+    sel.value = years.has(cur) ? cur : String(thisYear);
+  }
+  function render() {
+    fillYears();
+    const y = $("year").value;
+    $("nameList").innerHTML = [...new Set([...trades, ...divs].map(i => i.name))].sort().map(n => `<option value="${esc(n)}">`).join("");
+    const { results, holdings } = K.compute(trades);
+    const s = K.summarize(trades, divs, y, results);
+    const n = K.nisa(trades, y, holdings);
+    const hasAny = trades.some(t => yearOf(t) === y) || divs.some(d => yearOf(d) === y);
+    UI.set("sGain", hasAny ? signed(s.gain) : "-", cls(s.gain));
+    UI.set("sDiv", hasAny ? yen(s.dividend) : "-");
+    UI.set("sWith", hasAny ? yen(s.withheld) : "-");
+    UI.set("sNisa", hasAny ? `${signed(s.nisaGain)} ／ ${yen(s.nisaDividend)}` : "-");
+
+    // 判定文（制度の説明）
+    const msgs = [];
+    const ba = s.byAcc;
+    const nashiGain = (ba.tokutei_nashi ? ba.tokutei_nashi.gain : 0) + (ba.ippan ? ba.ippan.gain : 0);
+    if (nashiGain > 0) msgs.push(`特定口座（源泉なし）・一般口座の譲渡益が ${yen(nashiGain)} あります。証券会社は税金を引いていないので、原則として確定申告が必要です。`);
+    if (ba.tokutei_nashi && ba.tokutei_nashi.dividend > 0 || ba.ippan && ba.ippan.dividend > 0) msgs.push("源泉なし・一般口座にも配当が記録されています。配当は口座の種類に関係なく受取時に源泉徴収されるので、源泉徴収額が0になっていないか確かめてください。");
+    if (s.gain < 0) msgs.push(`譲渡損が ${yen(-s.gain)} です。${s.offset > 0 ? `配当 ${yen(s.dividend)} と相殺すると残りの損失は ${yen(s.carry)}。` : ""}確定申告（申告分離課税）をすると、残った損失を翌年以後3年間繰り越せます。`);
+    const taxableAccs = Object.entries(ba).filter(([k, v]) => !K.isNisa(k) && (v.gain !== 0 || v.dividend > 0));
+    if (taxableAccs.length >= 2 && taxableAccs.some(([, v]) => v.gain < 0) && taxableAccs.some(([, v]) => v.gain > 0)) msgs.push("利益の口座と損失の口座があります。源泉徴収あり口座は口座の中だけで精算されるので、口座をまたいだ損益通算は確定申告で行います。");
+    if (s.gain > 0 && Object.keys(ba).filter(k => !K.isNisa(k)).every(k => k === "tokutei_ari")) msgs.push("特定口座（源泉あり）だけで利益が出ています。税金は口座の中で引かれるので、申告しなくてよい場合がほとんどです（申告すると国民健康保険料や扶養に影響することがあります）。");
+    if (n.overTsumitate || n.overSeicho) msgs.push("NISAの年間投資枠を超える買いが記録されています。枠を超えた分は証券会社で受け付けられないので、口座区分や金額を確かめてください。");
+    if (n.overLife) msgs.push("NISAの簿価残高が生涯の非課税保有限度額1,800万円を超えています。記録を確かめてください。");
+    if (!hasAny) msgs.push("この年の記録はまだありません。取引や配当を記録すると、ここに集計と制度の説明が出ます。");
+    $("sumJudge").innerHTML = `<div>${hasAny ? "この年の記録から見た、制度のポイント（判定ではなく説明です）" : ""}</div><ul>${msgs.map(m => `<li>${m}</li>`).join("")}</ul>`;
+
+    // 口座別
+    const order = ["tokutei_ari", "tokutei_nashi", "ippan", "nisa_tsumitate", "nisa_seicho"];
+    $("accTable").tBodies[0].innerHTML = order.filter(k => ba[k]).map(k => { const v = ba[k]; return `<tr><td>${ACC[k]}</td><td class="num">${yen(v.buy)}</td><td class="num">${yen(v.sell)}</td><td class="num ${cls(v.gain)}">${signed(v.gain)}</td><td class="num">${yen(v.dividend)}</td><td class="num">${yen(v.withheld)}</td></tr>`; }).join("") || `<tr><td colspan="6" class="empty">記録がありません</td></tr>`;
+
+    // 損益通算
+    const rows = [
+      ["譲渡損益（NISA以外の合計）", signed(s.gain)],
+      ["配当（NISA以外・税引前）", yen(s.dividend)],
+      ["譲渡損と配当の相殺額", yen(s.offset)],
+      ["相殺後の課税対象（譲渡益＋配当）", yen(s.taxBase)],
+      ["翌年に繰り越せる損失（確定申告した場合）", yen(s.carry)],
+      ["税額の目安（20.315%）", yen(s.taxEst)],
+      ["すでに源泉徴収された額（配当＋源泉あり口座の譲渡益の概算）", yen(s.withheld + s.withheldGain)],
+      [s.refund >= 0 ? "確定申告で戻る可能性のある額（目安）" : "確定申告で納める可能性のある額（目安）", yen(Math.abs(s.refund))],
+    ];
+    $("offsetTable").tBodies[0].innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td class="num">${v}</td></tr>`).join("");
+
+    // NISA
+    $("nisaYear").textContent = y === String(thisYear) ? "今年" : y + "年";
+    UI.set("nTsumi", `${yen(n.tsumitateUsed)} ／ ${yen(n.tsumitateLeft)}`, n.overTsumitate ? "bad" : "");
+    UI.set("nSeicho", `${yen(n.seichoUsed)} ／ ${yen(n.seichoLeft)}`, n.overSeicho ? "bad" : "");
+    UI.set("nLife", `${yen(n.lifeUsed)} ／ ${yen(n.lifeLeft)}`, n.overLife ? "bad" : "");
+    UI.set("nSeichoLife", `${yen(n.seichoLifeUsed)} ／ ${yen(n.seichoLifeLeft)}`);
+
+    // 保有
+    const hs = holdings.slice().sort((a, b) => a.name.localeCompare(b.name, "ja") || a.account.localeCompare(b.account));
+    $("holdTable").tBodies[0].innerHTML = hs.map(h => `<tr><td>${esc(h.name)}</td><td>${ACC[h.account]}</td><td class="num">${h.qty.toLocaleString()}株</td><td class="num">${yen(h.avg)}</td><td class="num">${yen(h.cost)}</td></tr>`).join("");
+    $("holdEmpty").style.display = hs.length ? "none" : "";
+    $("holdTable").style.display = hs.length ? "" : "none";
+
+    // 一覧
+    const kind = document.querySelector('input[name="listKind"]:checked').value;
+    let html = "";
+    if (kind === "trade") {
+      const list = trades.filter(t => yearOf(t) === y).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+      html = list.map(t => { const r = results[t.id] || {}; return `<li data-kind="trade" data-id="${t.id}"><span class="name">${esc(t.name)} <span class="tag ${t.side}">${t.side === "buy" ? "買い" : "売り"}</span> <span class="tag off">${ACC[t.account]}</span></span><span class="amt">${t.side === "sell" && r.gain !== null && r.gain !== undefined ? `<span class="${cls(r.gain)}">${signed(r.gain)}</span>` : yen(t.qty * t.price)}</span><span class="meta">${t.date.replace(/-/g, "/")}　${t.qty.toLocaleString()}株 × ${yen(t.price)}${t.fee ? `　手数料 ${yen(t.fee)}` : ""}${t.side === "sell" ? `　取得単価 ${yen(r.avg || 0)}` : ""}${r.warn ? `<br><span class="bad">${r.warn}</span>` : ""}</span><span class="ops"><button type="button" data-op="del">削除</button></span></li>`; }).join("");
+    } else {
+      const list = divs.filter(d => yearOf(d) === y).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+      html = list.map(d => `<li data-kind="div" data-id="${d.id}"><span class="name">${esc(d.name)} <span class="tag">配当</span> <span class="tag off">${ACC[d.account]}</span></span><span class="amt">${yen(d.amount)}</span><span class="meta">${d.date.replace(/-/g, "/")}　源泉徴収 ${yen(d.withheld)}　受取 ${yen(d.amount - d.withheld)}</span><span class="ops"><button type="button" data-op="del">削除</button></span></li>`).join("");
+    }
+    $("list").innerHTML = html; $("empty").style.display = html ? "none" : "";
+  }
+  $("list").addEventListener("click", e => {
+    const b = e.target.closest("button[data-op]"); if (!b) return;
+    const li = b.closest("li"), id = Number(li.dataset.id);
+    if (li.dataset.kind === "trade") { const t = trades.find(x => x.id === id); if (t && confirm(`${t.name} ${t.side === "buy" ? "買い" : "売り"} ${t.qty}株 の記録を削除しますか？`)) trades = trades.filter(x => x.id !== id); }
+    else { const d = divs.find(x => x.id === id); if (d && confirm(`${d.name} 配当 ${yen(d.amount)} の記録を削除しますか？`)) divs = divs.filter(x => x.id !== id); }
+    save(); render();
+  });
+  $("year").addEventListener("change", render);
+  document.querySelectorAll('input[name="listKind"]').forEach(el => el.addEventListener("change", render));
+  $("clearAll").addEventListener("click", () => {
+    const y = $("year").value; const n = trades.filter(t => yearOf(t) === y).length + divs.filter(d => yearOf(d) === y).length;
+    if (!n) { toast("この年の記録はありません"); return; }
+    if (!confirm(`${y}年の取引と配当の記録${n}件をすべて消します。元に戻せません。よいですか？`)) return;
+    trades = trades.filter(t => yearOf(t) !== y); divs = divs.filter(d => yearOf(d) !== y); save(); render(); toast("消しました");
+  });
+
+  /* CSV */
+  const HEADER = ["種類", "日付", "銘柄名", "口座区分", "売買", "数量", "単価", "手数料", "配当金額", "源泉徴収額"];
+  const ACC_CSV = { tokutei_ari: "特定口座（源泉あり）", tokutei_nashi: "特定口座（源泉なし）", ippan: "一般口座", nisa_tsumitate: "NISA つみたて投資枠", nisa_seicho: "NISA 成長投資枠" };
+  function csv(y) {
+    const q = s => /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    const rows = [
+      ...trades.filter(t => yearOf(t) === y).map(t => ["取引", t.date.replace(/-/g, "/"), q(t.name), ACC_CSV[t.account], t.side === "buy" ? "買い" : "売り", t.qty, t.price, t.fee || 0, "", ""]),
+      ...divs.filter(d => yearOf(d) === y).map(d => ["配当", d.date.replace(/-/g, "/"), q(d.name), ACC_CSV[d.account], "", "", "", "", d.amount, d.withheld]),
+    ].sort((a, b) => a[1].localeCompare(b[1]));
+    return "﻿" + [HEADER.join(","), ...rows.map(r => r.join(","))].join("\r\n") + "\r\n";
+  }
+  $("exportCsv").addEventListener("click", async () => {
+    const y = $("year").value; const n = trades.filter(t => yearOf(t) === y).length + divs.filter(d => yearOf(d) === y).length;
+    if (!n) { toast("書き出す記録がありません"); return; }
+    const name = `kabu_${y}.csv`, file = new File([csv(y)], name, { type: "text/csv" });
+    let done = false;
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "株の記録" }); done = true; } catch (e) { if (e.name === "AbortError") return; }
+    }
+    if (!done) { const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+    toast(`${n}件を書き出しました`);
+  });
+  function parseCsv(text) {
+    const rows = []; let row = [], cell = "", inQ = false;
+    text = text.replace(/^﻿/, "");
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQ) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else inQ = false; } else cell += c; }
+      else if (c === '"') inQ = true;
+      else if (c === ",") { row.push(cell); cell = ""; }
+      else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+      else cell += c;
+    }
+    if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+    return rows.filter(r => r.some(x => x.trim() !== ""));
+  }
+  const normDate = s => { const m = String(s).trim().match(/^(\d{4})[\/\-.年](\d{1,2})[\/\-.月](\d{1,2})/); return m ? `${m[1]}-${pad(m[2])}-${pad(m[3])}` : null; };
+  const normNum = s => Number(String(s).replace(/[,，円株\s]/g, "")) || 0;
+  function accOf(s) {
+    s = String(s).replace(/\s/g, "");
+    if (/つみたて/.test(s)) return "nisa_tsumitate";
+    if (/成長/.test(s)) return "nisa_seicho";
+    if (/NISA|ＮＩＳＡ|ニーサ/i.test(s)) return "nisa_seicho";
+    if (/一般/.test(s)) return "ippan";
+    if (/な[しい]|無/.test(s)) return "tokutei_nashi";
+    return "tokutei_ari";
+  }
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", async e => {
+    const f = e.target.files[0]; if (!f) return;
+    let text;
+    try { const buf = await f.arrayBuffer(); text = new TextDecoder("utf-8", { fatal: true }).decode(buf); } catch (err) { try { text = new TextDecoder("shift_jis").decode(await f.arrayBuffer()); } catch (e2) { toast("ファイルを読めませんでした"); return; } }
+    const rows = parseCsv(text); if (!rows.length) { toast("データがありません"); return; }
+    let start = 0; if (/種類|日付/.test(rows[0].join(","))) start = 1;
+    let nt = 0, nd = 0, bad = 0;
+    for (const r of rows.slice(start)) {
+      const [kind, date, name, acc, sideS, qty, price, fee, amount, withheld] = r.map(x => (x || "").trim());
+      const d = normDate(date); if (!d || !name) { bad++; continue; }
+      const account = accOf(acc);
+      if (/配当/.test(kind) || (!/取引/.test(kind) && normNum(amount) > 0 && !normNum(qty))) {
+        const a = Math.round(normNum(amount)); if (!(a > 0)) { bad++; continue; }
+        divs.push({ id: newId(), date: d, name, account, amount: a, withheld: withheld === "" ? K.withholding(a, account).total : Math.round(normNum(withheld)) }); nd++;
+      } else {
+        const q = normNum(qty), p = normNum(price); if (!(q > 0)) { bad++; continue; }
+        trades.push({ id: newId(), date: d, name, account, side: /売/.test(sideS) ? "sell" : "buy", qty: q, price: p, fee: Math.round(normNum(fee)) }); nt++;
+      }
+    }
+    e.target.value = "";
+    if (!nt && !nd) { toast("読み込める行がありませんでした（列の順を確かめてください）"); return; }
+    save(); render(); toast(`取引${nt}件・配当${nd}件を読み込みました${bad ? `（${bad}行は読めず）` : ""}`);
+  });
+
+  render();
+  if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("howto").classList.add("hidden");
+  if ("serviceWorker" in navigator) { navigator.serviceWorker.register("kabu-sw.js", { scope: "kabu-kiroku.html" }).catch(() => {}); }
+})();
+</script>
+</body>
+</html>
