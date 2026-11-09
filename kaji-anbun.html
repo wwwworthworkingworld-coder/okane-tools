@@ -12,7 +12,7 @@
 <link rel="canonical" href="https://256company.com/kaji-anbun.html">
 </head>
 <body>
-<header class="site-header"></header>
+<header class="site-header"><div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav"><a href="index.html">トップ</a><a href="fukugyo-tax.html">副業の税金</a><a href="kaji-anbun.html">家事按分</a><a href="genka-shokyaku.html">減価償却</a><a href="kabu-tax.html">株の税金</a><a href="nisa.html">NISA枠</a><a href="booth-fee.html">BOOTH手数料</a><a href="keihi-memo.html">経費メモ</a><a href="seikyusho.html">請求書作成</a><a href="shussan.html">出産・育児のお金</a><a href="furusato-keisan.html">ふるさと納税</a><a href="kabu-kiroku.html">株の記録</a></nav></div></header>
 <main>
   <h1>家事按分の計算</h1>
   <p class="lead">仕事とプライベートの両方で使っている支出（家賃・スマホ代・電気代など）のうち、経費にできる金額を計算します。</p>
@@ -62,6 +62,30 @@
     </ul>
   </section>
 
+  <section class="card article" id="howto">
+    <h2>このツールの使い方</h2>
+    <ol>
+      <li>支出の種類を選び、1か月の金額と、対象の月数を入れます。年の途中で開業した場合は、開業した月から12月までの月数にします。</li>
+      <li>按分の方法を選びます。家賃は面積、電気代やスマホ代は時間、車は日数が使いやすい基準です。割合がすでに決まっているなら「割合を直接入力」を選びます。</li>
+      <li>仕事で使う分と全体の数字を入れると、事業割合、年間で経費にできる額、プライベート分（事業主貸）が出ます。</li>
+    </ol>
+    <h2>計算例</h2>
+    <div class="table-wrap"><table>
+      <tr><th>支出</th><th>基準</th><th>事業割合</th><th>経費にできる額（年間）</th></tr>
+      <tr><td>家賃 月8万円</td><td>仕事スペース6㎡÷全体40㎡</td><td>15％</td><td>8万円×12か月×15％＝144,000円</td></tr>
+      <tr><td>電気代 月1万円</td><td>仕事で使う6時間÷使う16時間</td><td>37.5％</td><td>1万円×12か月×37.5％＝45,000円</td></tr>
+      <tr><td>スマホ代 月6,000円</td><td>仕事で使う日5日÷使う日7日</td><td>約71.4％</td><td>6,000円×12か月×5÷7＝約51,400円</td></tr>
+    </table></div>
+    <p>家賃の例では、残りの816,000円がプライベート分です。毎月の帳簿では、経費の12,000円を「地代家賃」、残りの68,000円を「事業主貸」として記録します。年末にまとめて按分する方法でもかまいません。</p>
+    <h2>よくある質問</h2>
+    <h3>割合に決まりはありますか</h3>
+    <p>「何％まで」という決まった数字はありません。自分の使い方に合った基準で計算し、その根拠を説明できることが条件です。間取り図に仕事スペースを書き込んだもの、1週間の使用時間のメモ、走行距離の記録などを残しておきます。</p>
+    <h3>持ち家の場合はどうなりますか</h3>
+    <p>持ち家には家賃がないため、このツールの「家賃」は使えません。建物の減価償却費、固定資産税、火災保険料、住宅ローンの利息などを、同じように面積の割合で按分します。住宅ローンの元本の返済は経費になりません。住宅ローン控除を受けている場合は、事業で使う割合によって控除に影響が出るため、税務署か税理士に確認してください。</p>
+    <h3>毎年同じ割合でいいですか</h3>
+    <p>使い方が変わっていなければ同じ割合でかまいません。引っ越した、仕事部屋を変えた、仕事の時間が大きく増減したときは、その時点から割合を見直します。</p>
+  </section>
+
   <section class="card">
     <h2>くわしい解説</h2>
     <p><a href="kaji-anbun-kimekata.html">家事按分のやり方と、割合の決め方</a> … 家賃・スマホ代・電気代・車を経費にするときの基準と記録のコツ</p>
@@ -73,7 +97,8 @@
     <a class="btn" href="https://256-co.booth.pm/items/9050803" target="_blank" rel="noopener">個人事業主の青色申告 かんたん複式帳簿</a>
   </section>
 </main>
-<footer class="site-footer"></footer>
+<footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
+    <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>
 <script src="assets/ui.js"></script>
 <script>
 const LABELS = {

@@ -56,6 +56,8 @@ th:first-child,td:first-child{text-align:left}
 .table-wrap{overflow-x:auto}
 .article h2{font-size:18px;color:var(--text);border-left:4px solid var(--main);padding-left:10px;margin-top:24px}
 .article p,.article li{font-size:15px}
+.article h3{font-size:15.5px;margin:18px 0 4px}
+.article ol{padding-left:22px}
 .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .tool-link{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-decoration:none;color:var(--text)}
 .tool-link b{color:var(--main);font-size:16px}

@@ -15,11 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
     ["booth-fee.html", "BOOTH手数料"], ["keihi-memo.html", "経費メモ"], ["seikyusho.html", "請求書作成"],
     ["shussan.html", "出産・育児のお金"], ["furusato-keisan.html", "ふるさと納税"], ["kabu-kiroku.html", "株の記録"],
   ];
+  /* 各ページに静的HTMLで入っている（2026-11-10〜）。入っていない古いページだけここで補う */
   const h = document.querySelector(".site-header");
-  if (h) h.innerHTML = `<div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav">${
+  if (h && !h.children.length) h.innerHTML = `<div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav">${
     nav.map(([href, t]) => `<a href="${href}">${t}</a>`).join("")}</nav></div>`;
   const f = document.querySelector(".site-footer");
-  if (f) f.innerHTML = `計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
+  if (f && !f.textContent.trim()) f.innerHTML = `計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
     <a href="about.html">運営者情報</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256`;
 
   /* 発売記念セールの表示（2026年12月31日まで。期限を過ぎると自動で消える） */

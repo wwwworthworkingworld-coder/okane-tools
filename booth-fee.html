@@ -12,7 +12,7 @@
 <link rel="canonical" href="https://256company.com/booth-fee.html">
 </head>
 <body>
-<header class="site-header"></header>
+<header class="site-header"><div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav"><a href="index.html">トップ</a><a href="fukugyo-tax.html">副業の税金</a><a href="kaji-anbun.html">家事按分</a><a href="genka-shokyaku.html">減価償却</a><a href="kabu-tax.html">株の税金</a><a href="nisa.html">NISA枠</a><a href="booth-fee.html">BOOTH手数料</a><a href="keihi-memo.html">経費メモ</a><a href="seikyusho.html">請求書作成</a><a href="shussan.html">出産・育児のお金</a><a href="furusato-keisan.html">ふるさと納税</a><a href="kabu-kiroku.html">株の記録</a></nav></div></header>
 <main>
   <h1>BOOTH手数料・利益の計算</h1>
   <p class="lead">BOOTHの手数料と受取金額、同人誌・グッズの利益と損益分岐部数を計算します。</p>
@@ -63,13 +63,40 @@
     <p>2025年10月28日以降、BOOTHのサービス利用料は「利用対象額×5.6％＋45円（1注文ごと）」です。帳簿には、手数料を引く前の金額を売上、手数料を支払手数料として分けて記録するのが基本です。最新の料率はBOOTH公式ヘルプでご確認ください。</p>
   </section>
 
+  <section class="card article" id="howto">
+    <h2>このツールの使い方</h2>
+    <ol>
+      <li><strong>①手数料と受取金額</strong>に、商品の価格と数量を入れます。自宅から発送して買い手が送料を払う場合は、送料も入れます。</li>
+      <li>「買い手の支払額」「BOOTH手数料」「受取金額」がその場で出ます。このツールは、価格×数量＋送料の合計に料率を掛け、1円未満を切り捨ててから固定料金を足しています。</li>
+      <li><strong>②利益と損益分岐</strong>に、印刷・製作費の総額、作る部数、イベントとBOOTHそれぞれの価格と売れる見込みを入れます。</li>
+      <li>「利益」「1部あたりの原価」「黒字になる部数」「売れ残り」が出ます。部数や価格を変えて、何部作るかを決める材料にしてください。</li>
+    </ol>
+    <h2>計算例</h2>
+    <div class="table-wrap"><table>
+      <tr><th>場面</th><th>計算</th><th>結果</th></tr>
+      <tr><td>1,000円の商品が1個売れた</td><td>1,000円×5.6％＝56円、56円＋45円</td><td>手数料101円、受取899円</td></tr>
+      <tr><td>1,200円の商品が1個売れた</td><td>1,200円×5.6％＝67.2円→67円、67円＋45円</td><td>手数料112円、受取1,088円</td></tr>
+      <tr><td>500円の商品が1個売れた</td><td>500円×5.6％＝28円、28円＋45円</td><td>手数料73円、受取427円</td></tr>
+    </table></div>
+    <p>固定料金の45円は1注文ごとにかかるため、価格が低い商品ほど手数料の割合が大きくなります。500円の商品では売上の約15％、1,000円の商品では約10％が手数料です。</p>
+    <p>最初に入っている数字（印刷費6万円で100部、イベントで1,000円×50部、BOOTHで1,200円×20部、参加費など1万2,000円）で計算すると、売上は50,000円＋1,088円×20部＝71,760円、費用は72,000円で、利益は240円の赤字になります。黒字になるのは、イベント価格で72部売れたときです。</p>
+    <h2>よくある質問</h2>
+    <h3>手数料は経費になりますか</h3>
+    <p>なります。BOOTHから振り込まれるのは手数料を引いたあとの金額ですが、帳簿では手数料を引く前の金額を売上にし、手数料を「支払手数料」として経費にします。振り込まれた金額をそのまま売上にすると、売上と経費の両方が少なく記録されます。</p>
+    <h3>売れ残った本の印刷費はどうなりますか</h3>
+    <p>年末に売れ残っている分の製作費は、在庫（棚卸資産）としてその年の経費から外し、売れた年の経費にします。100部を6万円で作って30部残ったなら、1部600円×30部＝18,000円が在庫です。「1部あたりの原価」と「売れ残り」の数字は、この計算に使えます。</p>
+    <h3>料率が変わったらどうすればいいですか</h3>
+    <p>「手数料の設定」の料率と固定料金を書き換えると、新しい料率で計算できます。最新の料率は、BOOTHの公式ヘルプで確認してください。</p>
+  </section>
+
   <section class="card cta">
     <h2>BOOTHの売上CSVを貼るだけで確定申告の数字まで</h2>
     <p class="lead" style="margin:0">売上管理CSVを貼るだけで、月別の売上・手数料・受取金額から確定申告の数字まで自動で集計するExcelです。</p>
     <a class="btn" href="https://256-co.booth.pm/items/9050610" target="_blank" rel="noopener">BOOTH売上かんたん収支シート</a>
   </section>
 </main>
-<footer class="site-footer"></footer>
+<footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
+    <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>
 <script src="assets/calc.js"></script>
 <script src="assets/ui.js"></script>
 <script>

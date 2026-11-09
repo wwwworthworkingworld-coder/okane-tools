@@ -51,7 +51,7 @@
 <link rel="canonical" href="https://256company.com/seikyusho.html">
 </head>
 <body>
-<header class="site-header no-print"></header>
+<header class="site-header no-print"><div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav"><a href="index.html">トップ</a><a href="fukugyo-tax.html">副業の税金</a><a href="kaji-anbun.html">家事按分</a><a href="genka-shokyaku.html">減価償却</a><a href="kabu-tax.html">株の税金</a><a href="nisa.html">NISA枠</a><a href="booth-fee.html">BOOTH手数料</a><a href="keihi-memo.html">経費メモ</a><a href="seikyusho.html">請求書作成</a><a href="shussan.html">出産・育児のお金</a><a href="furusato-keisan.html">ふるさと納税</a><a href="kabu-kiroku.html">株の記録</a></nav></div></header>
 <main>
   <h1>請求書・見積書の作成</h1>
   <p class="lead">見積書・納品書・請求書・領収書を、スマホやiPadでも作れます。インボイス（適格請求書）の記載事項に対応。入力した内容はこの端末の中だけに保存され、どこにも送信されません。</p>
@@ -104,6 +104,32 @@
 
   <div class="paper" id="paper"></div>
 
+  <section class="card article no-print" id="howto" style="margin-top:22px">
+    <h2>このツールの使い方</h2>
+    <ol>
+      <li>「自分の情報」に、屋号・名前、住所、振込先などを入れます。一度入れると、次に開いたときにも残っています。</li>
+      <li>「書類の内容」で種類（請求書・見積書・納品書・領収書）を選び、取引先名、件名、品目・数量・単価を入れます。行は「＋ 行を追加」で増やせます。</li>
+      <li>画面の下に、できあがりの書類がそのまま表示されます。内容を確かめて「印刷・PDFで保存」を押すと、紙に印刷するか、PDFにして保存・送信できます。</li>
+      <li>「この書類を保存」を押すと、この端末に保存され、あとで呼び出して直せます。見積書を開いて「この見積書から請求書を作る」を押すと、同じ内容の請求書ができます。</li>
+    </ol>
+    <h2>4つの書類の使い分け</h2>
+    <div class="table-wrap"><table>
+      <tr><th>書類</th><th>渡す時期</th><th>役割</th></tr>
+      <tr><td>見積書</td><td>仕事を受ける前</td><td>内容と金額を相手に示し、合意をとる</td></tr>
+      <tr><td>納品書</td><td>納品したとき</td><td>何をいつ納めたかを相手に伝える</td></tr>
+      <tr><td>請求書</td><td>納品のあと、または月末など</td><td>金額と支払期限、振込先を伝えて支払いを求める</td></tr>
+      <tr><td>領収書</td><td>代金を受け取ったとき</td><td>受け取ったことを証明する</td></tr>
+    </table></div>
+    <p>4つすべてを毎回作る必要はありません。相手から求められた書類と、請求書があれば足ります。銀行振込で受け取った場合は、振込の記録が支払いの証明になるため、領収書を出さないことも一般的です。</p>
+    <h2>よくある質問</h2>
+    <h3>インボイスの登録をしていなくても使えますか</h3>
+    <p>使えます。「自分の情報」の登録番号を空欄にし、消費税を「免税事業者」にすると、消費税を記載しない書類になります。登録番号のない請求書は適格請求書（インボイス）にはなりませんが、請求書として使うことに問題はありません。</p>
+    <h3>源泉徴収は「する」にしたほうがいいですか</h3>
+    <p>原稿料、デザイン料、講演料など、源泉徴収の対象になる報酬を、会社などから受け取る場合に「する」を選びます。対象になるかどうかは仕事の内容で決まるので、取引先に確認するのが確実です。「する」にすると、差し引かれる金額と、実際に振り込まれる金額が書類に表示されます。</p>
+    <h3>作った書類はどこに保存されますか</h3>
+    <p>お使いの端末のブラウザの中だけです。当サイトのサーバーには送信されません。別の端末からは見えず、ブラウザのデータを消すと書類も消えます。取引先に渡した書類は、PDFでも手元に保存しておいてください。</p>
+  </section>
+
   <section class="card article no-print" style="margin-top:22px">
     <h2>インボイス（適格請求書）に必要なこと</h2>
     <ul>
@@ -114,7 +140,8 @@
     </ul>
   </section>
 </main>
-<footer class="site-footer no-print"></footer>
+<footer class="site-footer no-print">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
+    <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>
 <script src="assets/ui.js"></script>
 <script>
 (() => {
