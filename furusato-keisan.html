@@ -44,6 +44,12 @@
 .jump a.sub{background:var(--card);color:var(--main);border:1px solid var(--main)}
 .howto ol{padding-left:1.3em;margin:6px 0 0}
 .howto li{font-size:15px}
+.portals .pr{display:block;margin-top:4px;font-size:12px}
+.portal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px}
+.portal{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-decoration:none;color:var(--text);min-height:48px}
+.portal:hover{border-color:var(--main)}
+.portal .pn{font-weight:800;color:var(--main);font-size:15px}
+.portal .pd{font-size:12px;color:var(--muted)}
 @media (max-width:600px){
   .btn2{min-height:48px;font-size:16px}
   .btns{flex-direction:column}
@@ -126,6 +132,17 @@
     <div class="judge" id="judge"></div>
     <div class="table-wrap"><table id="detail"><tbody></tbody></table></div>
     <p class="note">この金額は目安です。正確な上限は、他の控除（ふるさと納税以外の寄附金、配当控除、外国税額控除など）や住民税の計算で変わります。確実に知りたいときは、お住まいの市区町村の住民税担当か税理士に確認してください。上限を超えた分は控除されず、全額が自己負担になります。</p>
+  </section>
+
+  <section class="card portals" id="portals" aria-label="ふるさと納税のサイト">
+    <h2>寄付先を探す</h2>
+    <p class="note" style="margin-top:0">上限の目安が分かったら、各サイトで返礼品を選べます。寄付したらこのページの「寄付の記録」に金額を書き残しておくと、残り枠を超えません。<span class="pr">※以下は外部サイトへのリンクです（広告・提携リンクを含むことがあります）</span></p>
+    <div class="portal-grid">
+      <a class="portal" data-portal="rakuten" href="https://event.rakuten.co.jp/furusato/" target="_blank" rel="sponsored noopener"><span class="pn">楽天ふるさと納税</span><span class="pd">楽天ポイントが付く。楽天市場と同じ操作</span></a>
+      <a class="portal" data-portal="furunavi" href="https://furunavi.jp/" target="_blank" rel="sponsored noopener"><span class="pn">ふるなび</span><span class="pd">家電・金券系の返礼品が多い。ふるなびコイン</span></a>
+      <a class="portal" data-portal="satofull" href="https://www.satofull.jp/" target="_blank" rel="sponsored noopener"><span class="pn">さとふる</span><span class="pd">発送が早め。アプリで管理しやすい</span></a>
+      <a class="portal" data-portal="choice" href="https://www.furusato-tax.jp/" target="_blank" rel="sponsored noopener"><span class="pn">ふるさとチョイス</span><span class="pd">掲載自治体数が最多。災害支援の寄付も</span></a>
+    </div>
   </section>
 
   <section class="card" id="record">
@@ -226,6 +243,15 @@
 <script src="assets/furusato.js"></script>
 <script src="assets/ui.js"></script>
 <script src="assets/yomi.js"></script>
+<script>
+// 提携（アフィリエイト）URLはここだけ差し替える。空のままなら上の公式トップへのリンクが使われる
+const PORTAL_LINKS = { rakuten: "", furunavi: "", satofull: "", choice: "" };
+document.querySelectorAll(".portal").forEach(a => {
+  const u = PORTAL_LINKS[a.dataset.portal];
+  if (u) a.href = u;
+  a.addEventListener("click", () => { if (typeof gtag === "function") gtag("event", "portal_click", { portal: a.dataset.portal }); });
+});
+</script>
 <script>
 (() => {
   const $ = UI.$;
