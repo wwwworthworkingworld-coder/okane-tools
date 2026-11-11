@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>株の損益・配当の記録ツール｜売買と配当を記録して、年ごとの譲渡損益・配当・源泉徴収・NISA枠を集計（スマホ対応・無料）</title>
-<meta name="description" content="株の売買と配当をスマホで記録すると、総平均法に準ずる方法で取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残り、損益通算の目安を出します。データは端末の中だけに保存、CSVで書き出し・読み込みができます。">
+<title>配当カレンダーと株の損益の記録ツール｜配当を記録すると今月・来月の受取と年間合計、譲渡損益・源泉徴収・NISA枠を集計（スマホ対応・無料）</title>
+<meta name="description" content="配当を記録すると、今月・来月の受取カレンダー、年間の配当合計（税引前・受取額）、月ごと・銘柄ごとの受取額、前年の同じ月との比較が出ます。売買も記録すると、総平均法に準ずる方法で取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残り、損益通算の目安を出します。データは端末の中だけに保存、CSVで書き出し・読み込みができます。">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="kabu-manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -76,8 +76,8 @@ input[type=file]{font-size:14px}
 <body>
 <header class="site-header"><div class="wrap"><a class="logo" href="index.html">お金の計算ツール</a><nav class="nav"><a href="index.html">トップ</a><a href="fukugyo-tax.html">副業の税金</a><a href="kaji-anbun.html">家事按分</a><a href="genka-shokyaku.html">減価償却</a><a href="kabu-tax.html">株の税金</a><a href="nisa.html">NISA枠</a><a href="booth-fee.html">BOOTH手数料</a><a href="keihi-memo.html">経費メモ</a><a href="seikyusho.html">請求書作成</a><a href="shussan.html">出産・育児のお金</a><a href="furusato-keisan.html">ふるさと納税</a><a href="kabu-kiroku.html">株の記録</a></nav></div></header>
 <main>
-  <h1>株の損益・配当の記録ツール</h1>
-  <p class="lead">株の売買と配当をその場で記録すると、取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残りが分かります。確定申告の要否を考える目安にも。記録はこの端末の中だけに保存され、どこにも送信されません。銘柄のおすすめや売買のタイミングを示すものではありません。</p>
+  <h1>配当カレンダーと株の損益の記録ツール</h1>
+  <p class="lead">配当を記録すると、今月・来月の受取カレンダーと年間の配当合計（税引前・受取額）、銘柄ごとの受取額が出ます。売買も記録すると、取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残りが分かります。確定申告の要否を考える目安にも。記録はこの端末の中だけに保存され、どこにも送信されません。銘柄のおすすめや売買のタイミングを示すものではありません。</p>
   <p class="note" style="margin-top:-6px">税率・制度の確認日：2026年11月7日（国税庁タックスアンサー No.1463・1466・1474・1330・1535）。令和8年分（2026年）の制度で計算しています。</p>
 
   <nav class="jump" aria-label="ページ内の移動"><a href="#tradeCard">取引を記録</a><a class="sub" href="#divCard">配当を記録</a><a class="sub" href="#calCard">受取カレンダー</a><a class="sub" href="#sumCard">集計を見る</a></nav>
