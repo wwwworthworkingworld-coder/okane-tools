@@ -96,5 +96,41 @@ const KabuKiroku = (() => {
     };
   }
 
-  return { ACCOUNTS, isNisa, NISA, RATE, withholding, compute, summarize, nisa };
+  /* ---------- 配当の受取カレンダー（アプリ版 core.js と同じ集計） ---------- */
+  const addMonths = (yymm, n) => { const [y, m] = yymm.split("-").map(Number); const t = y * 12 + (m - 1) + n; return `${Math.floor(t / 12)}-${String(t % 12 + 1).padStart(2, "0")}`; };
+  /* 年の配当：合計（税引前・源泉・受取額）、月別、銘柄別（金額の多い順） */
+  function dividendSummary(dividends, year) {
+    const y = String(year);
+    const total = { gross: 0, withheld: 0, net: 0, count: 0 };
+    const byMonth = Array.from({ length: 12 }, () => ({ gross: 0, net: 0, count: 0 }));
+    const names = {};
+    for (const d of dividends || []) {
+      if (String(d.date).slice(0, 4) !== y) continue;
+      const gross = Math.round(d.amount) || 0, w = Math.round(d.withheld) || 0, net = gross - w, mo = Number(d.date.slice(5, 7));
+      total.gross += gross; total.withheld += w; total.net += net; total.count++;
+      const m = byMonth[mo - 1]; if (m) { m.gross += gross; m.net += net; m.count++; }
+      const k = String(d.name || "").trim();
+      const e = names[k] || (names[k] = { name: k, gross: 0, net: 0, count: 0, months: [] });
+      e.gross += gross; e.net += net; e.count++; if (!e.months.includes(mo)) e.months.push(mo);
+    }
+    const byName = Object.values(names).map(e => ({ ...e, months: e.months.sort((a, b) => a - b) })).sort((a, b) => b.gross - a.gross || a.name.localeCompare(b.name, "ja"));
+    return { total, byMonth, byName };
+  }
+  /* ある月（"YYYY-MM"）の配当と、前年の同じ月。前年の記録が1件も無ければ prev は null */
+  function compareMonth(dividends, yymm) {
+    const prevYm = addMonths(yymm, -12);
+    const sum = m => (dividends || []).filter(d => String(d.date).slice(0, 7) === m).reduce((s, d) => ({ gross: s.gross + (Math.round(d.amount) || 0), count: s.count + 1 }), { gross: 0, count: 0 });
+    const cur = sum(yymm);
+    const prev = (dividends || []).some(d => String(d.date).slice(0, 4) === prevYm.slice(0, 4)) ? sum(prevYm) : null;
+    return { month: yymm, current: cur, prev, diff: prev ? cur.gross - prev.gross : null };
+  }
+  /* ある月に受け取る（受け取った）配当を日付順に */
+  function monthDividends(dividends, yymm) {
+    return (dividends || []).filter(d => String(d.date).slice(0, 7) === yymm)
+      .map(d => ({ id: d.id, date: d.date, name: d.name, account: d.account, amount: Math.round(d.amount) || 0, net: (Math.round(d.amount) || 0) - (Math.round(d.withheld) || 0) }))
+      .sort((a, b) => a.date.localeCompare(b.date) || String(a.name).localeCompare(String(b.name), "ja"));
+  }
+
+  return { ACCOUNTS, isNisa, NISA, RATE, withholding, compute, summarize, nisa, addMonths, dividendSummary, compareMonth, monthDividends };
 })();
+if (typeof module !== "undefined") module.exports = KabuKiroku;

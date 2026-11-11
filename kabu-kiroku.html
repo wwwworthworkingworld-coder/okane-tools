@@ -56,6 +56,18 @@ input[type=file]{font-size:14px}
   .list li .ops button{min-height:40px;padding:6px 14px}
   input,select{min-height:48px}
 }
+.cal-month{margin:14px 0 2px;font-size:14px;color:var(--muted);font-weight:700}
+.cal-list{list-style:none;padding:0;margin:0}
+.cal-list li{display:grid;grid-template-columns:3.2em 1fr auto;gap:0 10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.cal-list li:last-child{border-bottom:0}
+.cal-list .d{color:var(--muted);font-variant-numeric:tabular-nums}
+.cal-list .n small,.cal-list .a small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.cal-list .a{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.cal-list li.none{display:block;color:var(--muted);font-size:13px}
+.bars{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;height:90px;align-items:end;margin:16px 0 4px}
+.bars div{display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center}
+.bars i{display:block;min-height:2px;border-radius:3px 3px 0 0;background:var(--main)}
+.bars span{font-size:10px;color:var(--muted);line-height:1.6}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ETB5R7NFRR');</script>
@@ -68,7 +80,7 @@ input[type=file]{font-size:14px}
   <p class="lead">株の売買と配当をその場で記録すると、取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残りが分かります。確定申告の要否を考える目安にも。記録はこの端末の中だけに保存され、どこにも送信されません。銘柄のおすすめや売買のタイミングを示すものではありません。</p>
   <p class="note" style="margin-top:-6px">税率・制度の確認日：2026年11月7日（国税庁タックスアンサー No.1463・1466・1474・1330・1535）。令和8年分（2026年）の制度で計算しています。</p>
 
-  <nav class="jump" aria-label="ページ内の移動"><a href="#tradeCard">取引を記録</a><a class="sub" href="#divCard">配当を記録</a><a class="sub" href="#sumCard">集計を見る</a></nav>
+  <nav class="jump" aria-label="ページ内の移動"><a href="#tradeCard">取引を記録</a><a class="sub" href="#divCard">配当を記録</a><a class="sub" href="#calCard">受取カレンダー</a><a class="sub" href="#sumCard">集計を見る</a></nav>
 
   <section class="card" id="tradeCard">
     <h2>1. 取引の記録（買い・売り）</h2>
@@ -111,6 +123,25 @@ input[type=file]{font-size:14px}
     <div class="judge" id="divPreview" style="display:none"></div>
     <div class="btns"><button class="btn2 primary" type="button" id="addDiv">記録する</button></div>
     <p class="note">上場株式の配当の源泉徴収は、所得税・復興特別所得税15.315%＋住民税5%＝20.315%（国税庁 No.1330）。所得税分と住民税分を別々に1円未満切り捨てて計算しています。実際の額は「配当金計算書」や証券会社の年間取引報告書で確認してください。</p>
+  </section>
+
+  <section class="card" id="calCard">
+    <h2>配当の受取カレンダー</h2>
+    <p class="note">「2. 配当の記録」に入れた配当を、今月・来月の受取と、年の合計・月ごと・銘柄ごとにまとめます。支払日が先の配当も、予定として記録しておけばここに並びます。</p>
+    <h3 class="cal-month" id="calThisTitle"></h3>
+    <ul class="cal-list" id="calThis"></ul>
+    <h3 class="cal-month" id="calNextTitle"></h3>
+    <ul class="cal-list" id="calNext"></ul>
+    <h3 style="margin:18px 0 0;font-size:16px"><span id="calYear"></span>年の配当合計</h3>
+    <div class="result">
+      <div class="stat big"><div class="k">税引前</div><div class="v" id="cGross">-</div></div>
+      <div class="stat big"><div class="k">受取額（税引後）</div><div class="v" id="cNet">-</div></div>
+    </div>
+    <div class="bars" id="calBars" aria-label="月ごとの配当（税引前）"></div>
+    <p class="note" id="calCompare"></p>
+    <h3 style="margin:18px 0 6px;font-size:16px">銘柄ごとの年間受取額</h3>
+    <div class="table-wrap"><table id="calNameTable"><thead><tr><th>銘柄</th><th>受取月</th><th>税引前</th><th>受取額</th></tr></thead><tbody></tbody></table></div>
+    <p class="note">集計する年は「3. 年の集計」の年に合わせています。NISA口座の配当も含みます。銘柄の評価や比較はしません。</p>
   </section>
 
   <section class="card" id="sumCard">
@@ -310,6 +341,30 @@ input[type=file]{font-size:14px}
     sel.innerHTML = [...years].sort().reverse().map(y => `<option value="${y}">${y}年（1月1日〜12月31日）</option>`).join("");
     sel.value = years.has(cur) ? cur : String(thisYear);
   }
+  /* 配当の受取カレンダー */
+  function renderCalendar(y) {
+    const thisYm = ymd(now).slice(0, 7), nextYm = K.addMonths(thisYm, 1);
+    const label = m => `${m.slice(0, 4)}年${Number(m.slice(5))}月`;
+    const fill = (id, m) => {
+      const items = K.monthDividends(divs, m);
+      $(id).innerHTML = items.map(i => `<li><span class="d">${i.date.slice(5).replace("-", "/")}</span><span class="n">${esc(i.name)}<small>${ACC[i.account] || ""}</small></span><span class="a">${yen(i.net)}<small>税引前 ${yen(i.amount)}</small></span></li>`).join("")
+        || '<li class="none">この月の配当の記録はありません</li>';
+    };
+    $("calThisTitle").textContent = `今月（${label(thisYm)}）`; fill("calThis", thisYm);
+    $("calNextTitle").textContent = `来月（${label(nextYm)}）`; fill("calNext", nextYm);
+    const ds = K.dividendSummary(divs, y);
+    $("calYear").textContent = y;
+    UI.set("cGross", ds.total.count ? yen(ds.total.gross) : "-");
+    UI.set("cNet", ds.total.count ? yen(ds.total.net) : "-");
+    const max = Math.max(1, ...ds.byMonth.map(m => m.gross));
+    $("calBars").innerHTML = ds.byMonth.map((m, i) => `<div title="${i + 1}月 ${yen(m.gross)}"><i style="height:${Math.round(m.gross / max * 100)}%"></i><span>${i + 1}</span></div>`).join("");
+    const cm = K.compareMonth(divs, `${y}-${thisYm.slice(5)}`);
+    $("calCompare").textContent = cm.prev ? `${label(cm.month)}の配当 ${yen(cm.current.gross)}（前年の同じ月 ${yen(cm.prev.gross)}、${cm.diff >= 0 ? "+" : "−"}${yen(Math.abs(cm.diff))}）`
+      : ds.total.count ? `${ds.total.count}件・源泉徴収 ${yen(ds.total.withheld)}。前年の記録があると、同じ月との比較が出ます。` : "配当を記録すると、月ごとの棒と合計が出ます。";
+    $("calNameTable").tBodies[0].innerHTML = ds.byName.map(e => `<tr><td>${esc(e.name)}</td><td>${e.months.map(m => m + "月").join("・")}</td><td>${yen(e.gross)}</td><td>${yen(e.net)}</td></tr>`).join("")
+      || '<tr><td colspan="4">この年の配当の記録はありません</td></tr>';
+  }
+
   function render() {
     fillYears();
     const y = $("year").value;
@@ -322,6 +377,8 @@ input[type=file]{font-size:14px}
     UI.set("sDiv", hasAny ? yen(s.dividend) : "-");
     UI.set("sWith", hasAny ? yen(s.withheld) : "-");
     UI.set("sNisa", hasAny ? `${signed(s.nisaGain)} ／ ${yen(s.nisaDividend)}` : "-");
+
+    renderCalendar(y);
 
     // 判定文（制度の説明）
     const msgs = [];
