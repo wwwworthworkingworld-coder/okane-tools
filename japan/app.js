@@ -3,7 +3,7 @@
    that hosts the app has loaded Google Analytics (window.gtag). Search words, addresses and personal details are never sent. */
 (function () {
   "use strict";
-  var D = window.JPH, $app = document.getElementById("app"), $tabs = document.getElementById("tabs"),
+  var D = window.JPH, $app = document.getElementById("app"), $intro = document.getElementById("intro"), $tabs = document.getElementById("tabs"),
     $show = document.getElementById("show"), $toast = document.getElementById("toast");
   var KEY = "jph1";
   var S = { fav: [], places: [], info: {}, rate: "", cur: "USD", theme: "auto", size: "m", diet: { sel: [], allergy: true }, sym: [] };
@@ -292,6 +292,7 @@
     var isBack = !same && route.stack.length > 1 && route.stack[route.stack.length - 2] === cur;
     if (isBack) route.stack.pop(); else if (!same) route.stack.push(cur);
     $app.innerHTML = V[name](arg);
+    if ($intro && name === "cards") { $intro.style.display = ""; $app.appendChild($intro); } // site version only: the written description lives under the home screen
     var tab = TAB_OF[name] || name;
     $tabs.innerHTML = TABS.map(function (t) { return '<button data-go="#/' + t[0] + '" class="' + (t[0] === tab ? "on" : "") + '"' + (t[0] === tab ? ' aria-current="page"' : "") + '><span class="ic">' + t[1] + "</span>" + t[2] + "</button>"; }).join("");
     window.scrollTo(0, same ? keep : isBack ? (route.pos[cur] || 0) : 0);
@@ -335,7 +336,7 @@
   });
   document.addEventListener("input", function (e) {
     var t = e.target;
-    if (t.id === "q") { var r = search(t.value); document.getElementById("results").innerHTML = r; document.getElementById("home").style.display = r ? "none" : ""; }
+    if (t.id === "q") { var r = search(t.value); document.getElementById("results").innerHTML = r; document.getElementById("home").style.display = r ? "none" : ""; if ($intro) $intro.style.display = r ? "none" : ""; }
     else if (t.dataset.info) { S.info[t.dataset.info] = t.value; save(); }
     else if (t.id === "rate" || t.id === "cur" || t.id === "yen") {
       if (t.id === "rate") S.rate = t.value.replace(/[^0-9.]/g, "");
