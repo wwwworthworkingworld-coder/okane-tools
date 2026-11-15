@@ -1,0 +1,16 @@
+{
+  "name": "Japan Pocket Helper",
+  "short_name": "Japan Helper",
+  "description": "Show-and-point Japanese cards, quick how-tos, manners and emergency help for travellers in Japan. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F7FB",
+  "theme_color": "#1F5F99",
+  "lang": "en",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
