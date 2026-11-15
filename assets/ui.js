@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (Date.now() < Date.parse("2027-01-01T00:00:00+09:00")) {
     const sale = { "9050803": "2,980円 → 1,980円", "9051108": "1,980円 → 980円", "9050610": "980円 → 500円" };
     document.querySelectorAll(".cta").forEach(c => {
+      if (c.dataset.cta) return;                         // 客層別の案内（set_cta.py）は本文に価格を書いている
       const id = (c.querySelector("a.btn")?.href.match(/items\/(\d+)/) || [])[1];
       if (id && !sale[id]) return;                       // セール対象でない商品（株・NISAシートなど）には出さない
       const b = document.createElement("p");

@@ -80,3 +80,17 @@ th:first-child,td:first-child{text-align:left}
 .site-footer{max-width:960px;margin:0 auto;padding:0 16px 32px;font-size:12px;color:var(--muted)}
 .site-footer a{color:var(--muted)}
 [hidden]{display:none!important}
+
+/* 結果の直下に置く小さな案内（導線A） */
+.cta-inline{margin-top:14px;padding:12px 14px;border:1px solid var(--main);border-radius:10px;background:var(--card);font-size:14px;line-height:1.6}
+.cta-inline a.btn-s{display:inline-block;margin-top:6px;background:var(--main);color:#fff;text-decoration:none;padding:8px 14px;border-radius:999px;font-weight:700;font-size:14px}
+.cta-inline .sub{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+/* 簡易入力の切り替え */
+.mode{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 10px;font-size:14px}
+.mode label{display:inline-flex;align-items:center;gap:6px;min-height:36px;cursor:pointer}
+.mode input{width:18px;height:18px;margin:0}
+/* トップの季節の入口 */
+.season{margin:16px 0 4px;padding:14px 16px;border:2px solid var(--main);border-radius:12px;background:var(--main-weak)}
+.season h2{margin:0 0 8px;font-size:17px}
+.season ol{margin:0;padding-left:1.4em;columns:2;column-gap:24px;font-size:14px;line-height:1.9}
+@media (max-width:640px){.season ol{columns:1}}

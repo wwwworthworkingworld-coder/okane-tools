@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>副業の税金シミュレーター｜確定申告が必要か・いくら増えるか【令和8年分】</title>
-<meta name="description" content="会社員の副業の税金を計算。源泉徴収票の数字を入れるだけで、確定申告が必要か（20万円ルール）、確定申告で払う・戻る税金、住民税の増加の目安がわかります。">
+<meta name="description" content="会社員の副業の税金を計算。源泉徴収票の数字（手元にないときは年収だけ）を入れると、確定申告が必要か（20万円ルール）、確定申告で払う・戻る税金、住民税の増加の目安がわかります。">
 <link rel="stylesheet" href="assets/style.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
@@ -20,11 +20,16 @@
   <section class="card">
     <h2>入力</h2>
     <fieldset><legend>会社の源泉徴収票（前年のものでも目安になります）</legend>
+      <div class="mode">
+        <label><input type="radio" name="mode" value="detail" checked> 源泉徴収票の数字を入れる（正確）</label>
+        <label><input type="radio" name="mode" value="simple"> 手元にないので、年収だけで計算（かんたん）</label>
+      </div>
       <div class="grid">
         <div><label for="salaryRevenue">支払金額 <small>（給与の年収）</small></label><div class="field"><input id="salaryRevenue" type="number" inputmode="numeric" value="5000000"><span class="unit">円</span></div></div>
-        <div><label for="salaryIncome">給与所得控除後の金額</label><div class="field"><input id="salaryIncome" type="number" inputmode="numeric" value="3560000"><span class="unit">円</span></div></div>
-        <div><label for="deductions">所得控除の額の合計額</label><div class="field"><input id="deductions" type="number" inputmode="numeric" value="1770000"><span class="unit">円</span></div></div>
-        <div><label for="withheld">源泉徴収税額</label><div class="field"><input id="withheld" type="number" inputmode="numeric" value="91300"><span class="unit">円</span></div></div>
+        <div class="detail-only"><label for="salaryIncome">給与所得控除後の金額</label><div class="field"><input id="salaryIncome" type="number" inputmode="numeric" value="3560000"><span class="unit">円</span></div></div>
+        <div class="detail-only"><label for="deductions">所得控除の額の合計額</label><div class="field"><input id="deductions" type="number" inputmode="numeric" value="1770000"><span class="unit">円</span></div></div>
+        <div class="detail-only"><label for="withheld">源泉徴収税額</label><div class="field"><input id="withheld" type="number" inputmode="numeric" value="91300"><span class="unit">円</span></div></div>
+        <div class="simple-only" hidden><label for="social">社会保険料の年額 <small>（空なら年収の15%で概算）</small></label><div class="field"><input id="social" type="number" inputmode="numeric" placeholder="750000"><span class="unit">円</span></div></div>
         <div><label for="housingCredit">住宅借入金等特別控除の額 <small>（なければ0）</small></label><div class="field"><input id="housingCredit" type="number" inputmode="numeric" value="0"><span class="unit">円</span></div></div>
         <div><label for="oneEmployer">給与をもらっている会社</label><div class="field"><select id="oneEmployer"><option value="1">1か所</option><option value="0">2か所以上</option></select></div></div>
         <div><label for="yearEnd">会社の年末調整</label><div class="field"><select id="yearEnd"><option value="1">済み</option><option value="0">受けていない</option></select></div></div>
@@ -49,6 +54,12 @@
       <div class="stat"><div class="k">住民税の増減（目安）</div><div class="v" id="resident">-</div></div>
       <div class="stat"><div class="k">副業で増える税金の合計</div><div class="v" id="increase">-</div></div>
       <div class="stat"><div class="k">副業の手取り（目安）</div><div class="v" id="takehome">-</div></div>
+    </div>
+    <p class="note simple-only" id="simpleNote" hidden></p>
+    <div class="cta-inline" data-cta="fukugyo">
+      <b>この計算を、帳簿と一緒に。</b> 副業の収入と経費を1行ずつ入れていくExcel帳簿なら、1年分つけた時点でこのシミュレーターと同じ「20万円の判定」と「増える税金の目安」が出ます。
+      <a class="btn-s" href="https://256-co.booth.pm/items/9051088" target="_blank" rel="noopener">無料版をダウンロード（BOOTH）</a>
+      <span class="sub">無料版で帳簿づけを試せます。有料版（980円、12/31まで）は税金の計算と申告の手順ナビ付き。</span>
     </div>
     <div class="table-wrap"><table>
       <tbody>
@@ -81,17 +92,6 @@
     </ul>
   </section>
 
-  <section class="card">
-    <h2>くわしい解説</h2>
-    <p><a href="fukugyo-kakutei-shinkoku-20man.html">会社員の副業、確定申告はいくらから必要？</a> … 「20万円ルール」の数え方と、20万円以下でも必要な住民税の申告</p>
-  </section>
-
-  <section class="card cta">
-    <h2>副業の帳簿づけと税金の計算を、1つのExcelで</h2>
-    <p class="lead" style="margin:0">1行入力で帳簿ができ、このシミュレーションと同じ計算も自動で行うExcelテンプレートです。月額料金なしの買い切りで、データは自分のパソコンだけに残ります。無料のお試し版あり。</p>
-    <a class="btn" href="https://256-co.booth.pm/items/9051108" target="_blank" rel="noopener">会社員の副業 確定申告かんたん帳簿</a>
-  </section>
-</main>
   <section class="card article" data-added="2026-11-15">
     <h2>源泉徴収票のどこを見るか</h2>
     <p>会社から年明けにもらう「給与所得の源泉徴収票」の上段に、このツールで使う4つの金額が横に並んでいます。</p>
@@ -122,15 +122,44 @@
     <p>20万円の判定だけを知りたいときは<a href="fukugyo-kakutei-shinkoku-20man.html">副業の確定申告はいくらから必要？</a>、経費にできるか迷うものは<a href="keihi-ni-naranai.html">経費にならないもの一覧</a>、申告時期は<a href="kakutei-shinkoku-2027.html">2027年の確定申告スケジュール</a>をご覧ください。</p>
   </section>
 
+  <section class="card">
+    <h2>くわしい解説</h2>
+    <p><a href="fukugyo-kakutei-shinkoku-20man.html">会社員の副業、確定申告はいくらから必要？</a> … 「20万円ルール」の数え方と、20万円以下でも必要な住民税の申告</p>
+  </section>
+
+  <section class="card cta" data-cta="fukugyo">
+    <h2>この計算を、帳簿と一緒に。無料版あります</h2>
+    <p class="lead" style="margin:0">会社員の副業向けのExcel帳簿です。1行入力で帳簿ができ、<a href="fukugyo-tax.html">副業の税金シミュレーター</a>と同じ「20万円の判定」と「増える税金の目安」が自動で出ます。買い切りでデータは手元に残ります。まず無料版でお試しください。</p>
+    <a class="btn" href="https://256-co.booth.pm/items/9051088" target="_blank" rel="noopener">無料版をダウンロード（BOOTH）</a>
+    <p class="note">有料版は 980円（12/31まで、通常1,980円）。税金の計算と申告の手順ナビが付きます → <a href="https://256-co.booth.pm/items/9051108" target="_blank" rel="noopener">有料版を見る</a></p>
+  </section>
+</main>
 <footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
     <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>
 <script src="assets/calc.js"></script>
 <script src="assets/ui.js"></script>
 <script>
+const simpleMode = () => document.querySelector('input[name="mode"]:checked').value === "simple";
+document.querySelectorAll('input[name="mode"]').forEach(el => el.addEventListener("change", () => {
+  const s = simpleMode();
+  document.querySelectorAll(".detail-only").forEach(d => d.hidden = s);
+  document.querySelectorAll(".simple-only").forEach(d => d.hidden = !s);
+}));
 UI.watch(() => {
+  const simple = simpleMode();
+  let salaryIncome = UI.num("salaryIncome"), deductions = UI.num("deductions"), withheld = UI.num("withheld");
+  if (simple) {
+    // 年収だけの概算：給与所得控除（令和8年分）、社会保険料は空なら年収の15%、所得控除は社会保険料＋基礎控除だけ、源泉徴収税額は年末調整後の税額と同じとみなす
+    const rev = UI.num("salaryRevenue");
+    salaryIncome = Calc.salaryIncome(rev, "r8");
+    const social = UI.$("social").value === "" ? Math.round(rev * 0.15) : UI.num("social");
+    deductions = social + Calc.basicDeduction(salaryIncome);
+    withheld = Calc.incomeTaxWithReconstruction(Math.max(0, Math.floor((salaryIncome - deductions) / 1000) * 1000), UI.num("housingCredit"));
+    UI.$("simpleNote").textContent = "かんたん入力の前提：給与所得控除後 " + UI.yen(salaryIncome) + "、所得控除 " + UI.yen(deductions) + "（社会保険料 " + UI.yen(social) + "＋基礎控除）、源泉徴収税額 " + UI.yen(withheld) + " とみなしています。配偶者控除・扶養控除・生命保険料控除などがある人は実際より税金が多めに出ます。源泉徴収票が手に入ったら「正確」に切り替えてください。";
+  }
   const r = Calc.sideJob({
-    salaryRevenue: UI.num("salaryRevenue"), salaryIncome: UI.num("salaryIncome"), deductions: UI.num("deductions"),
-    withheld: UI.num("withheld"), housingCredit: UI.num("housingCredit"), extraDeductions: UI.num("extra"),
+    salaryRevenue: UI.num("salaryRevenue"), salaryIncome, deductions,
+    withheld, housingCredit: UI.num("housingCredit"), extraDeductions: UI.num("extra"),
     sideRevenue: UI.num("sideRevenue"), sideExpenses: UI.num("sideExpenses"), kind: UI.$("kind").value,
     sideWithheld: UI.num("sideWithheld"), oneEmployer: UI.$("oneEmployer").value === "1", yearEndAdjusted: UI.$("yearEnd").value === "1",
   });
@@ -141,7 +170,7 @@ UI.watch(() => {
   UI.set("takehome", UI.yen(r.takeHome));
   UI.$("t6").textContent = UI.yen(r.basicSalary) + " → " + UI.yen(r.basicWith);
   [["t1", r.profitBefore], ["t2", r.blue], ["t3", r.taxBase], ["t4", r.taxWith], ["t5", r.alreadyPaid]].forEach(([id, v]) => UI.$(id).textContent = UI.yen(v));
-  UI.$("check").textContent = r.checkOk === null ? "" : r.checkOk
+  UI.$("check").textContent = (simple || r.checkOk === null) ? "" : r.checkOk
     ? "✓ 副業がない場合の所得税が、源泉徴収票の税額とほぼ一致しています（入力OK）。"
     : "⚠ 副業がない場合の所得税が源泉徴収票の税額と一致しません。入力を確認してください（年の途中の扶養の変更などで一致しない場合もあります）。";
 });
