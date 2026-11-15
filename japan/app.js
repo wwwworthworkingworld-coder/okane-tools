@@ -277,7 +277,7 @@
       '<p class="sub" style="margin:14px 4px 0">It does not replace your map, train-route or translation app — it covers what those don\'t.</p>' +
       '<div class="h2">Privacy</div><p style="margin:0 4px">What you type or save here (addresses, your details, saved cards) stays on this phone and is never sent to us.' +
       (typeof window.gtag === "function" ? " This website counts visits and which cards are opened, anonymously (Google Analytics), so we can improve the cards. Your search words are not sent." : "") + "</p>" +
-      '<div class="h2">Still planning the trip?</div><p style="margin:0 4px">Our <a href="https://www.etsy.com/listing/4615651135" target="_blank" rel="noopener" data-track="planner">Japan Travel Planner</a> (Excel / Google Sheets) plans the days, compares the JR Pass with single tickets and keeps your yen budget.</p>' +
+      '<div class="h2">Still planning the trip?</div><p style="margin:0 4px 10px">Read our <a href="before-you-go.html" data-track="beforeyougo">checklist of 10 things to sort out before you fly</a> (entry QR code, mobile data, cash, medicines, luggage).</p><p style="margin:0 4px">Our <a href="https://www.etsy.com/listing/4615651135" target="_blank" rel="noopener" data-track="planner">Japan Travel Planner</a> (Excel / Google Sheets) plans the days, compares the JR Pass with single tickets and keeps your yen budget.</p>' +
       '<p class="sub" style="margin:14px 4px 0">Made in Japan by 256 Co., Ltd.</p>';
   };
 

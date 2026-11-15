@@ -1,5 +1,5 @@
 /* Japan Pocket Helper — offline cache. Bump VERSION whenever any file changes. */
-var VERSION = "jph-v1-2026-11-16a";
+var VERSION = "jph-v1-2026-11-16b";
 var FILES = ["./", "index.html", "data.js", "app.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", function (e) {
