@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Japan Pension Lump-sum Withdrawal Payment Calculator (Free Estimate) | 256</title>
+<meta name="description" content="Free estimate of your Japan pension lump-sum withdrawal payment using the Japan Pension Service tables (last payment month April 2026 to March 2027). Nothing is sent anywhere. Checked 2026-11-17.">
+<meta name="theme-color" content="#1F5F99">
+<link rel="canonical" href="https://256company.com/en/lump-sum-withdrawal-calculator.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Japan Pension Lump-sum Withdrawal Payment Calculator (Free Estimate) | 256">
+<meta property="og:description" content="Free estimate of your Japan pension lump-sum withdrawal payment using the Japan Pension Service tables (last payment month April 2026 to March 2027). Nothing is sent anywhere. Checked 2026-11-17.">
+<meta property="og:url" content="https://256company.com/en/lump-sum-withdrawal-calculator.html">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Lump-sum Withdrawal Payment estimator", "description": "Free estimate of your Japan pension lump-sum withdrawal payment using the Japan Pension Service tables (last payment month April 2026 to March 2027). Nothing is sent anywhere. Checked 2026-11-17.", "inLanguage": "en", "dateModified": "2026-11-17", "author": {"@type": "Organization", "name": "256 Co., Ltd."}, "publisher": {"@type": "Organization", "name": "256 Co., Ltd."}, "mainEntityOfPage": "https://256company.com/en/lump-sum-withdrawal-calculator.html"}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ETB5R7NFRR');</script>
+<style>
+:root{--navy:#1F5F99;--bg:#F4F7FB;--card:#fff;--ink:#16202E;--sub:#5A6470;--line:#DDE4EE;--warn:#FFF4DE}
+@media (prefers-color-scheme: dark){:root{--navy:#7FB4E6;--bg:#10161F;--card:#1A2330;--ink:#E9EEF5;--sub:#A7B2C0;--line:#2C394A;--warn:#3A2F16}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
+main{max-width:680px;margin:0 auto;padding:20px 16px 56px}
+a{color:var(--navy)}
+h1{font-size:1.65rem;line-height:1.25;margin:10px 0 8px}
+h2{font-size:1.15rem;margin:0 0 8px}
+p{margin:0 0 10px}
+.sub{color:var(--sub);font-size:.93rem}
+.crumb a{display:inline-block;padding:10px 0;font-size:.95rem}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+section ul,section ol{margin:0 0 10px;padding-left:1.25em}
+section li{margin:5px 0}
+.src{font-size:.88rem;color:var(--sub);margin:8px 0 0}
+.note{background:var(--warn);border-radius:12px;padding:12px 14px;font-size:.93rem;margin:14px 0}
+.cta{display:block;text-align:center;background:var(--navy);color:var(--bg);text-decoration:none;font-weight:700;padding:14px 16px;border-radius:12px;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:.93rem;margin:6px 0 10px}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:600}
+.num{text-align:right;white-space:nowrap}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input,select{width:100%;font:inherit;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+button{font:inherit;font-weight:700;width:100%;padding:14px;border:0;border-radius:12px;background:var(--navy);color:var(--bg);margin-top:14px;cursor:pointer}
+.res{font-size:1.2rem;font-weight:700}
+footer{font-size:.86rem;color:var(--sub);margin-top:22px}
+footer a{display:inline-block;padding:8px 10px 8px 0}
+</style>
+</head>
+<body>
+<main>
+<p class="crumb"><a href="./">← Japan tax &amp; pension guides</a></p>
+<h1>Lump-sum Withdrawal Payment estimator</h1>
+<p class="sub">A rough estimate from the official table. It runs in your browser; nothing you type is sent anywhere.</p>
+<div class="note"><strong>Estimate only.</strong> Uses the Japan Pension Service tables for a last paid or insured month from April 2026 to March 2027 (National Pension), and the rates for a final month of April 2021 or later (Employees' Pension). If your last month is in another fiscal year, amounts differ. The JPS decides the real figure.</div>
+<section>
+<h2>Your months of coverage</h2>
+<label for="npm">National Pension: months paid (a partly exempt month counts as a fraction — see the JPS page)</label>
+<input id="npm" type="number" inputmode="numeric" min="0" max="999" placeholder="e.g. 18">
+<label for="epm">Employees' Pension: months insured</label>
+<input id="epm" type="number" inputmode="numeric" min="0" max="999" placeholder="e.g. 30">
+<label for="avg">Employees' Pension: average standard remuneration per month (yen, bonuses included)</label>
+<input id="avg" type="number" inputmode="numeric" min="0" placeholder="e.g. 280000">
+<button id="go" type="button">Estimate</button>
+<div id="res" aria-live="polite"></div>
+</section>
+<section>
+<h2>How it works</h2>
+<ul>
+<li>Months are counted up to <strong>60</strong>. Under 6 months: no payment.</li>
+<li><strong>National Pension</strong> (fiscal year 2026):</li>
+</ul>
+<table>
+<tr><th>Months</th><th class="num">Amount</th></tr>
+<tr><td>6–11</td><td class="num">¥53,760</td></tr>
+<tr><td>12–17</td><td class="num">¥107,520</td></tr>
+<tr><td>18–23</td><td class="num">¥161,280</td></tr>
+<tr><td>24–29</td><td class="num">¥215,040</td></tr>
+<tr><td>30–35</td><td class="num">¥268,800</td></tr>
+<tr><td>36–41</td><td class="num">¥322,560</td></tr>
+<tr><td>42–47</td><td class="num">¥376,320</td></tr>
+<tr><td>48–53</td><td class="num">¥430,080</td></tr>
+<tr><td>54–59</td><td class="num">¥483,840</td></tr>
+<tr><td>60 or more</td><td class="num">¥537,600</td></tr>
+</table>
+<ul><li><strong>Employees' Pension:</strong> average standard remuneration × the rate below.</li></ul>
+<table>
+<tr><th>Months</th><th class="num">Rate</th></tr>
+<tr><td>6–11</td><td class="num">0.5</td></tr>
+<tr><td>12–17</td><td class="num">1.1</td></tr>
+<tr><td>18–23</td><td class="num">1.6</td></tr>
+<tr><td>24–29</td><td class="num">2.2</td></tr>
+<tr><td>30–35</td><td class="num">2.7</td></tr>
+<tr><td>36–41</td><td class="num">3.3</td></tr>
+<tr><td>42–47</td><td class="num">3.8</td></tr>
+<tr><td>48–53</td><td class="num">4.4</td></tr>
+<tr><td>54–59</td><td class="num">4.9</td></tr>
+<tr><td>60 or more</td><td class="num">5.5</td></tr>
+</table>
+<ul>
+<li>Average standard remuneration is calculated by the JPS from your record (before April 2003: standard monthly remuneration × 1.3; from April 2003: monthly remuneration plus standard bonus). Use the figure on your pension record or ask your pension office.</li>
+<li>For the Employees' Pension part, 20.42% is withheld at payment. See the <a href="lump-sum-withdrawal-payment.html">guide</a> for how to claim it back.</li>
+</ul>
+</section><section><h2>Official sources</h2><ul><li><a href="https://www.nenkin.go.jp/service/jukyu/seido/sonota-kyufu/dattai-ichiji/20150406.html" rel="noopener">Japan Pension Service: payment amount tables (Japanese page, updated 2026-04-01)</a> — checked 2026-11-17</li><li><a href="https://www.nenkin.go.jp/international/english/japanese-system/benefit/payment.html" rel="noopener">Japan Pension Service: Lump-sum Withdrawal Payments (English)</a> — checked 2026-11-17</li><li><a href="https://www.nenkin.go.jp/international/english/japanese-system/benefit/payment.files/A.pdf" rel="noopener">Japan Pension Service: Lump-sum Withdrawal Payment guide and claim form (PDF)</a> — checked 2026-11-17</li><li><a href="https://www.nta.go.jp/english/taxes/individual/12005.htm" rel="noopener">NTA: Income tax on lump-sum withdrawal payments</a> — checked 2026-11-17</li></ul><p class="src">These are the primary sources this page is based on. Rules, forms and amounts change; always confirm on the official page before you act.</p></section><footer>
+<p><a href="./">All guides</a> · <a href="/japan/">Visiting Japan? Japan Pocket Helper</a> · <a href="/about.html">About</a></p>
+<p>Published by 256 Co., Ltd. General information only — not tax, legal or immigration advice, and not a substitute for the tax office, the Japan Pension Service, your city office or a licensed tax accountant (zeirishi). Last checked 2026-11-17.</p>
+</footer>
+
+<script>
+(function(){
+  var NP=[[6,53760],[12,107520],[18,161280],[24,215040],[30,268800],[36,322560],[42,376320],[48,430080],[54,483840],[60,537600]];
+  var EP=[[6,0.5],[12,1.1],[18,1.6],[24,2.2],[30,2.7],[36,3.3],[42,3.8],[48,4.4],[54,4.9],[60,5.5]];
+  function tier(t,m){var r=null;for(var i=0;i<t.length;i++){if(m>=t[i][0])r=t[i][1];}return r;}
+  function yen(n){return '\u00a5'+Math.round(n).toLocaleString('en-US');}
+  document.getElementById('go').addEventListener('click',function(){
+    var np=parseInt(document.getElementById('npm').value||'0',10);
+    var ep=parseInt(document.getElementById('epm').value||'0',10);
+    var avg=parseFloat(document.getElementById('avg').value||'0');
+    var out=[],gross=0,tax=0,err=[];
+    if(np>0){var a=tier(NP,np);if(a===null){err.push('National Pension: under 6 months, no payment.');}else{out.push('National Pension: '+yen(a)+' (no tax withheld)');gross+=a;}}
+    if(ep>0){var r=tier(EP,ep);if(r===null){err.push('Employees\u2019 Pension: under 6 months, no payment.');}else if(!(avg>0)){err.push('Enter your average standard remuneration (monthly, yen).');}else{var b=avg*r;out.push('Employees\u2019 Pension: '+yen(b)+' before tax (rate '+r+' \u00d7 '+yen(avg)+')');out.push('Withheld at payment (20.42%): '+yen(b*0.2042));gross+=b;tax=b*0.2042;}}
+    var h='';
+    if(out.length){h+='<p class="res">'+yen(gross-tax)+' <span class="sub">estimated amount you receive before any refund</span></p><ul><li>'+out.join('</li><li>')+'</li></ul>';if(tax>0){h+='<p>The withheld '+yen(tax)+' can be claimed back through a tax return filed by your tax agent (see the guide). Whether you recover all of it depends on your case.</p>';}}
+    if(err.length){h+='<p>'+err.join('<br>')+'</p>';}
+    if(!out.length&&!err.length){h='<p>Enter your months of coverage.</p>';}
+    document.getElementById('res').innerHTML=h;
+  });
+})();
+</script>
+</main>
+</body>
+</html>
