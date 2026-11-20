@@ -102,3 +102,8 @@ th:first-child,td:first-child{text-align:left}
 .fig{margin:0 0 18px}
 .fig svg{display:block;max-width:100%;height:auto}
 .fig figcaption{font-size:12px;color:var(--muted);margin-top:4px}
+.fig .fbox{fill:#e7eef7;stroke:#1f5f99}
+.fig .ftxt{fill:#1f2933}
+.fig .fsub{fill:#5f6b7a}
+.fig .farrow{stroke:#1f5f99;stroke-width:2;fill:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fig .fbox{fill:#1f2d3d;stroke:#63a4e8}:root:not([data-theme="light"]) .fig .ftxt{fill:#e6ebf1}:root:not([data-theme="light"]) .fig .fsub{fill:#9aa7b6}:root:not([data-theme="light"]) .fig .farrow{stroke:#63a4e8}}
