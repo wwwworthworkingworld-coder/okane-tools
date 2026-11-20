@@ -107,3 +107,5 @@ th:first-child,td:first-child{text-align:left}
 .fig .fsub{fill:#5f6b7a}
 .fig .farrow{stroke:#1f5f99;stroke-width:2;fill:none}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fig .fbox{fill:#1f2d3d;stroke:#63a4e8}:root:not([data-theme="light"]) .fig .ftxt{fill:#e6ebf1}:root:not([data-theme="light"]) .fig .fsub{fill:#9aa7b6}:root:not([data-theme="light"]) .fig .farrow{stroke:#63a4e8}}
+.fig .fig-v{display:none;max-width:360px;margin:0 auto}
+@media (max-width:639px){.fig .fig-h{display:none}.fig .fig-v{display:block}}
