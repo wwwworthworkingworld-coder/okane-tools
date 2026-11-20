@@ -1,7 +1,6 @@
 name: 補助金データの更新
 on:
-  schedule:
-    - cron: "0 21 * * *"  # 毎日 朝6時（日本時間）
+  # schedule は AdSense 審査中は停止（承認後に戻す）: cron "0 21 * * *"
   workflow_dispatch:
 permissions:
   contents: write
