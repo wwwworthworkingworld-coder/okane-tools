@@ -133,7 +133,7 @@ const Calc = (() => {
 
   // BOOTHのサービス利用料（5.6%＋45円／注文、2025年10月28日以降）
   function boothFee(amount, rate = 5.6, fixed = 45) {
-    return amount > 0 ? fl(amount * rate / 100) + fixed : 0;
+    return amount > 0 ? Math.ceil(amount * rate / 100 - 1e-7) + fixed : 0; // 小数点以下は切り上げ（BOOTH 公式）
   }
 
   /* 株の売却益の税金（上場株式等、申告分離課税 20.315%）
@@ -270,8 +270,8 @@ const Calc = (() => {
     if (months > 0) return months;
     return daysBetween(start, end) + 1 >= 14 ? 1 : 0;
   }
-  // 本人負担の社会保険料（1か月の目安）：健康保険9.85%（東京支部・40歳未満）と厚生年金18.3%の折半。厚生年金の標準報酬は65万円まで
-  const socialMonthly = std => fl(std * 0.0985 / 2) + fl(Math.min(std, 650000) * 0.183 / 2);
+  // 本人負担の社会保険料（1か月の目安）：健康保険9.85%＋子ども・子育て支援金0.23%（東京支部・40歳未満・令和8年4月分から）と厚生年金18.3%の折半。厚生年金の標準報酬は65万円まで
+  const socialMonthly = std => fl(std * (0.0985 + 0.0023) / 2) + fl(Math.min(std, 650000) * 0.183 / 2);
 
   /* 出産・育児のお金のまとめ
    * p: { work（"employee"|"part"|"self"|"officer"|"dependent"）, pay（月給）, due（出産予定日）, children, older,

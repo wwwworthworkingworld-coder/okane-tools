@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>配当カレンダーと株の損益の記録ツール｜配当を記録すると今月・来月の受取と年間合計、譲渡損益・源泉徴収・NISA枠を集計（スマホ対応・無料）</title>
+<title>配当カレンダーと株の損益の記録ツール｜受取予定・年間損益・NISA枠を集計</title>
 <meta name="description" content="配当を記録すると、今月・来月の受取カレンダー、年間の配当合計（税引前・受取額）、月ごと・銘柄ごとの受取額、前年の同じ月との比較が出ます。売買も記録すると、総平均法に準ずる方法で取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残り、損益通算の目安を出します。データは端末の中だけに保存、CSVで書き出し・読み込みができます。">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="kabu-manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -213,14 +215,7 @@ input[type=file]{font-size:14px}
     <p>同じ銘柄を何回かに分けて買って一部を売ったとき、売った分の取得費は「総平均法に準ずる方法」で出します。前回売った後から今回売るまでに買った分をまとめて、<strong>（買った代金の合計＋手数料）÷ 株数</strong> を1株の取得単価にします（1円未満は切り上げ）。これに売った株数を掛けたものが取得費で、<strong>売却代金 − 売却手数料 − 取得費</strong> が譲渡損益です。証券会社の特定口座も同じ考え方で計算していますが、手数料の扱いや端数で数円の差が出ることがあります。正確な数字は年間取引報告書で確認してください。</p>
     <p>このツールは、銘柄名と口座区分が同じ記録をひとつの銘柄として平均します。同じ銘柄を特定口座とNISAで持っているときは、口座ごとに別々に計算します（税法上もそうなります）。</p>
 
-    <h2>株の記録でよくある疑問</h2>
-    <ul>
-      <li><strong>配当金額は税引前と税引後のどちら？</strong> 税引前（配当金計算書の「配当金額」）を入れてください。源泉徴収額は自動で計算され、通知書の額があれば上書きできます。</li>
-      <li><strong>投資信託も記録できる？</strong> 口数と基準価額を数量・単価として入れれば記録できますが、基準価額は1万口あたりなので単価は1万口あたりの額÷10,000にするなど工夫が必要です。分配金の「特別分配金（元本払戻金）」は非課税で、取得費が減ります。このツールでは対応していないので、手で調整してください。</li>
-      <li><strong>株式分割があったら？</strong> 分割後の数量に合わせて、分割前の買いの記録の数量を増やし、単価を割ってください（取得費の合計が変わらないように）。</li>
-      <li><strong>データはどこに保存される？</strong> このブラウザの中（localStorage）だけです。別の端末やブラウザには引き継がれないので、CSVに書き出して移してください。</li>
-    </ul>
-  </section>
+    </section>
 
 
   <section class="card howto" id="howto">
@@ -234,14 +229,14 @@ input[type=file]{font-size:14px}
   </section>
 
   <section class="card article">
-    <h2>株の記録の根拠にした資料</h2>
-    <ul>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm" target="_blank" rel="noopener">国税庁 No.1463 株式等を譲渡したときの課税（申告分離課税）</a>（上場株式等の譲渡益は所得税15%・住民税5%、復興特別所得税は基準所得税額の2.1%）</li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1466.htm" target="_blank" rel="noopener">国税庁 No.1466 同一銘柄の株式等を2回以上にわたって購入している場合の取得費</a>（総平均法に準ずる方法、1円未満切り上げ）</li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1474.htm" target="_blank" rel="noopener">国税庁 No.1474 上場株式等に係る譲渡損失の損益通算及び繰越控除</a>（申告分離課税の配当と通算、翌年以後3年間の繰越、毎年の申告）</li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm" target="_blank" rel="noopener">国税庁 No.1330 配当金を受け取ったとき（配当所得）</a>（上場株式等の源泉徴収 15.315%＋5%、申告不要・総合課税・申告分離課税）</li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1535.htm" target="_blank" rel="noopener">国税庁 No.1535 NISA制度</a>（年間投資枠 つみたて120万円・成長240万円、非課税保有限度額1,800万円・うち成長1,200万円、NISA口座の損失はないものとみなす）</li>
-    </ul>
+    <h2>株の記録で参考にした一次情報</h2>
+<ul>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm" target="_blank" rel="noopener">国税庁 No.1463 株式等を譲渡したときの課税（申告分離課税）</a>（上場株式等の譲渡益は所得税15%・住民税5%、復興特別所得税は基準所得税額の2.1%）</li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1466.htm" target="_blank" rel="noopener">国税庁 No.1466 同一銘柄の株式等を2回以上にわたって購入している場合の取得費</a>（総平均法に準ずる方法、1円未満切り上げ）</li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1474.htm" target="_blank" rel="noopener">国税庁 No.1474 上場株式等に係る譲渡損失の損益通算及び繰越控除</a>（申告分離課税の配当と通算、翌年以後3年間の繰越、毎年の申告）</li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm" target="_blank" rel="noopener">国税庁 No.1330 配当金を受け取ったとき（配当所得）</a>（上場株式等の源泉徴収 15.315%＋5%、申告不要・総合課税・申告分離課税）</li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1535.htm" target="_blank" rel="noopener">国税庁 No.1535 NISA制度</a>（年間投資枠 つみたて120万円・成長240万円、非課税保有限度額1,800万円・うち成長1,200万円、NISA口座の損失はないものとみなす）</li>
+</ul>
     <p class="note">免責：このページの計算結果は目安であり、正確な税額は税理士や証券会社の年間取引報告書で確認してください。このツールは記録と税金の計算の補助であり、特定の銘柄の推奨、売買のタイミングの助言、個別の投資判断を示すものではありません。計算結果や記録を使って生じた損害について、運営者は責任を負いません。</p>
   </section>
 

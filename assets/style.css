@@ -98,3 +98,7 @@ th:first-child,td:first-child{text-align:left}
 .why{margin:0 0 16px}
 .related-nav ul{margin:6px 0 0;padding-left:1.2em}
 .sig{margin-top:18px}
+
+.fig{margin:0 0 18px}
+.fig svg{display:block;max-width:100%;height:auto}
+.fig figcaption{font-size:12px;color:var(--muted);margin-top:4px}

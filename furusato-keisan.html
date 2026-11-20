@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ふるさと納税の上限計算と寄付の記録｜年収と家族構成から控除上限の目安、残り枠、ワンストップ5自治体の管理</title>
 <meta name="description" content="年収と家族構成、または源泉徴収票の数字から、ふるさと納税で全額控除される上限の目安を計算します。寄付した自治体・金額・ワンストップ特例の申請を記録して、残り枠と5自治体の数を管理。データはスマホの中だけに保存、CSVで書き出せます。">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="furusato-manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -86,7 +88,8 @@
 <main>
   <h1>ふるさと納税の上限計算と寄付の記録</h1>
   <p class="lead">年収と家族構成を入れると、自己負担2,000円で済む寄付の上限の目安が出ます。寄付した自治体と金額を記録すると、残り枠とワンストップ特例の自治体数（5まで）が分かります。入力した数字と記録はこの端末の中だけに保存され、どこにも送信されません。</p>
-  <p class="why" data-why="2026-11-21">ふるさと納税の上限は「年収の目安表」で見当をつけられますが、副業の所得や住宅ローン控除、iDeCo があると表の数字から外れます。代表自身、副業を始めた年に表の金額で寄付をして上限を超えた経験があります。この計算機は、給与以外の所得と主な控除を入れて、全額控除になる寄付の上限の目安を出し、あわせて寄付した自治体と金額を記録できるようにしたものです。</p>
+  <p class="why" data-why="2026-11-22">副業を始めた年、年収の目安表で6万円を上限と見て寄付したところ、副業の所得で上限が約7万円に増えていて1万円分を使い残しました。逆に住宅ローン控除やiDeCoがある人は、表の数字より上限が下がります。この計算機は、給与以外の所得と主な控除を入れて全額控除になる上限の目安を出し、寄付した自治体と金額をその場で記録できるようにしています。</p>
+  <figure class="fig"><svg viewBox="0 0 640 130" role="img" aria-label="ふるさと納税の上限の計算の流れ" xmlns="http://www.w3.org/2000/svg"><text x="20" y="18" font-size="13" fill="var(--muted)">ふるさと納税の上限の計算の流れ</text><rect x="20" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="72" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">年収</text><text x="72" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">給与の支払金額</text><path d="M127 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="144" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="196" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">＋副業の所得</text><text x="196" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">ある人だけ</text><path d="M251 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="268" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="320" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">−控除</text><text x="320" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">社会保険料・iDeCo・住宅ローン</text><path d="M375 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="392" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="444" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">住民税の所得割</text><text x="444" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">ここから上限を計算</text><path d="M499 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="516" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="568" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">上限の目安</text><text x="568" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">所得割×20%÷係数＋2,000円</text></svg><figcaption>ふるさと納税の上限の計算の流れ</figcaption></figure>
   <p class="note" style="margin-top:-6px">計算式の確認日：2026年11月7日（総務省ふるさと納税ポータル・国税庁タックスアンサー）。令和8年分（2026年1〜12月の寄付）の控除額で計算しています。</p>
 
   <nav class="jump" aria-label="ページ内の移動"><a href="#calcCard">上限を計算する</a><a class="sub" href="#record">寄付を記録する</a></nav>
@@ -185,7 +188,7 @@
       <li><strong>寄付先が6自治体以上</strong>（同じ自治体に何回寄付しても1自治体と数えます）</li>
       <li><strong><a href="iryohi-kojo.html">医療費控除</a></strong>や<strong>住宅ローン控除の1年目</strong>など、ほかの理由で確定申告をする人。申告をするとワンストップの申請は無効になるので、申請した分も含めてすべての寄付を申告書に書きます</li>
       <li><strong>個人事業主・フリーランス</strong>、<strong>副業の所得が20万円を超える会社員</strong>、年収2,000万円超の会社員など、もともと確定申告をする人</li>
-      <li>ワンストップの申請書が<strong>1月10日に間に合わなかった</strong>人、引っ越しで住所が変わったのに変更届を出していない人</li>
+      <li>ワンストップの申請書が<strong>1月10日に間に合わなかった</strong>人（2027年1月10日は日曜日。土日の扱いは自治体で違うので年内に送るのが安全）、引っ越しで住所が変わったのに変更届を出していない人</li>
     </ul>
     <p>確定申告のやり方と注意点は <a href="furusato-kakutei-shinkoku.html">ふるさと納税の確定申告のやり方と、ワンストップ特例との違い</a> にまとめています。確定申告をしても控除の合計額は変わりません（所得税の還付と翌年度の住民税の減額に分かれるだけです）。</p>
 
@@ -199,14 +202,7 @@
     <p>3つ目の「所得割額の20%」を超えた分は控除されないので、ここが上限を決めます。式を逆算すると、<strong>上限 ＝ 住民税所得割額 × 20% ÷（90%−所得税率×1.021）＋ 2,000円</strong> です。このツールは、年収から給与所得・社会保険料・各控除を引いて住民税の所得割額と所得税率を出し、この式で上限を計算しています（住民税の所得割額は、調整控除と住宅ローン控除の住民税分を引いた後の額。特例分の所得税率は、総務省の説明どおり、住民税の課税所得から人的控除差を引いた額で判定）。</p>
     <p>所得が大きく変わった年（転職・産休・育休・退職）は、今年の見込み年収で計算してください。源泉徴収票は12月か翌年1月にもらうので、年内は昨年の源泉徴収票を参考にしつつ、少なめに寄付するのが安全です。</p>
 
-    <h2>ふるさと納税の上限でよくある疑問</h2>
-    <ul>
-      <li><strong>ワンストップ特例を使うと上限は変わる？</strong> 変わりません。所得税から控除される分も含めて、翌年度の住民税から控除されます。</li>
-      <li><strong>夫婦で寄付するときは？</strong> 上限は一人ひとりの収入で決まります。寄付と控除は本人の名義で。配偶者の名義で寄付した分は、もう一方の控除にはなりません。</li>
-      <li><strong>返礼品に税金はかかる？</strong> 返礼品は一時所得です。ほかの一時所得と合わせて年間50万円を超えると課税されます（総務省 よくある質問 Q12）。</li>
-      <li><strong>12月31日ぎりぎりでも大丈夫？</strong> その年の寄付になるのは、自治体が受領した日（決済日）が12月31日までのもの。銀行振込や払込票は年内に着金しないことがあるので、年末はクレジットカード決済が安全です。</li>
-    </ul>
-  </section>
+    </section>
 
   <nav class="card related-nav" aria-label="関連ページ">
 <h2>次に読む</h2>
@@ -228,15 +224,15 @@
   </section>
 
   <section class="card article">
-    <h2>ふるさと納税の上限の根拠にした資料</h2>
-    <ul>
-      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/deduction.html" target="_blank" rel="noopener">総務省 ふるさと納税ポータルサイト「税金の控除について」</a>（控除額の計算式。所得税・住民税基本分・特例分と、所得割額の2割の上限）</li>
-      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/procedure.html" target="_blank" rel="noopener">総務省「ふるさと納税の流れ」</a>（ワンストップ特例は確定申告の不要な給与所得者等で5団体以内）</li>
-      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/topics/20150401.html" target="_blank" rel="noopener">総務省「ふるさと納税ワンストップ特例制度」</a>（申請書・変更届出書は翌年1月10日まで）</li>
-      <li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/faq/" target="_blank" rel="noopener">総務省「よくある質問」</a>（2,000円は年間の寄付の合計に対して1回、返礼品は一時所得）</li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1150.htm" target="_blank" rel="noopener">国税庁 No.1150 一定の寄附金を支払ったとき（寄附金控除）</a>（総所得金額等の40%が上限）</li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm" target="_blank" rel="noopener">国税庁 No.1410 給与所得控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1180.htm" target="_blank" rel="noopener">No.1180 扶養控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm" target="_blank" rel="noopener">No.1191 配偶者控除</a>（令和8年分の控除額）</li>
-    </ul>
+    <h2>ふるさと納税の上限で参考にした一次情報</h2>
+<ul>
+<li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/deduction.html" target="_blank" rel="noopener">総務省 ふるさと納税ポータルサイト「税金の控除について」</a>（控除額の計算式。所得税・住民税基本分・特例分と、所得割額の2割の上限）</li>
+<li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/procedure.html" target="_blank" rel="noopener">総務省「ふるさと納税の流れ」</a>（ワンストップ特例は確定申告の不要な給与所得者等で5団体以内）</li>
+<li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/topics/20150401.html" target="_blank" rel="noopener">総務省「ふるさと納税ワンストップ特例制度」</a>（申請書・変更届出書は翌年1月10日まで）</li>
+<li><a href="https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/faq/" target="_blank" rel="noopener">総務省「よくある質問」</a>（2,000円は年間の寄付の合計に対して1回、返礼品は一時所得）</li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1150.htm" target="_blank" rel="noopener">国税庁 No.1150 一定の寄附金を支払ったとき（寄附金控除）</a>（総所得金額等の40%が上限）</li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm" target="_blank" rel="noopener">国税庁 No.1410 給与所得控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1180.htm" target="_blank" rel="noopener">No.1180 扶養控除</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm" target="_blank" rel="noopener">No.1191 配偶者控除</a>（令和8年分の控除額）</li>
+</ul>
     <p class="note">免責：このページの計算結果は目安であり、正確な控除上限は所得や控除の状況で変わります。寄付の前に、お住まいの市区町村の住民税担当や税理士に確認してください。計算結果や記録を使って生じた損害について、運営者は責任を負いません。</p>
   </section>
 

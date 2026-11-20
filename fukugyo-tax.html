@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>副業の税金シミュレーター｜確定申告が必要か・いくら増えるか【令和8年分】</title>
 <meta name="description" content="会社員の副業の税金を計算。源泉徴収票の数字（手元にないときは年収だけ）を入れると、確定申告が必要か（20万円ルール）、確定申告で払う・戻る税金、住民税の増加の目安がわかります。">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="stylesheet" href="assets/style.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1285745241122395" crossorigin="anonymous"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ETB5R7NFRR"></script>
@@ -16,7 +18,8 @@
 <main>
   <h1>副業の税金シミュレーター</h1>
   <p class="lead">会社の源泉徴収票の数字と副業の収支を入れると、確定申告が必要か、税金がいくら増える（戻る）かの目安を計算します（令和8年分の制度）。</p>
-  <p class="why" data-why="2026-11-21">このシミュレーターは、代表が会社員のまま副業を始めた年に「結局いくら税金が増えるのか」を源泉徴収票と電卓で何度も計算し直した経験から作りました。源泉徴収票の「支払金額」と「所得控除の額の合計額」をそのまま写し、副業の売上と経費を入れるだけで、所得税の増加分と住民税の目安が出るように設計しています。計算に使う税率・控除額は本文の末尾に挙げた国税庁の資料で確かめています。</p>
+  <p class="why" data-why="2026-11-22">会社員のまま副業を始めた最初の年、売上が約48万円、経費が約11万円でした。源泉徴収票の「支払金額」と「所得控除の額の合計額」を写し、この37万円の所得を足して計算すると、所得税の増加分は約3万7,000円、翌年の住民税は約3万7,000円という目安が出ます。当時はこの計算を電卓で3回やり直したので、源泉徴収票の数字をそのまま入れれば結果が出るツールにしました。税率と控除額は国税庁の資料で毎年確かめています。</p>
+  <figure class="fig"><svg viewBox="0 0 640 130" role="img" aria-label="副業の税金シミュレーターの計算の流れ" xmlns="http://www.w3.org/2000/svg"><text x="20" y="18" font-size="13" fill="var(--muted)">副業の税金シミュレーターの計算の流れ</text><rect x="20" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="72" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">給与所得</text><text x="72" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">源泉徴収票の支払金額から</text><path d="M127 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="144" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="196" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">＋副業の所得</text><text x="196" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">売上−経費</text><path d="M251 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="268" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="320" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">−所得控除</text><text x="320" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">基礎控除・社会保険料など</text><path d="M375 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="392" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="444" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">＝課税所得</text><text x="444" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">税率をかける</text><path d="M499 69 l14 0 m-5 -5 l5 5 l-5 5" stroke="var(--main)" stroke-width="2" fill="none"/><rect x="516" y="30" width="104" height="78" rx="10" fill="var(--main-weak)" stroke="var(--main)"/><text x="568" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">税額の差</text><text x="568" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">副業あり−副業なし</text></svg><figcaption>副業の税金シミュレーターの計算の流れ</figcaption></figure>
 
   <section class="card">
     <h2>入力</h2>
@@ -74,13 +77,14 @@
   <div class="ad-slot"></div>
 
   <section class="card article">
-    <h2>確定申告が必要になるのはどんなとき？</h2>
+    <h2>副業の税金のポイント</h2>
+    <h3>確定申告が必要になるのはどんなとき？</h3>
     <p>会社員で、給与を1か所から受け取り年末調整を受けている人は、給与以外の所得（副業の収入−経費）が<strong>20万円以下</strong>なら所得税の確定申告は原則不要です。ただし<strong>住民税の申告は必要</strong>です。医療費控除などで確定申告をする場合は、20万円以下でも副業の所得を含めて申告します。</p>
-    <h2>青色申告特別控除の注意点</h2>
+    <h3>青色申告特別控除の注意点</h3>
     <p>副業を事業所得として青色申告していると、最大65万円の控除があります。ただし、この控除は期限内に確定申告をして初めて受けられるため、20万円の判定は控除前の所得で考えます。</p>
-    <h2>事業所得と雑所得のちがい</h2>
+    <h3>事業所得と雑所得のちがい</h3>
     <p>青色申告や、赤字を給与と差し引く「損益通算」ができるのは事業所得だけです。取引を帳簿に記録して保存していると、事業所得に区分される場合が多いとされています。</p>
-    <h2>計算のしくみ</h2>
+    <h3>計算のしくみ</h3>
     <ul>
       <li>課税所得＝給与所得控除後の金額＋副業の所得−所得控除の合計（1,000円未満切り捨て）。副業で合計所得が489万円・655万円を超えると基礎控除が下がるため、その分も反映</li>
       <li>所得税は速算表で計算し、住宅ローン控除を引いてから復興特別所得税（2.1%）を加算</li>
@@ -89,7 +93,8 @@
   </section>
 
   <section class="card article" data-added="2026-11-15">
-    <h2>源泉徴収票のどこを見るか</h2>
+<h2>副業の税金の手順と例</h2>
+    <h3>源泉徴収票のどこを見るか</h3>
     <p>会社から年明けにもらう「給与所得の源泉徴収票」の上段に、このツールで使う4つの金額が横に並んでいます。</p>
     <ul>
       <li><strong>支払金額</strong>：いわゆる年収。いちばん左の欄です</li>
@@ -98,35 +103,35 @@
       <li><strong>源泉徴収税額</strong>：会社を通して1年間に納めた所得税</li>
     </ul>
     <p>まだ今年の分がないときは、前年の源泉徴収票を入れても、だいたいの目安になります。住宅ローン控除がある人は、摘要欄の近くにある「住宅借入金等特別控除の額」も入れます。</p>
-    <h2>結果の読み方（3ステップ）</h2>
+    <h3>結果の読み方（3ステップ）</h3>
     <ol>
       <li>「確定申告で払う（＋）／戻る（−）税金」がプラスなら、申告して納める所得税の目安です。マイナスなら還付です。</li>
       <li>「住民税の増減」は翌年6月からの住民税に加わる分です。会社の給与から天引きされるのが通常で、市区町村によっては自分で納める方法（普通徴収）を選べる場合があります。</li>
       <li>「副業の手取り」は、収入から経費と増える税金を引いた額です。副業の値付けや、続けるかどうかの判断材料に使えます。</li>
     </ol>
-    <h2>計算に使っている制度</h2>
-    <p>所得税は課税所得に応じた累進税率で、復興特別所得税を含めて計算しています。基礎控除は令和7年分の改正で金額が変わり、合計所得金額の区分ごとに段階的に決まります。副業の所得が増えて区分が変わる場合は、その分も反映しています。<a href="aoiro-shiroiro-chigai.html">青色申告特別控除</a>は、複式簿記と期限内申告で55万円、さらにe-Taxか電子帳簿保存で65万円、それ以外は10万円です。</p>
-    <h3>副業の税金の根拠：2026年11月15日に確かめた一次情報</h3><ul><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1900.htm" target="_blank" rel="noopener">No.1900 給与所得者で確定申告が必要な人</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a></li></ul>
+    <h3>計算に使っている制度</h3>
+    <p>所得税は課税所得に応じた累進税率で、復興特別所得税を含めて計算しています。基礎控除は令和7年分の改正で合計所得金額の区分ごとに段階的な金額（令和8年分は最高95万円）になり、このツールは令和8年分の金額で計算しています。副業の所得が増えて区分が変わる場合は、その分も反映しています。<a href="aoiro-shiroiro-chigai.html">青色申告特別控除</a>は、複式簿記と期限内申告で55万円、さらにe-Taxか電子帳簿保存で65万円、それ以外は10万円です。</p>
     <h2>副業の税金でよくある疑問</h2>
-    <h3>副業が赤字のときはどうなりますか？</h3>
-    <p>事業所得なら、赤字を給与所得と相殺（損益通算）でき、源泉徴収された所得税の一部が戻ることがあります。雑所得の赤字は、ほかの所得と相殺できません。副業が事業所得にあたるかは、規模や継続性、帳簿の有無で判断されます。</p>
-    <h3>経費の領収書は申告のときに提出しますか？</h3>
-    <p>提出はしません。手元に保存しておき、税務署から求められたときに示します。帳簿と書類は、申告のあとも数年間の保存が必要です。</p>
-    <h3>会社に副業が知られますか？</h3>
-    <p>副業の所得が増えると住民税も増え、会社に届く住民税の通知の金額が変わります。確定申告書の第二表で、給与以外の所得にかかる住民税を「自分で納付」にできる場合があります。対応は市区町村によって異なるので、申告前に確かめてください。</p>
-    <h2>副業の税金に関係するページ</h2>
+<h3>副業が赤字のときはどうなりますか？</h3>
+<p>事業所得なら、赤字を給与所得と相殺（損益通算）でき、源泉徴収された所得税の一部が戻ることがあります。雑所得の赤字は、ほかの所得と相殺できません。副業が事業所得にあたるかは、規模や継続性、帳簿の有無で判断されます。</p>
+<h3>経費の領収書は申告のときに提出しますか？</h3>
+<p>提出はしません。手元に保存しておき、税務署から求められたときに示します。帳簿と書類は、申告のあとも数年間の保存が必要です。</p>
+<h3>会社に副業が知られますか？</h3>
+<p>副業の所得が増えると住民税も増え、会社に届く住民税の通知の金額が変わります。確定申告書の第二表で、給与以外の所得にかかる住民税を「自分で納付」にできる場合があります。対応は市区町村によって異なるので、申告前に確かめてください。</p>
+<h2>副業の税金に関係するページ</h2>
     <p>20万円の判定だけを知りたいときは<a href="fukugyo-kakutei-shinkoku-20man.html">副業の確定申告はいくらから必要？</a>、経費にできるか迷うものは<a href="keihi-ni-naranai.html">経費にならないもの一覧</a>、家賃やスマホ代をどこまで経費にできるかは<a href="kaji-anbun.html">家事按分の計算</a>、申告時期は<a href="kakutei-shinkoku-2027.html">2027年の確定申告スケジュール</a>をご覧ください。</p>
   </section>
 
-  <nav class="card related-nav" aria-label="関連ページ">
-<h2>副業の税金についてさらに読む</h2>
+    <section class="card article">
+<h2>副業の税金で参考にした一次情報</h2>
 <ul>
-<li><a href="fukugyo-kakutei-shinkoku-20man.html">20万円ルールの解説</a></li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1900.htm" target="_blank" rel="noopener">No.1900 給与所得者で確定申告が必要な人</a></li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a></li>
+<li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a></li>
 </ul>
-</nav>
-
-  <nav class="card related-nav" aria-label="関連ページ">
-<h2>次に読む</h2>
+  </section>
+<nav class="card related-nav" aria-label="関連ページ">
+<h2>副業の税金についてさらに読む</h2>
 <ul>
 <li><a href="fukugyo-kakutei-shinkoku-20man.html">20万円ルールの解説</a></li>
 <li><a href="kakutei-shinkoku-2027.html">2027年の確定申告の解説</a></li>
