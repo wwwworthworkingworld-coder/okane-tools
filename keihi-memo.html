@@ -51,6 +51,7 @@
 <main>
   <h1>経費メモ</h1>
   <p class="lead">支払ったその場で、経費をスマホに記録。レシートを撮れば日付・金額を読み取ります。売上も入力でき、たまったらCSVで書き出して、帳簿のExcelに取り込めます。</p>
+  <p class="why" data-why="2026-11-21">レシートを財布にためて、確定申告の直前にまとめて帳簿に写す、という作業を減らすために作った記録ツールです。レシートを撮ると日付と金額を読み取り、科目を選んで保存し、売上も入力して CSV で Excel に移せます。データはこの端末の中だけに保存され、サーバーには送りません。Suica の利用履歴 PDF からの読み込みにも対応しています。</p>
 
   <section class="card">
     <form class="memo-form" id="form" autocomplete="off">
@@ -119,15 +120,15 @@
     </ol>
     <h2>記録を残す義務について</h2>
     <p>白色申告の人も、収入と経費を記載した帳簿を作り、帳簿は7年、領収書などの書類は5年保存することになっています。会社員の副業が雑所得にあたる場合でも、前々年の副業の収入が300万円を超える人は、領収書などの書類を保存する義務があります。家と仕事で共用しているものの支出は、仕事に使った部分が記録で明らかに区分できる金額だけが経費になります。このメモの「事業で使った割合」は、その区分を書き残すための欄です。</p>
-    <h3>計算の根拠にした一次情報（2026年11月15日確認）</h3><ul><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2080.htm" target="_blank" rel="noopener">No.2080 白色申告者の記帳・帳簿等保存制度</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1500.htm" target="_blank" rel="noopener">No.1500 雑所得（業務に係る雑所得の書類の保存）</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2210.htm" target="_blank" rel="noopener">No.2210 必要経費の知識（家事関連費）</a></li></ul>
-    <h2>よくある質問</h2>
+    <h3>経費メモの根拠：2026年11月15日に確かめた一次情報</h3><ul><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2080.htm" target="_blank" rel="noopener">No.2080 白色申告者の記帳・帳簿等保存制度</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1500.htm" target="_blank" rel="noopener">No.1500 雑所得（業務に係る雑所得の書類の保存）</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2210.htm" target="_blank" rel="noopener">No.2210 必要経費の知識（家事関連費）</a></li></ul>
+    <h2>経費メモでよくある疑問</h2>
     <h3>記録したら、紙のレシートは捨ててよいですか？</h3>
     <p>原則は保存です。このメモの写真は、金額を読み取るための一時的なもので、税法上の保存要件を満たす形では保管していません。紙のまま月ごとに封筒に入れておくのが、いちばん手間のかからない方法です。</p>
     <h3>科目はどう選べばよいですか？</h3>
     <p>迷ったら「雑費」にせず、いちばん近い科目を選んで「内容」に用途を書いておきます。あとで帳簿に取り込むときに直せます。決め方は<a href="kanjo-kamoku-erabikata.html">勘定科目の選び方</a>にまとめました。</p>
     <h3>スマホを買い替えたら記録は引き継げますか？</h3>
     <p>記録はこの端末のブラウザの中だけにあるため、自動では引き継がれません。買い替えの前に「全部をCSVに」で書き出しておいてください。</p>
-    <h2>あわせて使うページ</h2>
+    <h2>経費メモに関係するページ</h2>
     <p>経費になるか迷うものは<a href="keihi-ni-naranai.html">経費にならないもの一覧</a>、家賃やスマホ代の割合は<a href="kaji-anbun.html">家事按分の計算</a>、売上の請求書は<a href="seikyusho.html">請求書・見積書の作成</a>で作れます。</p>
   </section>
 
@@ -144,12 +145,9 @@
     </ul>
   </section>
 
-  <section class="card cta" data-cta="kojin">
-    <h2>帳簿から青色申告決算書の数字まで、Excel 1つで。無料版あります</h2>
-    <p class="lead" style="margin:0">個人事業主向けの複式帳簿です。日付・金額・科目を1行入力すると、仕訳・元帳・試算表ができ、青色申告決算書の欄ごとの数字と税金の目安まで出ます。月額なしの買い切りで、データは手元に残ります。まず無料版でお試しください。</p>
-    <a class="btn" href="https://256-co.booth.pm/items/9050781" target="_blank" rel="noopener">無料版をダウンロード（BOOTH）</a>
-    <p class="note">有料版は 1,980円（12/31まで、通常2,980円）。決算書の数字・税金の計算・申告ナビが付きます → <a href="https://256-co.booth.pm/items/9050803" target="_blank" rel="noopener">有料版を見る</a></p>
-  </section>
+
+  <p class="note">経費メモに使える Excel：<a href="https://256-co.booth.pm/items/9050781" target="_blank" rel="noopener">個人事業主の複式帳簿（BOOTH・無料版あり）</a></p>
+  <p class="note sig">書いた人：株式会社256 代表（<a href="about.html#how">作り方</a>）。経費メモの確認日 2026-11-21</p>
 </main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>

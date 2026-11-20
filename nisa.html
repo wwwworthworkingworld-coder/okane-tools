@@ -16,6 +16,7 @@
 <main>
   <h1>NISA枠の残りの計算</h1>
   <p class="lead">新NISA（2024年から）の、今年あといくら投資できるか・生涯であといくら投資できるかを計算します。金額は買付額（簿価）で入力してください。</p>
+  <p class="why" data-why="2026-11-21">新NISAは年間360万円・生涯1,800万円の枠がありますが、売った分の枠は翌年に簿価で戻る、年間の枠は戻らない、といった決まりがあり、残りを自分で数えるのは面倒です。この計算機は、今年の買付額とこれまでの簿価、売却した分を入れると、今年あといくら使えるか、生涯の枠がいくら残っているかを出します。制度の根拠は金融庁の公表資料で確かめています。</p>
 
   <section class="card">
     <h2>入力</h2>
@@ -70,7 +71,7 @@
       <tr><td>生涯投資枠の残り</td><td>1,800万円−420万円</td><td>1,380万円</td></tr>
       <tr><td>うち成長投資枠の残り</td><td>1,200万円−240万円</td><td>960万円</td></tr>
     </table></div>
-    <h2>よくある質問</h2>
+    <h2>NISAの枠でよくある疑問</h2>
     <h3>値上がりした分は、枠を使ったことになりますか</h3>
     <p>なりません。枠は買ったときの金額（簿価）で数えます。100万円で買った商品が150万円に値上がりしても、使っている枠は100万円のままです。</p>
     <h3>売ったら、その年のうちにまた買えますか</h3>
@@ -93,15 +94,15 @@
     </ul>
     <h2>制度の根拠</h2>
     <p>年間投資枠はつみたて投資枠120万円と成長投資枠240万円、生涯の非課税保有限度額は1,800万円（うち成長投資枠は1,200万円まで）です。保有商品を売ると、翌年以降にその簿価分の枠が復活します。このツールはこの4つの数字で計算しています。</p>
-    <h3>計算の根拠にした一次情報（2026年11月15日確認）</h3><ul><li><a href="https://www.fsa.go.jp/policy/nisa2/about/index.html" target="_blank" rel="noopener">金融庁 NISA特設ウェブサイト「NISAを知る」</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1474.htm" target="_blank" rel="noopener">No.1474 上場株式等に係る譲渡損失の損益通算及び繰越控除</a></li></ul>
-    <h2>よくある質問</h2>
+    <h3>NISAの枠の根拠：2026年11月15日に確かめた一次情報</h3><ul><li><a href="https://www.fsa.go.jp/policy/nisa2/about/index.html" target="_blank" rel="noopener">金融庁 NISA特設ウェブサイト「NISAを知る」</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1474.htm" target="_blank" rel="noopener">No.1474 上場株式等に係る譲渡損失の損益通算及び繰越控除</a></li></ul>
+    <h2>NISAの枠について、ほかに聞かれること</h2>
     <h3>2つの証券会社でNISA口座を持てますか？</h3>
     <p>同じ年に使えるNISA口座は1人1つです。金融機関の変更は年単位ででき、変更の手続きには期限があります。変更しても生涯の枠は引き継がれます。</p>
     <h3>つみたて投資枠で個別株は買えますか？</h3>
     <p>買えません。つみたて投資枠は国が定めた基準を満たす投資信託などに限られます。個別株は成長投資枠で買います。</p>
     <h3>枠を使い切れなかった年の分は翌年に持ち越せますか？</h3>
     <p>持ち越せません。年間投資枠はその年限りです。ただし使わなかった分だけ生涯の枠が残るので、長い目では損はしません。</p>
-    <h2>あわせて使うページ</h2>
+    <h2>NISAの枠に関係するページ</h2>
     <p>買付と売却を記録して枠を自動で追うなら<a href="kabu-kiroku.html">配当カレンダー・株の記録</a>、課税口座の税金は<a href="kabu-tax.html">株の税金の計算</a>、2つの枠の違いは<a href="#waku-shikumi">新NISAの枠のしくみ</a>をご覧ください。</p>
   </section>
 
@@ -172,16 +173,18 @@
 <li><a href="https://www.fsa.go.jp/policy/nisa2/about/nisa2024/slide_202406.pdf" target="_blank" rel="noopener">金融庁 NISAを利用する皆さまへ</a></li>
 </ul>
 </section>
-<section class="card">
-    <h2>くわしい解説</h2>
-    <p><a href="#waku-shikumi">新NISAの枠のしくみと、売ったときの枠の復活</a> … 年間360万円・生涯1,800万円と、簿価での管理</p>
-  </section>
+<nav class="card related-nav" aria-label="関連ページ">
+<h2>NISAの枠についてさらに読む</h2>
+<ul>
+<li><a href="#waku-shikumi">枠のしくみのくわしい解説（このページ内）</a></li>
+<li><a href="kabu-kiroku.html">株の記録</a></li>
+<li><a href="kabu-tax.html">株の税金の計算</a></li>
+</ul>
+</nav>
 
-  <section class="card cta">
-    <h2>売買と配当の記録・税金・NISA枠をExcelで</h2>
-    <p class="lead" style="margin:0">売買と配当を記録するだけで、口座ごとの譲渡損益、配当の課税方式の比較、確定申告の目安、NISAの残り枠まで自動で計算するExcelシートです。980円の買い切りで、無料のお試し版もあります。</p>
-    <a class="btn" href="https://256-co.booth.pm/items/9061872" target="_blank" rel="noopener">株・NISAの税金と記録かんたんシート</a>
-  </section>
+
+  <p class="note">NISAの枠に使える Excel：<a href="https://256-co.booth.pm/items/9061872" target="_blank" rel="noopener">株の記録表（BOOTH・無料版あり）</a></p>
+  <p class="note sig">書いた人：株式会社256 代表（<a href="about.html#how">作り方</a>）。NISAの枠の確認日 2026-11-21</p>
 </main>
 <footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
     <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>

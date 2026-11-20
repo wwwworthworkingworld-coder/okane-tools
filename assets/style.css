@@ -94,3 +94,7 @@ th:first-child,td:first-child{text-align:left}
 .season h2{margin:0 0 8px;font-size:17px}
 .season ol{margin:0;padding-left:1.4em;columns:2;column-gap:24px;font-size:14px;line-height:1.9}
 @media (max-width:640px){.season ol{columns:1}}
+
+.why{margin:0 0 16px}
+.related-nav ul{margin:6px 0 0;padding-left:1.2em}
+.sig{margin-top:18px}

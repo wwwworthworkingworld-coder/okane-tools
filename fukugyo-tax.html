@@ -16,6 +16,7 @@
 <main>
   <h1>副業の税金シミュレーター</h1>
   <p class="lead">会社の源泉徴収票の数字と副業の収支を入れると、確定申告が必要か、税金がいくら増える（戻る）かの目安を計算します（令和8年分の制度）。</p>
+  <p class="why" data-why="2026-11-21">このシミュレーターは、代表が会社員のまま副業を始めた年に「結局いくら税金が増えるのか」を源泉徴収票と電卓で何度も計算し直した経験から作りました。源泉徴収票の「支払金額」と「所得控除の額の合計額」をそのまま写し、副業の売上と経費を入れるだけで、所得税の増加分と住民税の目安が出るように設計しています。計算に使う税率・控除額は本文の末尾に挙げた国税庁の資料で確かめています。</p>
 
   <section class="card">
     <h2>入力</h2>
@@ -56,11 +57,6 @@
       <div class="stat"><div class="k">副業の手取り（目安）</div><div class="v" id="takehome">-</div></div>
     </div>
     <p class="note simple-only" id="simpleNote" hidden></p>
-    <div class="cta-inline" data-cta="fukugyo">
-      <b>この計算を、帳簿と一緒に。</b> 副業の収入と経費を1行ずつ入れていくExcel帳簿なら、1年分つけた時点でこのシミュレーターと同じ「20万円の判定」と「増える税金の目安」が出ます。
-      <a class="btn-s" href="https://256-co.booth.pm/items/9051088" target="_blank" rel="noopener">無料版をダウンロード（BOOTH）</a>
-      <span class="sub">無料版で帳簿づけを試せます。有料版（980円、12/31まで）は税金の計算と申告の手順ナビ付き。</span>
-    </div>
     <div class="table-wrap"><table>
       <tbody>
         <tr><td>副業の所得（青色申告特別控除の前）</td><td id="t1"></td></tr>
@@ -110,37 +106,36 @@
     </ol>
     <h2>計算に使っている制度</h2>
     <p>所得税は課税所得に応じた累進税率で、復興特別所得税を含めて計算しています。基礎控除は令和7年分の改正で金額が変わり、合計所得金額の区分ごとに段階的に決まります。副業の所得が増えて区分が変わる場合は、その分も反映しています。<a href="aoiro-shiroiro-chigai.html">青色申告特別控除</a>は、複式簿記と期限内申告で55万円、さらにe-Taxか電子帳簿保存で65万円、それ以外は10万円です。</p>
-    <h3>計算の根拠にした一次情報（2026年11月15日確認）</h3><ul><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1900.htm" target="_blank" rel="noopener">No.1900 給与所得者で確定申告が必要な人</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a></li></ul>
-    <h2>よくある質問</h2>
+    <h3>副業の税金の根拠：2026年11月15日に確かめた一次情報</h3><ul><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1900.htm" target="_blank" rel="noopener">No.1900 給与所得者で確定申告が必要な人</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a></li><li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a></li></ul>
+    <h2>副業の税金でよくある疑問</h2>
     <h3>副業が赤字のときはどうなりますか？</h3>
     <p>事業所得なら、赤字を給与所得と相殺（損益通算）でき、源泉徴収された所得税の一部が戻ることがあります。雑所得の赤字は、ほかの所得と相殺できません。副業が事業所得にあたるかは、規模や継続性、帳簿の有無で判断されます。</p>
     <h3>経費の領収書は申告のときに提出しますか？</h3>
     <p>提出はしません。手元に保存しておき、税務署から求められたときに示します。帳簿と書類は、申告のあとも数年間の保存が必要です。</p>
     <h3>会社に副業が知られますか？</h3>
     <p>副業の所得が増えると住民税も増え、会社に届く住民税の通知の金額が変わります。確定申告書の第二表で、給与以外の所得にかかる住民税を「自分で納付」にできる場合があります。対応は市区町村によって異なるので、申告前に確かめてください。</p>
-    <h2>あわせて使うページ</h2>
+    <h2>副業の税金に関係するページ</h2>
     <p>20万円の判定だけを知りたいときは<a href="fukugyo-kakutei-shinkoku-20man.html">副業の確定申告はいくらから必要？</a>、経費にできるか迷うものは<a href="keihi-ni-naranai.html">経費にならないもの一覧</a>、家賃やスマホ代をどこまで経費にできるかは<a href="kaji-anbun.html">家事按分の計算</a>、申告時期は<a href="kakutei-shinkoku-2027.html">2027年の確定申告スケジュール</a>をご覧ください。</p>
   </section>
 
-  <section class="card">
-    <h2>くわしい解説</h2>
-    <p><a href="fukugyo-kakutei-shinkoku-20man.html">会社員の副業、確定申告はいくらから必要？</a> … 「20万円ルール」の数え方と、20万円以下でも必要な住民税の申告</p>
-  </section>
+  <nav class="card related-nav" aria-label="関連ページ">
+<h2>副業の税金についてさらに読む</h2>
+<ul>
+<li><a href="fukugyo-kakutei-shinkoku-20man.html">20万円ルールの解説</a></li>
+</ul>
+</nav>
 
-  <section class="card" data-next="2026-11-16">
+  <nav class="card related-nav" aria-label="関連ページ">
 <h2>次に読む</h2>
 <ul>
-<li><a href="fukugyo-kakutei-shinkoku-20man.html">会社員の副業、確定申告はいくらから必要？「20万円ルール」と住民税の申告</a></li>
-<li><a href="kakutei-shinkoku-2027.html">2027年の確定申告スケジュール</a></li>
+<li><a href="fukugyo-kakutei-shinkoku-20man.html">20万円ルールの解説</a></li>
+<li><a href="kakutei-shinkoku-2027.html">2027年の確定申告の解説</a></li>
 <li><a href="keihi-memo.html">経費メモ</a></li>
 </ul>
-</section>
-<section class="card cta" data-cta="fukugyo">
-    <h2>この計算を、帳簿と一緒に。無料版あります</h2>
-    <p class="lead" style="margin:0">会社員の副業向けのExcel帳簿です。1行入力で帳簿ができ、<a href="fukugyo-tax.html">副業の税金シミュレーター</a>と同じ「20万円の判定」と「増える税金の目安」が自動で出ます。買い切りでデータは手元に残ります。まず無料版でお試しください。</p>
-    <a class="btn" href="https://256-co.booth.pm/items/9051088" target="_blank" rel="noopener">無料版をダウンロード（BOOTH）</a>
-    <p class="note">有料版は 980円（12/31まで、通常1,980円）。税金の計算と申告の手順ナビが付きます → <a href="https://256-co.booth.pm/items/9051108" target="_blank" rel="noopener">有料版を見る</a></p>
-  </section>
+</nav>
+
+  <p class="note">副業の税金に使える Excel：<a href="https://256-co.booth.pm/items/9051088" target="_blank" rel="noopener">副業向けの帳簿（BOOTH・無料版あり）</a></p>
+  <p class="note sig">書いた人：株式会社256 代表（<a href="about.html#how">作り方</a>）。副業の税金の確認日 2026-11-21</p>
 </main>
 <footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
     <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>

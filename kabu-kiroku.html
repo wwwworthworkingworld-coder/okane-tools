@@ -78,6 +78,7 @@ input[type=file]{font-size:14px}
 <main>
   <h1>配当カレンダーと株の損益の記録ツール</h1>
   <p class="lead">配当を記録すると、今月・来月の受取カレンダーと年間の配当合計（税引前・受取額）、銘柄ごとの受取額が出ます。売買も記録すると、取得単価と売却損益を計算し、年ごとの譲渡損益・配当・源泉徴収の合計、口座区分別の内訳、NISA枠の使用額と残りが分かります。確定申告の要否を考える目安にも。記録はこの端末の中だけに保存され、どこにも送信されません。銘柄のおすすめや売買のタイミングを示すものではありません。</p>
+  <p class="why" data-why="2026-11-21">証券会社の年間取引報告書は年に一度しか来ないので、年の途中で「今年の損益はいくらか」「配当は来月いくら入るか」を知るには自分の記録が要ります。この記録ツールは、買い・売り・配当を入力すると、取得単価と譲渡損益、月ごとの配当の受取予定、NISA 枠の使用額を集計します。データはこの端末の中だけに保存され、CSV で書き出して Excel に移せます。</p>
   <p class="note" style="margin-top:-6px">税率・制度の確認日：2026年11月7日（国税庁タックスアンサー No.1463・1466・1474・1330・1535）。令和8年分（2026年）の制度で計算しています。</p>
 
   <nav class="jump" aria-label="ページ内の移動"><a href="#tradeCard">取引を記録</a><a class="sub" href="#divCard">配当を記録</a><a class="sub" href="#calCard">受取カレンダー</a><a class="sub" href="#sumCard">集計を見る</a></nav>
@@ -212,7 +213,7 @@ input[type=file]{font-size:14px}
     <p>同じ銘柄を何回かに分けて買って一部を売ったとき、売った分の取得費は「総平均法に準ずる方法」で出します。前回売った後から今回売るまでに買った分をまとめて、<strong>（買った代金の合計＋手数料）÷ 株数</strong> を1株の取得単価にします（1円未満は切り上げ）。これに売った株数を掛けたものが取得費で、<strong>売却代金 − 売却手数料 − 取得費</strong> が譲渡損益です。証券会社の特定口座も同じ考え方で計算していますが、手数料の扱いや端数で数円の差が出ることがあります。正確な数字は年間取引報告書で確認してください。</p>
     <p>このツールは、銘柄名と口座区分が同じ記録をひとつの銘柄として平均します。同じ銘柄を特定口座とNISAで持っているときは、口座ごとに別々に計算します（税法上もそうなります）。</p>
 
-    <h2>よくある質問</h2>
+    <h2>株の記録でよくある疑問</h2>
     <ul>
       <li><strong>配当金額は税引前と税引後のどちら？</strong> 税引前（配当金計算書の「配当金額」）を入れてください。源泉徴収額は自動で計算され、通知書の額があれば上書きできます。</li>
       <li><strong>投資信託も記録できる？</strong> 口数と基準価額を数量・単価として入れれば記録できますが、基準価額は1万口あたりなので単価は1万口あたりの額÷10,000にするなど工夫が必要です。分配金の「特別分配金（元本払戻金）」は非課税で、取得費が減ります。このツールでは対応していないので、手で調整してください。</li>
@@ -221,15 +222,10 @@ input[type=file]{font-size:14px}
     </ul>
   </section>
 
-  <section class="card cta">
-    <h2>口座ごとの損益・課税方式の比較・申告の目安までExcelで</h2>
-    <p class="lead" style="margin:0">売買と配当を記録するだけで、口座ごとの譲渡損益、配当の課税方式（申告不要・総合・申告分離）の比較、確定申告の目安、NISAの残り枠まで自動で計算するExcelシートです。このツールのCSVを貼り付けて使えます。980円の買い切りで、無料のお試し版もあります。</p>
-    <a class="btn" href="https://256-co.booth.pm/items/9061872" target="_blank" rel="noopener">株・NISAの税金と記録かんたんシート（BOOTH）</a>
-  </section>
 
   <section class="card howto" id="howto">
-    <h2>ホーム画面に追加して、1タップで開く</h2>
-    <p class="lead" style="margin:0 0 6px">アプリのように開けます。記録はこの端末の中に残り、電波がなくても開けます。</p>
+    <h2>スマホのホーム画面に置く</h2>
+    <p class="lead" style="margin:0 0 6px">次からはアプリと同じように1回のタップで開き、通信がない場所でも記録を見られます。</p>
     <p style="margin:8px 0 0"><strong>iPhone（Safari）</strong></p>
     <ol><li>画面の下（または上）の「共有」ボタン（四角から上向きの矢印）をタップ</li><li>「ホーム画面に追加」をタップ → 右上の「追加」</li></ol>
     <p style="margin:8px 0 0"><strong>Android（Chrome）</strong></p>
@@ -238,7 +234,7 @@ input[type=file]{font-size:14px}
   </section>
 
   <section class="card article">
-    <h2>参考にした資料（2026年11月7日に確認）</h2>
+    <h2>株の記録の根拠にした資料</h2>
     <ul>
       <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm" target="_blank" rel="noopener">国税庁 No.1463 株式等を譲渡したときの課税（申告分離課税）</a>（上場株式等の譲渡益は所得税15%・住民税5%、復興特別所得税は基準所得税額の2.1%）</li>
       <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1466.htm" target="_blank" rel="noopener">国税庁 No.1466 同一銘柄の株式等を2回以上にわたって購入している場合の取得費</a>（総平均法に準ずる方法、1円未満切り上げ）</li>
@@ -246,8 +242,11 @@ input[type=file]{font-size:14px}
       <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm" target="_blank" rel="noopener">国税庁 No.1330 配当金を受け取ったとき（配当所得）</a>（上場株式等の源泉徴収 15.315%＋5%、申告不要・総合課税・申告分離課税）</li>
       <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1535.htm" target="_blank" rel="noopener">国税庁 No.1535 NISA制度</a>（年間投資枠 つみたて120万円・成長240万円、非課税保有限度額1,800万円・うち成長1,200万円、NISA口座の損失はないものとみなす）</li>
     </ul>
-    <p class="note">免責：このページの計算結果は目安であり、正確な税額は税理士や証券会社の年間取引報告書で確認してください。このツールは記録と税金の計算の補助であり、特定の銘柄の推奨、売買のタイミングの助言、個別の投資判断を示すものではありません。計算結果や記録を使って生じた損害について、運営者は責任を負いません。制度や税率は年度で変わるため、確認日以後の改正は反映されていないことがあります。</p>
+    <p class="note">免責：このページの計算結果は目安であり、正確な税額は税理士や証券会社の年間取引報告書で確認してください。このツールは記録と税金の計算の補助であり、特定の銘柄の推奨、売買のタイミングの助言、個別の投資判断を示すものではありません。計算結果や記録を使って生じた損害について、運営者は責任を負いません。</p>
   </section>
+
+  <p class="note">株の記録に使える Excel：<a href="https://256-co.booth.pm/items/9061872" target="_blank" rel="noopener">株の記録表（BOOTH・無料版あり）</a></p>
+  <p class="note sig">書いた人：株式会社256 代表（<a href="about.html#how">作り方</a>）。株の記録の確認日 2026-11-21</p>
 </main>
 <footer class="site-footer">計算結果は目安です。税務上の判断は税務署・税理士にご確認ください。入力した数字はこの端末の中だけで計算され、どこにも送信されません。<br>
     <a href="about.html">運営者情報</a>　<a href="about.html#contact">お問い合わせ</a>　<a href="privacy.html">プライバシーポリシー</a>　運営：株式会社256</footer>
